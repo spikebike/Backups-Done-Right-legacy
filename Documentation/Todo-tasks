@@ -1,0 +1,34 @@
+
+#1. Find a simple configuration file format and code to load it that
+    supports key=value and key=list type settings.
+
+Example:
+private_key=/etc/bdr/private.key
+public_key =/etc/bdr/public.key
+backup_dirs = /home /etc /var/lib/mail
+server = my-master-p2p.domain.com
+local_sqlite = /etc/bdr/fs-meta.sql
+purge_deleted_files = 30 #days
+local_store = /home/bdr/blobs
+queue_blobs= /var/lib/bdr
+minimum_blob_replication = 4 # copies
+minimum_number_of_hops = 2 # avoid peers too local
+
+#2 file system walker - depends on #1, iterates over backup_dirs noting
+      any new files, changed files, and deleted files.  Keeps state
+      in sqlite (permission, size, timestamps, uid/gid).  Builds
+      queue of new/changed files.
+
+#3 Uploader depends on #1 - For each file in the queue it reads, compresses,
+   and checksums it.  Ideally multiple core friendly.  As files are finished
+   upload them to p2p server.
+
+#4 P2P server - speaks the p2p protocol for trading blobs, including those
+                from the uploader.  Depends on #5 protocol and #1 init file.
+
+#5 implement code to implement p2p protocol (see protocol.txt) between
+   SSL connected peers.  Connections should only be allowed to complete
+   if the peer presents the public key in the sqlite database that
+   tracks peers.
+
+

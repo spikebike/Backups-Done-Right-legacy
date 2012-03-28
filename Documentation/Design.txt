@@ -1,0 +1,35 @@
+The overall design is to attempt to make a very easy to use client
+that makes it feasible to backup a set of directories by trading space
+with peers.
+
+Security is a top concern.  To that end:
+* Write an absolute minimal amount of encryption code, depend
+  heavily on popular well tested libraries.
+* Encrypt user files as soon as they are read from disk with 
+  a strong encryption
+* Easy to audit source code, no backdoors, no method for 
+  recovery without keys.
+* Use well tested libraries whenever possible, avoid writing code
+  whenever possible.
+
+Observations:
+* Average file size is small
+* At least on LANs (multiple peers on same lan is predicted to
+  be a common case) 60-80MB/sec connections are common
+* Disk space is cheap (don't try too hard to save disk space)
+* Random IO on disks is often on the order of 100/second (very slow)
+
+To this end 2 programs to achieve this are:
+1) file system walker - has access to encryption key, tracks all
+   file system state locally, maintains a per machine metadata
+   sqlite database.  Any new or changed files are encrypted and
+   uploaded as blobs to the p2p daemon.  Can be run out of cron or by
+   users.
+2) p2p daemon -
+   A) tracks peers, reputation, IP address, and SSL public key
+   B) challenges peers and updates reputation accordingly.
+   C) accepts uploaded blobs from the filesystem walker using the
+      same protocol as peers do.
+   D) ensures desired redundancy of blobs
+   E) accepts stores from peers.
+
