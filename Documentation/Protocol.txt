@@ -1,6 +1,6 @@
 
 Protocol should support the following commands:
-* Request - <number of records> 
+* REQUEST - <number of records> 
                <skein 256 bit checksum>
                <size>
 
@@ -10,19 +10,30 @@ Protocol should support the following commands:
             <skein 256bit checksum> - checksum
             <size> - blob size
 
-            The request command is sent between peers.  The listed blobs
-            are under replicated.  Any accepted blobs will count against
-            my quota, but do NOT necessarily need to be sent.  
+            The request command is sent from a peer that needs a blob
+            stored to a peer that will hopefully store blob.  The listed
+            blobs are under replicated, the goal is to get the peer to
+            register them as yours, that way they will stay available in
+            the future.  Any accepted blobs will count against my quota,
+            but do NOT necessarily need to be sent.
 
-* Accept - <number of records>
+            Note this sends a request for a peer to replicate blobs, but
+            does NOT actually send them.
+
+* REPLY - <number of records>
                <skein 256 bit checksum>
+               <reply-status>
            
-           The accept commands acknowledges that you will store the files
-           requested by the peer and count them against the quote.  They
-           do not necessarily require being sent.  Server sending an
-           accept should follow up with a get for any missing blobs.
+           Reply allows a peer to respond to a REQUEST.  This isn't on the
+           same connection.  Status should be one of:
+           Status = 0   I have blob, your are now subscribed to it.
+           Status = 1   I don't have that blob, please send it.
+           Status = 2   I don't want that blob, try someone else
+           Status = 3   I don't accept blobs that big, try someone else
+           Status = 4   That violated our agreed on quota, go away
+           Status = 5   That vioated our agreed on quota, but I will accept a larger quota trade.
 
-* get - <number of records>
+* GET - <number of records>
             <skein 256 checksum>
             <size>
         
@@ -31,4 +42,10 @@ Protocol should support the following commands:
 	         <size> 
              <status>
              <contents of blob if no error>
+
+        Status = 0 # file available and is being sent
+        Status = 1 # file unavailable, try again later
+        Status = 2 # file unavailable, it wasn't offered, anonymous gets are turned off.
+        Status = 3 # file doesn't exist, no idea
+
 

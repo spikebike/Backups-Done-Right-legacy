@@ -15,7 +15,9 @@ Security is a top concern.  To that end:
 Observations:
 * Average file size is small
 * At least on LANs (multiple peers on same lan is predicted to
-  be a common case) 60-80MB/sec connections are common
+  be a common use case) 60-80MB/sec connections are common
+* Reading, compressing, checksumming, and encrypting at 60-80MB/sec
+  is tough.
 * Disk space is cheap (don't try too hard to save disk space)
 * Random IO on disks is often on the order of 100/second (very slow)
 
