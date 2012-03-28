@@ -19,8 +19,9 @@ minimum_number_of_hops = 2 # avoid peers too local
 local_sqlite = /etc/bdr/blob-peer-meta.sql
 local_store = /home/bdr/blobs
 notify_email = joe@foo.com
-contract_grace_period = 48 # hours.  The time that you agree to store blobs even if the
-                             peer disappears.
+max_cores = 4 # maximum workers
+contract_grace_period = 48 # hours.  The time that you agree to store blobs 
+                           # even if the peer disappears.
 
 
 #2 file system walker - depends on #1, iterates over backup_dirs noting
@@ -30,7 +31,7 @@ contract_grace_period = 48 # hours.  The time that you agree to store blobs even
 
 #3 Uploader depends on #1 - For each file in the queue it reads, compresses,
    and checksums it.  Ideally multiple core friendly.  As files are finished
-   upload them to p2p server.
+   upload them to p2p server.  See uploader.txt
 
 #4 P2P server - speaks the p2p protocol for trading blobs, including those
                 from the uploader.  Depends on #5 protocol and #1 init file.
