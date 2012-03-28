@@ -1,0 +1,34 @@
+
+Protocol should support the following commands:
+* Request - <number of records> 
+               <skein 256 bit checksum>
+               <size>
+
+            <number of records> legal values 1-256, represents the
+                                number of blobs we are requesting 
+                                storage for
+            <skein 256bit checksum> - checksum
+            <size> - blob size
+
+            The request command is sent between peers.  The listed blobs
+            are under replicated.  Any accepted blobs will count against
+            my quota, but do NOT necessarily need to be sent.  
+
+* Accept - <number of records>
+               <skein 256 bit checksum>
+           
+           The accept commands acknowledges that you will store the files
+           requested by the peer and count them against the quote.  They
+           do not necessarily require being sent.  Server sending an
+           accept should follow up with a get for any missing blobs.
+
+* get - <number of records>
+            <skein 256 checksum>
+            <size>
+        
+        Reply should be a list of:
+             <skein checksum>
+	         <size> 
+             <status>
+             <contents of blob if no error>
+
