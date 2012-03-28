@@ -1,0 +1,40 @@
+
+import hashlib
+import sys
+import zlib
+import os,tempfile
+
+def process_file(iobj,ofd):
+	c=zlib.compressobj()
+	s=hashlib.sha256()
+
+	while True:
+		buf=iobj.read(8096)
+		if not buf:
+			break
+		cbuf=c.compress(buf)
+		s.update(cbuf)
+		os.write(ofd,cbuf)
+	return s.hexdigest()	
+
+def filetemp():
+  (fd, fname) = tempfile.mkstemp()
+  return (os.fdopen(fd, "w+b"), fname)
+
+def CESfile(fname):
+	try:
+		input = open(fname, 'rb')
+		(fd,oname) = tempfile.mkstemp(".bdr","t","/home/bill/imp/src/bdr/python")
+		print "input=",input
+		print "fd=",fd," name=",oname
+	except:
+		return 'Failed to open file'
+	ret =  process_file(input,fd)
+	input.close()
+	os.close(fd)
+	return ret
+
+if __name__ == '__main__':
+    for fname in sys.argv[1:]:
+        print '%32s  %s' % (CESfile(fname), fname)
+
