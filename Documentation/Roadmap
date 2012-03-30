@@ -4,7 +4,8 @@ Basically functionality for backing up files.
 Manual peer introductions
 Manual quotes/contracts for peer storage
 
-1.0 - stable protocol/init file, gradual improvements
+1.0 - stable protocol/init file, gradual improvements, easy to install,
+      ideally linux, windows, and osx ports.
 
 2.0 - Addition of more complex contracts, reputation.
       Automated peer to peer introductions
@@ -13,5 +14,7 @@ Manual quotes/contracts for peer storage
       IPv6
       Consider not trusting local filesystem timestamps/modification flags.
       Teach client side to split files over MAXBLOBSIZE
+      Lower security encryption with global dedupe by encrypting with file checksum.
+      
 
 

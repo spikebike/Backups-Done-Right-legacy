@@ -31,16 +31,23 @@ contract_grace_period = 48 # hours.  The time that you agree to store blobs
 
 #3 Uploader depends on #1 - For each file in the queue it reads, compresses,
    and checksums it.  Ideally multiple core friendly.  As files are finished
-   upload them to p2p server.  See uploader.txt
+   upload them to p2p server.  See uploader.txt.  Depends on #4 and #5 to
+   actually upload.
+#3A update https://github.com/wernerd/Skein3Fish to build with Go1.
+
 
 #4 P2P server - speaks the p2p protocol for trading blobs, including those
                 from the uploader.  Depends on #5 protocol and #1 init file.
                 Continuously trades blobs, makes challenges, accepts challenges
                 monitors and maintains redundancy.
+#4A get test case with a few unique blobs each to successfully transfer
+    blobs.
 
 #5 implement code to implement p2p protocol (see protocol.txt) between
    SSL connected peers.  Connections should only be allowed to complete
    if the peer presents the public key in the sqlite database that
    tracks peers.
-
-
+#5A write go code to connect with TLS/SSL and view the other ends public key
+*DONE*
+#5B get goprotobufs built/usable with working test code
+#5B implement REQUEST, REPLY, and GET.  See protocol.txt
