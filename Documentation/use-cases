@@ -1,0 +1,15 @@
+
+#1 Home user with videos, photos, musics, and personal files.  Might
+   share with several friends and potentially a few less known trusted
+   people.  Might trade 60GB with peers and keep a redundancy of 3-6.
+   Runs 1 walker and 1 p2p server.  Supportable churn rate limited
+   by dsl/cable uplink.
+
+#2 small deparment at a school, university, or business.  Trades 50-100GB
+   with 5-10 peers in the same organization over a school/business lan
+   with 100 mbit/1Gbit.  Might run dozens of walkers and 1 p2p server.
+
+#3 large department with multiple 16 disk file servers, might run 100s of 
+   walkers and several peers.  Requires 2 onsite copies and 1 offsite
+   copy of all files.  Might well pay 3rd parties/clouds to provide
+   higher confidence in offsite backups.
