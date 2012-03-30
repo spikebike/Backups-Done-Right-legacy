@@ -5,7 +5,9 @@
 Example client.conf:
 private_key=/etc/bdr/client/private.key
 public_key =/etc/bdr/client/public.key
-backup_dirs = /home /etc /var/spool/mail
+backup_dirs_secure = /home /etc /var/spool/mail /
+backup_dirs_less_secure = /usr /lib /var 
+  #less_secure allows for global dedupe but is less secure.
 server = my-master-p2p.domain.com
 local_sqlite = /etc/bdr/fs-meta.sql
 purge_deleted_files = 30 #days
@@ -22,12 +24,16 @@ notify_email = joe@foo.com
 max_cores = 4 # maximum workers
 contract_grace_period = 48 # hours.  The time that you agree to store blobs 
                            # even if the peer disappears.
+keep_files_for= 28 # days
+keep_local_copy_of_all_blobs = True # costs more disk, less reliant on peers
 
 
 #2 file system walker - depends on #1, iterates over backup_dirs noting
       any new files, changed files, and deleted files.  Keeps state
       in sqlite (permission, size, timestamps, uid/gid).  Builds
       queue of new/changed files.  See walker.txt and schema.txt.
+#2A find, download, compile, install, and build a usable test case
+    for sqlite3 or similar lightweight SQL like queries
 
 #3 Uploader depends on #1 - For each file in the queue it reads, compresses,
    and checksums it.  Ideally multiple core friendly.  As files are finished
