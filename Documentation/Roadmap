@@ -15,6 +15,7 @@ Manual quotes/contracts for peer storage
       Consider not trusting local filesystem timestamps/modification flags.
       Teach client side to split files over MAXBLOBSIZE
       Lower security encryption with global dedupe by encrypting with file checksum.
+	  Pluggable encryption/checksum algorithms.
       
 
 
