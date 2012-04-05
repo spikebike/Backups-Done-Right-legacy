@@ -1,21 +1,25 @@
 
-Pre 1.0 -
-Basically functionality for backing up files.
-Manual peer introductions
-Manual quotes/contracts for peer storage
+Pre 1.0 - 
+	Basically functionality for backing up files.
+    Manual peer introductions
+    Manual quotes/contracts for peer storage
+    Testing use only
 
-1.0 - stable protocol/init file, gradual improvements, easy to install,
-      ideally linux, windows, and osx ports.
+1.0 stable protocol/init file, gradual improvements, easy to install,
+    ideally linux, windows, and osx ports.
+    Usable for early adopters.
 
-2.0 - Addition of more complex contracts, reputation.
-      Automated peer to peer introductions
-      Potentially more advanced/efficient redundancy
-      Automated requests to increase size of contract when disk is needed.
-      IPv6
-      Consider not trusting local filesystem timestamps/modification flags.
-      Teach client side to split files over MAXBLOBSIZE
-      Lower security encryption with global dedupe by encrypting with file checksum.
-	  Pluggable encryption/checksum algorithms.
+2.0 or later:
+	Addition of more complex contracts, reputation.
+	Multiple choices for encryption/checkumming
+	Splitting of large files of MAXBLOBSIZE.
+	Automated peer to peer introductions
+	Potentially more advanced/efficient redundancy
+	Automated requests to increase size of contract when disk is needed.
+    IPv6
+    Consider not trusting local filesystem timestamps/modification flags at the
+    cost of substantially more CPU and disk IO.
+    Lower security encryption with global dedupe by encrypting with file checksum.
       
 
 

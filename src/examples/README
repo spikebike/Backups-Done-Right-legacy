@@ -1,0 +1,9 @@
+This is for small examples that exercise functionality needed for this project.
+
+Examples so far:
+aes-test.go       tests AES encrypting/decrypting, needed by uploader
+sha256-test.go    tests sha256 by checksumming any file given on the command line, needed by uploader
+client-server-tls tests client<->server TLS connection, needed by p2p daemon
+client-server-tls-proto tests client<->server with protobuts, needed by p2p daemon
+
+
