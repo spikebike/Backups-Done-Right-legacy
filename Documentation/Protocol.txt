@@ -1,4 +1,13 @@
 
+Protobufs: http://code.google.com/p/protobuf/
+and
+Go-rpcgen: https://github.com/kylelemons/go-rpcgen
+
+Look particularly promising.  The above allow for a simple proto file to
+generate most of the code ncessary to support RPC based on the proto file.
+
+Example code is already allowing a simple RPC to work over TLS.
+
 Protocol should support the following commands:
 * REQUEST - <number of records> 
                <256 bit checksum>
@@ -18,7 +27,7 @@ Protocol should support the following commands:
             but do NOT necessarily need to be sent.
 
             Note this sends a request for a peer to replicate blobs, but
-            does NOT actually send them.
+            does NOT actually send the contenst of the blob.
 
 * REPLY - <number of records>
                <256 bit checksum>
