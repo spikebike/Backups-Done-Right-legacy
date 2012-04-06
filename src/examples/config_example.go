@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	c, _ := config.ReadDefault("../../Documentation/config.cfg")
+	c, _ := config.ReadDefault("../../config.cfg")
 
 	client_public_key, _ := c.String("Client", "public_key")
 	server_public_key, _ := c.String("Server", "public_key")
