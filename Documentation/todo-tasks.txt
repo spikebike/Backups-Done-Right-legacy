@@ -26,15 +26,15 @@ Num Status    Description
                including those from the uploader.  Depends on #5 protocol and 
                #1 init file.  Continuously trades blobs, makes challenges, 
                accepts challenges monitors and maintains redundancy.
-4A Unassigned  get test case with a few unique blobs each to successfully 
+4A  Unassigned get test case with a few unique blobs each to successfully 
                transfer blobs between peers.
 
-5  Unassigned  implement code to implement p2p protocol (see protocol.txt) 
+5   Unassigned implement code to implement p2p protocol (see protocol.txt) 
                between SSL connected peers.  Connections should only be 
                allowed to complete if the peer presents the public key in 
                the sqlite database that tracks peers.
-5A *DONE*      write go code to connect with TLS/SSL and view the other ends 
+5A  *DONE*     write go code to connect with TLS/SSL and view the other ends 
                public key
-5B *DONE*      get goprotobufs built/usable with working test code
-5C *DONE       get goprotobufs built/usable with working TLS test code
-5D Unassigned  implement REQUEST, REPLY, and GET.  See protocol.txt
+5B  *DONE*     get goprotobufs built/usable with working test code
+5C  *DONE*     get goprotobufs built/usable with working TLS test code
+5D  Unassigned implement REQUEST, REPLY, and GET.  See protocol.txt

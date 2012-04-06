@@ -20,14 +20,12 @@ Protocol should support the following commands:
             <size> - blob size
 
             The request command is sent from a peer that needs a blob
-            stored to a peer that will hopefully store blob.  The listed
-            blobs are under replicated, the goal is to get the peer to
-            register them as yours, that way they will stay available in
-            the future.  Any accepted blobs will count against my quota,
-            but do NOT necessarily need to be sent.
+            stored to a peer that will hopefully store blob.  
 
-            Note this sends a request for a peer to replicate blobs, but
-            does NOT actually send the contenst of the blob.
+			If accepted the blob size counts against the requester.
+
+			If the block is already stored on the target it doesn't
+            need to be sent.
 
 * REPLY - <number of records>
                <256 bit checksum>
