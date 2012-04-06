@@ -4,6 +4,8 @@ For best speed ideally one process/thread/goroutine per core would be used.
 To minimize IO the encryption/checkpoint process should:
 
 thread/goroutine #1
+
+// encrypt, checkum and upload files.
 upload_file(filename,server_connection):
     fp=fopen(dir+newfile.name) # open file to queue
     ep=fopen($queue_blobs/tmp/tmpfile)  # open file to write encrypted blob to
@@ -14,7 +16,7 @@ upload_file(filename,server_connection):
         block=fread(fp)                   # read block
         eblock=e.update(block)            # encrypt block 
         sk.update(eblock)                 # add encrypted block to checksum
-		write(ep,eblock)
+		write(ep,eblock)                  # write block to tmpfile
     }
 	close(fp)
     close(ep)
@@ -26,19 +28,24 @@ upload_file(filename,server_connection):
 }
 
 thread/goroutine #2
+
+// request upload of encrypted blobs.
 for file in $queue_blobs/spool/
      request_file(file,master_connection)
 
+
 thread/goroutine #3
 
+// for any blobs the server doesn't already have upload.
+ 
 foreach get in peer_get_requests
 
-if (file_exists($queue_blobs/spool/get.checksum))
-	status=0
-    reply($queue_blobs/spool/get.checksum,status)
-else
-    status=3
-    reply(nil,status).
+	if (file_exists($queue_blobs/spool/get.checksum))
+	{
+		// file exists
+		status=0
+		put($queue_blobs/spool/get.checksum,status)
+	} 
     
 
 

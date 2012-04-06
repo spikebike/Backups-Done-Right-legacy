@@ -9,7 +9,7 @@ server = my-master-p2p.domain.com
 local_sqlite = /etc/bdr/fs-meta.sql
 purge_deleted_files = 30 #days
 queue_blobs= /var/lib/bdr
-notify_email = joe@foo.com
+notify_email = joe@example.com
 
 Example server.conf:
 private_key=/etc/bdr/server/private.key
@@ -17,7 +17,7 @@ public_key =/etc/bdr/server/public.key
 minimum_number_of_hops = 2 # avoid peers too local
 local_sqlite = /etc/bdr/blob-peer-meta.sql
 local_store = /home/bdr/blobs
-notify_email = joe@foo.com
+notify_email = joe@example.com
 max_cores = 4 # maximum workers
 contract_grace_period = 48 # hours.  The time that you agree to store blobs 
                            # even if the peer disappears.
