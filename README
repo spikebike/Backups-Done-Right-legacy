@@ -1,2 +1,8 @@
-Please see Documentation/*
+You need the goconfig package to use the config readout (example in src/examples/config-test.go).
+
+Use the following command:    'go get github.com/kless/goconfig/config'
+
+-------------------------------------------
+
+Please see Documentation/* for the rest
 
