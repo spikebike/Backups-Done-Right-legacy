@@ -2,7 +2,7 @@
 Num Status    Description
 === ======    ===========
 
-1   Tectu      Find a simple configuration file format and code to load it that
+1   *DONE*     Find a simple configuration file format and code to load it that
                supports key=value and key=list type settings.  See init.txt
 
 2   smw        file system walker - depends on #1, iterates over backup_dirs 
