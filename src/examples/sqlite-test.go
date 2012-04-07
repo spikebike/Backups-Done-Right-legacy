@@ -1,16 +1,18 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	_ "github.com/mattn/go-sqlite3"
 	"os"
+	"fmt"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-func main() {
-	os.Remove("./foo.db")
+	const DataBaseName = "./foo.db"
 
-	db, err := sql.Open("sqlite3", "./foo.db")
+func main() {
+	os.Remove(DataBaseName)
+
+	db, err := sql.Open("sqlite3", DataBaseName)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -41,7 +43,7 @@ func main() {
 	}
 	defer stmt.Close()
 	for i := 0; i < 100; i++ {
-		_, err = stmt.Exec(i, fmt.Sprintf("こんにちわ世界%03d", i))
+		_, err = stmt.Exec(i, fmt.Sprintf("Hello World! %03d", i))
 		if err != nil {
 			fmt.Println(err)
 			return
