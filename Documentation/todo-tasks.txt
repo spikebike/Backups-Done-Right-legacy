@@ -10,7 +10,7 @@ Num Status    Description
                state in sqlite (permission, size, timestamps, uid/gid).  Builds
                queue of new/changed files.  See walker.txt and schema.txt.
 
-2A  Unassigned find, download, compile, install, and build a usable test case
+2A  *DONE*     find, download, compile, install, and build a usable test case
                for sqlite3 or similar lightweight SQL like queries
 
 3   Unassigned Uploader depends on #1 - For each file in the queue it reads, 
