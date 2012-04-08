@@ -38,21 +38,21 @@ Protocol should support the following commands:
            Status = 2   I don't want that blob, try someone else
            Status = 3   I don't accept blobs that big, try someone else
            Status = 4   That violated our agreed on quota, go away
-           Status = 5   That vioated our agreed on quota, but I will accept a larger quota trade.
+           Status = 5   That vioated our agreed on quota, but I will accept 
+                        a larger quota trade.
 
-* GET - <number of records>
+* SEND - <number of records>
             <256 checksum>
             <size>
         
         Reply should be a list of:
              <checksum>
-	         <size> 
              <status>
              <contents of blob if no error>
 
-        Status = 0 # file available and is being sent
-        Status = 1 # file unavailable, try again later
-        Status = 2 # file unavailable, it wasn't offered, anonymous gets are turned off.
-        Status = 3 # file doesn't exist, no idea
+        Status = 0 # succes
+        Status = 1 # failed, please retry
+        Status = 2 # failed, I didn't ask for this 
+        Status = 3 # failed, unknown.
 
 

@@ -5,13 +5,14 @@ Num Status    Description
 1   *DONE*     Find a simple configuration file format and code to load it that
                supports key=value and key=list type settings.  See init.txt
 
-2   smw        file system walker - depends on #1, iterates over backup_dirs 
+2   Unassigned file system walker - depends on #1, iterates over backup_dirs 
                noting any new files, changed files, and deleted files.  Keeps 
                state in sqlite (permission, size, timestamps, uid/gid).  Builds
                queue of new/changed files.  See walker.txt and schema.txt.
 
 2A  *DONE*     find, download, compile, install, and build a usable test case
                for sqlite3 or similar lightweight SQL like queries
+2B  *DONE*     Demonstrate filepath.Walk and Readdir
 
 3   Unassigned Uploader depends on #1 - For each file in the queue it reads, 
                compresses, and checksums it.  Ideally multiple core friendly.  
