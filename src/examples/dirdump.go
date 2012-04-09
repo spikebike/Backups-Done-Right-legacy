@@ -34,7 +34,7 @@ func main() {
 			t, _:= os.Readlink(fi.Name())
 			fmt.Printf("%s is a link, destination is %s!!!!!\n",fi.Name(),t)
 			t2, _:= filepath.EvalSymlinks(fi.Name())
-			fmt.Printf("EvalSymLinks clams destination is %s\n",t2)
+			fmt.Printf("EvalSymLinks claims destination is %s\n",t2)
 		} else {
 			fmt.Printf("%s is a not a link\n",fi.Name())
 		}
