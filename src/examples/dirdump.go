@@ -31,7 +31,7 @@ func main() {
 			fmt.Printf("%s is a not a link\n", fi.Name())
 		}
 		if !fi.IsDir() {
-			fmt.Printf("%s %d bytes Mode=%+v Perm=%+v UID=%+v GID=%+v\n", fi.Name(), fi.Size(), unixStat.Mode, fi.Mode()&os.ModePerm, unixStat.Uid, unixStat.Gid)
+			fmt.Printf("inode=%d %d bytes Mode=%+v Perm=%+v UID=%+v GID=%+v\n", unixStat.Ino, fi.Size(), unixStat.Mode, fi.Mode()&os.ModePerm, unixStat.Uid, unixStat.Gid)
 			t := time.Unix(unixStat.Atim.Sec, unixStat.Atim.Nsec)
 			fmt.Printf("atime: %+v\n", t)
 			t = time.Unix(unixStat.Ctim.Sec, unixStat.Ctim.Nsec)
