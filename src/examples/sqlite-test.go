@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"database/sql"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"os"
 )
 
-	const DataBaseName = "./foo.db"
+const DataBaseName = "./foo.db"
 
 func main() {
 	os.Remove(DataBaseName)

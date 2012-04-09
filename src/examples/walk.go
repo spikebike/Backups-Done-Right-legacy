@@ -1,10 +1,10 @@
 package main
 
 import (
+	"flag"
+	"log"
 	"os"
 	"path/filepath"
-	"log"
-	"flag"
 )
 
 func main() {
@@ -12,7 +12,7 @@ func main() {
 
 	markFn := func(path string, info os.FileInfo, err error) error {
 		if path == "doozerd" { // Will skip walking of directory pictures and its contents.
-			log.Println("Skipping",path)
+			log.Println("Skipping", path)
 			return filepath.SkipDir
 		}
 		if err != nil {

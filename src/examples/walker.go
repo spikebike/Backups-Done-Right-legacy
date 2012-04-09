@@ -38,7 +38,7 @@ func backupDir(db *sql.DB, dirList string) error {
 	var dirname string
 	i = 0
 	log.Printf("backupDir received %s", dirList)
-	dirArray := strings.Split(dirList," ")
+	dirArray := strings.Split(dirList, " ")
 	for i < len(dirArray) {
 		dirname = dirArray[i]
 		log.Printf("backing up dir %s", dirname)
@@ -53,12 +53,12 @@ func backupDir(db *sql.DB, dirList string) error {
 		}
 		for _, fi := range fi {
 			if !fi.IsDir() {
-				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
+				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(), fi.ModTime())
 
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
 				log.Printf("found directory %s", fi.Name())
-//				log.Println(os.Stat(fi))
+				//				log.Println(os.Stat(fi))
 			}
 		}
 		i = i + 1
