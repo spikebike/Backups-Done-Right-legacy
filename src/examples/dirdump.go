@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+// This link was suggested to compare:
+// https://github.com/str1ngs/unix/blob/master/ls/main.go
 func main() {
 	var dirname string
 	dirname = "."

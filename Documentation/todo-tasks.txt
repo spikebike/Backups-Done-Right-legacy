@@ -13,6 +13,10 @@ Num Status    Description
 2A  *DONE*     find, download, compile, install, and build a usable test case
                for sqlite3 or similar lightweight SQL like queries
 2B  *DONE*     Demonstrate filepath.Walk and Readdir
+2C  *DONE*     Write a dirdump.go that prints filename, if it's a link,
+               size, Mode, permissions, GID, UID, actim, ctime, and mtime
+2D  *DONE*     Write code to build the directory/file schema in sqlite3
+               
 
 3   Unassigned Uploader depends on #1 - For each file in the queue it reads, 
                compresses, and checksums it.  Ideally multiple core friendly.  
