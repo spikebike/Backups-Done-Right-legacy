@@ -78,11 +78,11 @@ func main() {
 	log.Printf("Loading config file from %s\n", *configFile)
 	config, _ := config.ReadDefault(*configFile)
 
-	log.Printf("Backing up these directories: %s\n", dirList)
 	dirList, _ := config.String("Client", "backup_dirs_secure")
+	log.Printf("Backing up these directories: %s\n", dirList)
 
-	log.Printf("Attempting to open %s", dataBaseName)
 	dataBaseName, _ := config.String("Client", "sql_file")
+	log.Printf("Attempting to open %s", dataBaseName)
 
 	db, err := init_db(dataBaseName)
 	err = backupDir(db, dirList)
