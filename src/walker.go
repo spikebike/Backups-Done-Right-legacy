@@ -12,7 +12,15 @@ import (
 	"strings"
 )
 
-var configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
+var (
+	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
+
+	sqls = []string {
+		"create table dirs (id INTEGER PRIMARY KEY,st_mode INT, st_ino BIGINT, st_uid INT, st_gid INT, name varchar(2048), last_seen ts, deleted INT)",
+		"create table files (id INTEGER PRIMARY KEY, st_mode INT, st_ino BIGINT, st_dev BIGINT, st_nlink INT, st_uid INT, st_gid INT, st_size BIGINT, st_atime BIGINT, st_mtime BIGINT, st_ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
+	}
+
+)
 
 func init_db(dataBaseName string) (db *sql.DB, err error) {
 	db, err = sql.Open("sqlite3", dataBaseName)
@@ -20,11 +28,11 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 		log.Printf("Couldn't open database: %s", err)
 		os.Exit(1)
 	}
-	_, rerr := db.Exec("create table dirs (id INTEGER PRIMARY KEY,st_mode INT, st_ino BIGINT, st_uid INT, st_gid INT, name varchar(2048), last_seen ts, deleted INT)")
+	_, rerr := db.Exec(sqls[0])
 	if rerr != nil {
 		log.Printf("%s", rerr)
 	}
-	_, rerr = db.Exec("create table files (id INTEGER PRIMARY KEY, st_mode INT, st_ino BIGINT, st_dev BIGINT, st_nlink INT, st_uid INT, st_gid INT, st_size BIGINT, st_atime BIGINT, st_mtime BIGINT, st_ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))")
+	_, rerr = db.Exec(sqls[1])
 	if rerr != nil {
 		log.Printf("%s", rerr)
 	}
