@@ -8,7 +8,6 @@ import (
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
-	//	_ "github.com/kuroneko/gosqlite3"
 	"os"
 	"strings"
 )
