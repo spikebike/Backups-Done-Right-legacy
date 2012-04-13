@@ -60,7 +60,7 @@ func backupDir(db *sql.DB, dirList string) error {
 //				log.Println(os.Stat(fi))
 			}
 		}
-		i = i + 1
+		i++
 	}
 	return nil
 }
