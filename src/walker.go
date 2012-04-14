@@ -59,16 +59,25 @@ func backupDir(db *sql.DB, dirList string) error {
 		}
 		for _, fi := range fi {
 			if !fi.IsDir() {
-				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
-
+//				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				log.Printf("found directory %s", fi.Name())
+//				log.Printf("found directory %s", fi.Name())
 //				log.Println(os.Stat(fi))
 			}
 		}
 		i++
 	}
+	return nil
+}
+
+func makeDirEntry(db *sql.DB, entry string) error {
+
+	return nil
+}
+
+func makeFileEntry(db *sql.DB, entry string) error {
+
 	return nil
 }
 
