@@ -60,8 +60,10 @@ func backupDir(db *sql.DB, dirList string) error {
 		for _, fi := range fi {
 			if !fi.IsDir() {
 //				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
+				makeFileEntry(db, fi.Name())
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
+				makeDirEntry(db, fi.Name())
 //				log.Printf("found directory %s", fi.Name())
 //				log.Println(os.Stat(fi))
 			}
@@ -72,11 +74,45 @@ func backupDir(db *sql.DB, dirList string) error {
 }
 
 func makeDirEntry(db *sql.DB, entry string) error {
+	tx, err := db.Begin()
+	if err != nil {
+		log.Println(err)
+	}
+	stmt, err := tx.Prepare("insert into dirs(name) values(?)")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(entry)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	tx.Commit()
 
 	return nil
 }
 
 func makeFileEntry(db *sql.DB, entry string) error {
+	tx, err := db.Begin()
+	if err != nil {
+		log.Println(err)
+	}
+	stmt, err := tx.Prepare("insert into files(name) values(?)")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(entry)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	tx.Commit()
 
 	return nil
 }
