@@ -2,6 +2,10 @@
 Num Status    Description
 === ======    ===========
 
+-   spikebike  	Please write very clear documentation about every single field
+		in database and descripe what it is for and what should be
+		written in it
+
 1   *DONE*     Find a simple configuration file format and code to load it that
                supports key=value and key=list type settings.  See init.txt
 
