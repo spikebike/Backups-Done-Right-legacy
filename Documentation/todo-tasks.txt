@@ -2,6 +2,10 @@
 Num Status    Description
 === ======    ===========
 
+-   Tectu	Find a good way to clean the db entry stuff up. Search for a 
+		solution which allows to have only one function, makeEntry(), and
+		probably also only one struct.
+
 -   spikebike  	Please write very clear documentation about every single field
 		in database and descripe what it is for and what should be
 		written in it
