@@ -2,7 +2,7 @@
 Num Status    Description
 === ======    ===========
 
--   Tectu	Find a good way to clean the db entry stuff up. Search for a 
+-   *DONE*	Find a good way to clean the db entry stuff up. Search for a 
 		solution which allows to have only one function, makeEntry(), and
 		probably also only one struct.
 

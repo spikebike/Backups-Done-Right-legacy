@@ -82,59 +82,56 @@ func backupDir(db *sql.DB, dirList string) error {
 //				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
 				entry.name = fi.Name()
 				entry.st_size = fi.Size()
-				makeFileEntry(db, entry)
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
+				entry.st_size = 0	// VERY IMPORTANT! 
 				entry.name = fi.Name()
-				makeDirEntry(db, entry)
 //				log.Printf("found directory %s", fi.Name())
 //				log.Println(os.Stat(fi))
 			}
+
+			makeEntry(db, entry)
 		}
 		i++
 	}
 	return nil
 }
 
-func makeDirEntry(db *sql.DB, entry *file_info_t) error {
+func makeEntry(db *sql.DB, entry *file_info_t) error {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
 	}
-	stmt, err := tx.Prepare("insert into dirs(name) values(?)")
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	defer stmt.Close()
 
-	_, err = stmt.Exec(entry.name)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	tx.Commit()
+	if entry.st_size != 0 {	// is it a file or a dir entry?
+		stmt, err := tx.Prepare("insert into files(name, st_size) values(?, ?)")
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		defer stmt.Close()
 
-	return nil
-}
+		_, err = stmt.Exec(entry.name, entry.st_size)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 
-func makeFileEntry(db *sql.DB, entry *file_info_t) error {
-	tx, err := db.Begin()
-	if err != nil {
-		log.Println(err)
-	}
-	stmt, err := tx.Prepare("insert into files(name, st_size) values(?, ?)")
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	defer stmt.Close()
+	} else {
+		stmt, err := tx.Prepare("insert into dirs(name) values(?)")
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		defer stmt.Close()
 
-	_, err = stmt.Exec(entry.name, entry.st_size)
-	if err != nil {
-		log.Println(err)
-		return err
+		_, err = stmt.Exec(entry.name)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 	}
+
 	tx.Commit()
 
 	return nil
@@ -154,5 +151,10 @@ func main() {
 
 	db, err := init_db(dataBaseName)
 	err = backupDir(db, dirList)
-	log.Printf("backupDir exited with %s", err)
+
+	if err != nil {
+		log.Printf("backupDir exited with %s", err)
+	} else {
+		log.Printf("backupDir exited without any error")
+	}
 }
