@@ -40,7 +40,7 @@ type FileEntry struct {
 	st_nlink int
 	st_uid int
 	st_gid int
-	st_size int
+	st_size int64
 	st_atime int
 	st_mtime int
 	st_ctime int
@@ -93,6 +93,7 @@ func backupDir(db *sql.DB, dirList string) error {
 			if !fi.IsDir() {
 //				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
 				file.name = fi.Name()
+				file.st_size = fi.Size()
 				makeFileEntry(db, file)
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
@@ -134,14 +135,14 @@ func makeFileEntry(db *sql.DB, entry *FileEntry) error {
 	if err != nil {
 		log.Println(err)
 	}
-	stmt, err := tx.Prepare("insert into files(name) values(?)")
+	stmt, err := tx.Prepare("insert into files(name, st_size) values(?, ?)")
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(entry.name)
+	_, err = stmt.Exec(entry.name, entry.st_size)
 	if err != nil {
 		log.Println(err)
 		return err
