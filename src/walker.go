@@ -21,6 +21,35 @@ var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 )
 
+type DirEntry struct {
+	id int
+	st_mode int
+	st_ino int
+	st_uid int
+	st_gid int
+	name string
+	last_seen int
+	deleted int
+}
+
+type FileEntry struct {
+	id int
+	st_mode int
+	st_ino int
+	st_dev int
+	st_nlink int
+	st_uid int
+	st_gid int
+	st_size int
+	st_atime int
+	st_mtime int
+	st_ctime int
+	name string
+	dirID int
+	last_seen int
+	deleted int
+}
+
 func init_db(dataBaseName string) (db *sql.DB, err error) {
 	db, err = sql.Open("sqlite3", dataBaseName)
 	if err != nil {
@@ -42,6 +71,9 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 func backupDir(db *sql.DB, dirList string) error {
 	var i int
 	var dirname string
+	file := &FileEntry{}
+	dir := &DirEntry{}
+
 	i = 0
 	log.Printf("backupDir received %s", dirList)
 	dirArray := strings.Split(dirList," ")
@@ -60,10 +92,12 @@ func backupDir(db *sql.DB, dirList string) error {
 		for _, fi := range fi {
 			if !fi.IsDir() {
 //				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
-				makeFileEntry(db, fi.Name())
+				file.name = fi.Name()
+				makeFileEntry(db, file)
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				makeDirEntry(db, fi.Name())
+				dir.name = fi.Name()
+				makeDirEntry(db, dir)
 //				log.Printf("found directory %s", fi.Name())
 //				log.Println(os.Stat(fi))
 			}
@@ -73,7 +107,7 @@ func backupDir(db *sql.DB, dirList string) error {
 	return nil
 }
 
-func makeDirEntry(db *sql.DB, entry string) error {
+func makeDirEntry(db *sql.DB, entry *DirEntry) error {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
@@ -85,7 +119,7 @@ func makeDirEntry(db *sql.DB, entry string) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(entry)
+	_, err = stmt.Exec(entry.name)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -95,7 +129,7 @@ func makeDirEntry(db *sql.DB, entry string) error {
 	return nil
 }
 
-func makeFileEntry(db *sql.DB, entry string) error {
+func makeFileEntry(db *sql.DB, entry *FileEntry) error {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
@@ -107,7 +141,7 @@ func makeFileEntry(db *sql.DB, entry string) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(entry)
+	_, err = stmt.Exec(entry.name)
 	if err != nil {
 		log.Println(err)
 		return err
