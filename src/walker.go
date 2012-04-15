@@ -20,6 +20,7 @@ var (
 	}
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
+	newDB = flag.Bool("new-database", false, "true = creates a new database | false = use existing database")
 )
 
 type file_info_t struct {
@@ -41,6 +42,10 @@ type file_info_t struct {
 }
 
 func init_db(dataBaseName string) (db *sql.DB, err error) {
+	if *newDB == true {
+		os.Remove(dataBaseName)
+	}
+
 	db, err = sql.Open("sqlite3", dataBaseName)
 	if err != nil {
 		log.Printf("couldn't open database: %s", err)
