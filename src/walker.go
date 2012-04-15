@@ -21,18 +21,7 @@ var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 )
 
-type DirEntry struct {
-	id int
-	st_mode int
-	st_ino int
-	st_uid int
-	st_gid int
-	name string
-	last_seen int
-	deleted int
-}
-
-type FileEntry struct {
+type file_info_t struct {
 	id int
 	st_mode int
 	st_ino int
@@ -71,8 +60,7 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 func backupDir(db *sql.DB, dirList string) error {
 	var i int
 	var dirname string
-	file := &FileEntry{}
-	dir := &DirEntry{}
+	entry := &file_info_t{}
 
 	i = 0
 	log.Printf("backupDir received %s", dirList)
@@ -92,13 +80,13 @@ func backupDir(db *sql.DB, dirList string) error {
 		for _, fi := range fi {
 			if !fi.IsDir() {
 //				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
-				file.name = fi.Name()
-				file.st_size = fi.Size()
-				makeFileEntry(db, file)
+				entry.name = fi.Name()
+				entry.st_size = fi.Size()
+				makeFileEntry(db, entry)
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				dir.name = fi.Name()
-				makeDirEntry(db, dir)
+				entry.name = fi.Name()
+				makeDirEntry(db, entry)
 //				log.Printf("found directory %s", fi.Name())
 //				log.Println(os.Stat(fi))
 			}
@@ -108,7 +96,7 @@ func backupDir(db *sql.DB, dirList string) error {
 	return nil
 }
 
-func makeDirEntry(db *sql.DB, entry *DirEntry) error {
+func makeDirEntry(db *sql.DB, entry *file_info_t) error {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
@@ -130,7 +118,7 @@ func makeDirEntry(db *sql.DB, entry *DirEntry) error {
 	return nil
 }
 
-func makeFileEntry(db *sql.DB, entry *FileEntry) error {
+func makeFileEntry(db *sql.DB, entry *file_info_t) error {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
