@@ -9,6 +9,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
+	"time"
 	"strings"
 )
 
@@ -42,7 +43,7 @@ type file_info_t struct {
 func init_db(dataBaseName string) (db *sql.DB, err error) {
 	db, err = sql.Open("sqlite3", dataBaseName)
 	if err != nil {
-		log.Printf("Couldn't open database: %s", err)
+		log.Printf("couldn't open database: %s", err)
 		os.Exit(1)
 	}
 	_, rerr := db.Exec(sqls[0])
@@ -70,24 +71,21 @@ func backupDir(db *sql.DB, dirList string) error {
 		log.Printf("backing up dir %s", dirname)
 		d, err := os.Open(dirname)
 		if err != nil {
-			log.Printf("Failed to open %s error=%s", dirname, err)
+			log.Printf("failed to open %s error : %s", dirname, err)
 			os.Exit(1)
 		}
 		fi, err := d.Readdir(-1)
 		if err != nil {
-			log.Printf("Directory %s failed with error %s", dirname, err)
+			log.Printf("directory %s failed with error %s", dirname, err)
 		}
 		for _, fi := range fi {
 			if !fi.IsDir() {
-//				log.Printf("%s %d bytes %s", fi.Name(), fi.Size(),fi.ModTime())
 				entry.name = fi.Name()
 				entry.st_size = fi.Size()
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
 				entry.st_size = 0	// VERY IMPORTANT! 
 				entry.name = fi.Name()
-//				log.Printf("found directory %s", fi.Name())
-//				log.Println(os.Stat(fi))
 			}
 
 			makeEntry(db, entry)
@@ -140,21 +138,28 @@ func makeEntry(db *sql.DB, entry *file_info_t) error {
 func main() {
 	flag.Parse()
 
-	log.Printf("Loading config file from %s\n", *configFile)
+	log.Printf("loading config file from %s\n", *configFile)
 	config, _ := config.ReadDefault(*configFile)
 
 	dirList, _ := config.String("Client", "backup_dirs_secure")
-	log.Printf("Backing up these directories: %s\n", dirList)
+	log.Printf("backing up these directories: %s\n", dirList)
 
 	dataBaseName, _ := config.String("Client", "sql_file")
-	log.Printf("Attempting to open %s", dataBaseName)
+	log.Printf("attempting to open %s", dataBaseName)
 
 	db, err := init_db(dataBaseName)
+
+	t0 := time.Now()
+	log.Printf("start walking...")
 	err = backupDir(db, dirList)
+	t1 := time.Now()
+	duration := t1.Sub(t0)
 
 	if err != nil {
-		log.Printf("backupDir exited with %s", err)
+		log.Printf("Walking didn't finished successfully. Error: ", err)
 	} else {
-		log.Printf("backupDir exited without any error")
+		log.Printf("walking successfully finished")
 	}
+
+	log.Printf("walking took: %1.3vs\n", duration)
 }
