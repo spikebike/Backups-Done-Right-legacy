@@ -1,3 +1,7 @@
+IMPORTANT: Please change the settings in config.cfg before you try to run the software first!!!
+
+-------------------------------------------
+
 You need the goconfig package to use the config readout (example in src/examples/config-test.go).
 
 Use the following command:    	'go get github.com/kless/goconfig/config'
@@ -8,6 +12,6 @@ You need the gosqlite3 package to use the sqlite database (example in src/exampl
 
 Use the following command:	'go get github.com/mattn/go-sqlite3'
 
-------------------------------------------
+-------------------------------------------
 
-Please see Documentation/* for the rest
+Please see documentation/* for the rest
