@@ -166,5 +166,5 @@ func main() {
 		log.Printf("walking successfully finished")
 	}
 
-	log.Printf("walking took: %1.3vs\n", duration)
+	log.Printf("walking took: %v\n", duration)
 }
