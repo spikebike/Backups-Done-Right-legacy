@@ -18,7 +18,7 @@ import (
 var (
 	sqls = []string {
 		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, name varchar(2048), last_seen ts, deleted INT)",
-		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, nlink INT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
+		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
 	}
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
@@ -38,7 +38,7 @@ type file_info_t struct {
 	mtime int64
 	ctime int64
 	name string
-	dirID int64
+	dirID string
 	last_seen int64
 	deleted int
 }
@@ -111,11 +111,12 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 				writer.WriteString(dirname+"/"+fi.Name()+"\n")
 				writer.Flush()
 				entry.size = 0	// VERY IMPORTANT! 
-				entry.name = fi.Name()
 				entry.gid = unixStat.Gid
 				entry.uid = unixStat.Uid
 				entry.ino = unixStat.Ino
 				entry.mode = unixStat.Mode
+				entry.name = dirname+"/"+fi.Name()
+				entry.dirID = dirname+"/"+fi.Name()
 			}
 
 			makeEntry(db, entry)
@@ -132,14 +133,14 @@ func makeEntry(db *sql.DB, e *file_info_t) error {
 	}
 
 	if e.size != 0 {	// is it a file or a dir entry?
-		stmt, err := tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime) values(?,?,?,?,?,?,?,?,?,?)")
+		stmt, err := tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,dirID) values(?,?,?,?,?,?,?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(e.name, e.size, e.mode, e.gid, e.uid, e.ino, e.dev, e.mtime, e.atime, e.ctime)
+		_, err = stmt.Exec(e.name, e.size, e.mode, e.gid, e.uid, e.ino, e.dev, e.mtime, e.atime, e.ctime, e.dirID)
 		if err != nil {
 			log.Println(err)
 			return err
