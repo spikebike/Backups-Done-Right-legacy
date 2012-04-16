@@ -1,49 +1,40 @@
 
-Directory table allows for common cases like finding all files in a directory
-quickly.  
+table dirs:
+	"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)"
 
-Schema for directories:
 
-OLD
-  create table dirs (id INTEGER PRIMARY KEY,st_mode INT, st_ino BIGINT, st_uid INT, st_gid INT, name varchar(2048), last_seen ts, deleted INT)
+	field name	field type	field description
+	==========	==========	=================
+	id		Prim. Key	unice ID inside of dirs table (increment)
+	mode		INT		unix folder mode bit flags
+	ino		BIGINT		inode value
+	uid		INT		user id value
+	gid		INT		group id value
+	path		vchar(2048)	absolute dir path
+	last_seen	BIGINT		last time walker walked through it
+	deleted		INT		0 when file exists, 1 when file got deleted
 
-NEW:
-  ID - each file entry will will include the directory.id to track it's parent
-       directory.
-  last-seen - every run of the walker will record every thing it sees by recording
-              the timestamp in last_seen
-  Deleted - once a file/directory is not seen it willb e marked deleted.
-  All other fields - whatever is required to accurately and efficiently record
-                     all file/directory metadata.  Goal #1 will be go running
-                     on linux so uid, gid, file permissions.  Other filesystems/OSs
-                     later.  See dirdump.go for all fields needed.
 
-Schema for files:
 
-OLD:
-create table files (id INTEGER PRIMARY KEY, st_mode INT, st_ino BIGINT, st_dev BIGINT, st_nlink INT, st_uid INT, st_gid INT, st_size BIGINT, st_atime BIGINT, st_mtime BIGINT, st_ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))
 
-New:
-  Last-seen - see dir description
-  Deleted - see dir description
-  Foreign Key (dirID) - the id field of the directory that the file is in
-  
+table files:
+	"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, 
+	mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))"
 
-#keep in mind local walker need a peer ID.
-Schema for peers:
-* peer_id
-* Trusted_peer = TRUE|FALSE # TRUE for local walkers that don't need to store blobs for us.
-* last_seen_IP address (ipv4 for version 1, ipv6 for version 2)
-* public_key
-* last_seen_ts
-* current agreed on storage trade in 64MB chunks.
-* successful challenges
-* failed challenges
-* last_challenged_ts
 
-blobs: # 
-* blob_id blob_checksum created_ts
-
-blob_owner_map #where are the blobs
-* peer ID, blob ID, last_updated
-
+	field name	field type	field description
+	==========	==========	=================
+	id		Prim. Key	unice ID inside of files table (increment)
+	mode		INT		unix file mode bit flags
+	ino		BIGINT		inode value
+	dev		BIGINT		dev value
+	uid		INT		user id value
+	gid		INT		group id value
+	size		BIGINT		size of the file in bytes
+	atime		BIGINT		atime in seconds since 1970
+	mtime		BIGINT		mtime in seconds since 1970
+	ctime		BIGINT		ctime in seconds since 1970
+	name		vchar(2048)	name of the file (no path)
+	dirID		For. Key	id from the parent directory (dirs table)
+	last_seen	BIGINT		last time walker walked through it
+	deleted		INT		0 when file exists, 1 when file got deleted
