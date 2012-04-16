@@ -1,4 +1,4 @@
-
+	
 table dirs:
 	"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)"
 
@@ -11,7 +11,7 @@ table dirs:
 	uid		INT		user id value
 	gid		INT		group id value
 	path		vchar(2048)	absolute dir path
-	last_seen	BIGINT		last time walker walked through it
+	last_seen	BIGINT		last time walker walked through it in seconds from 1970
 	deleted		INT		0 when file exists, 1 when file got deleted
 
 
@@ -36,5 +36,5 @@ table files:
 	ctime		BIGINT		ctime in seconds since 1970
 	name		vchar(2048)	name of the file (no path)
 	dirID		For. Key	id from the parent directory (dirs table)
-	last_seen	BIGINT		last time walker walked through it
+	last_seen	BIGINT		last time walker walked through it in seconds from 1970
 	deleted		INT		0 when file exists, 1 when file got deleted
