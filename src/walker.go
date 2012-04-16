@@ -7,6 +7,7 @@ import (
 	"log"
 	"flag"
 	"time"
+	"bufio"
 	"strings"
 	"syscall"
 	"database/sql"
@@ -64,12 +65,20 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 	return db, err
 }
 
-func backupDir(db *sql.DB, dirList string) error {
+func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 	var i int
 	var dirname string
 	entry := &file_info_t{}
-
 	i = 0
+
+	os.Remove(upfilepath)
+	file, err := os.Create(upfilepath)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	writer := bufio.NewWriter(file)
+
 	log.Printf("backupDir received %s", dirList)
 	dirArray := strings.Split(dirList," ")
 	for i < len(dirArray) {
@@ -99,6 +108,8 @@ func backupDir(db *sql.DB, dirList string) error {
 				entry.ctime = unixStat.Ctim.Sec
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
+				writer.WriteString(dirname+"/"+fi.Name()+"\n")
+				writer.Flush()
 				entry.size = 0	// VERY IMPORTANT! 
 				entry.name = fi.Name()
 				entry.gid = unixStat.Gid
@@ -168,9 +179,11 @@ func main() {
 
 	db, err := init_db(dataBaseName)
 
+	upfilepath, _ := config.String("Client", "upload_file")
+
 	t0 := time.Now()
 	log.Printf("start walking...")
-	err = backupDir(db, dirList)
+	err = backupDir(db, upfilepath, dirList)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 
