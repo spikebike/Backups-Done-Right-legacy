@@ -39,7 +39,7 @@ type file_info_t struct {
 	ctime int64
 	name string
 	path string
-	dirID string
+	dirID int
 	last_seen int64
 	deleted int
 }
@@ -117,7 +117,6 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 				entry.ino = unixStat.Ino
 				entry.mode = unixStat.Mode
 				entry.path = dirname+"/"+fi.Name()
-				entry.dirID = dirname+"/"+fi.Name()
 			}
 
 			makeEntry(db, entry)
@@ -134,7 +133,19 @@ func makeEntry(db *sql.DB, e *file_info_t) error {
 	}
 
 	if e.size != 0 {	// is it a file or a dir entry?
-		stmt, err := tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,dirID) values(?,?,?,?,?,?,?,?,?,?,?)")
+		stmt, err := db.Prepare("select id from dirs where path = ?")
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		defer stmt.Close()
+		err = stmt.QueryRow(e.path).Scan(&e.dirID)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		stmt, err = tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,dirID) values(?,?,?,?,?,?,?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
@@ -146,7 +157,6 @@ func makeEntry(db *sql.DB, e *file_info_t) error {
 			log.Println(err)
 			return err
 		}
-// select id from dirs where path="/foo/bar"
 	} else {
 		stmt, err := tx.Prepare("insert into dirs(path,mode,gid,uid,ino) values(?,?,?,?,?)")
 		if err != nil {
