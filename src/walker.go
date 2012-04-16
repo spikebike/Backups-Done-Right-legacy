@@ -3,14 +3,15 @@ package main
 import "C"
 
 import (
-	"github.com/kless/goconfig/config"
-	_ "github.com/mattn/go-sqlite3"
 	"os"
 	"log"
 	"flag"
 	"time"
 	"strings"
+	"syscall"
 	"database/sql"
+	"github.com/kless/goconfig/config"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
@@ -24,20 +25,20 @@ var (
 )
 
 type file_info_t struct {
-	id int
-	mode int
-	ino int
-	dev int
-	nlink int
-	uid int
-	gid int
+	id int64
+	mode int64
+	ino int64
+	dev int64
+	nlink int64
+	uid int64
+	gid int64
 	size int64
-	atime int
-	mtime int
-	ctime int
+	atime int64
+	mtime int64
+	ctime int64
 	name string
-	dirID int
-	last_seen int
+	dirID int64
+	last_seen int64
 	deleted int
 }
 
@@ -84,9 +85,13 @@ func backupDir(db *sql.DB, dirList string) error {
 			log.Printf("directory %s failed with error %s", dirname, err)
 		}
 		for _, fi := range fi {
+			unixStat, _ := fi.Sys().(*syscall.Stat_t)
 			if !fi.IsDir() {
 				entry.name = fi.Name()
 				entry.size = fi.Size()
+				entry.mtime = unixStat.Mtim.Sec
+				entry.atime = unixStat.Atim.Sec
+				entry.ctime = unixStat.Ctim.Sec
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
 				entry.size = 0	// VERY IMPORTANT! 
@@ -107,14 +112,14 @@ func makeEntry(db *sql.DB, entry *file_info_t) error {
 	}
 
 	if entry.size != 0 {	// is it a file or a dir entry?
-		stmt, err := tx.Prepare("insert into files(name, size) values(?, ?)")
+		stmt, err := tx.Prepare("insert into files(name, size, mtime, atime, ctime) values(?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(entry.name, entry.size)
+		_, err = stmt.Exec(entry.name, entry.size, entry.mtime, entry.atime, entry.ctime)
 		if err != nil {
 			log.Println(err)
 			return err
