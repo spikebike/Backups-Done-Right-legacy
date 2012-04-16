@@ -4,11 +4,30 @@ quickly.
 
 Schema for directories:
 
-create table dirs (id INTEGER PRIMARY KEY,st_mode INT, st_ino BIGINT, st_uid INT, st_gid INT, name varchar(2048), last_seen ts, deleted INT)
+OLD
+  create table dirs (id INTEGER PRIMARY KEY,st_mode INT, st_ino BIGINT, st_uid INT, st_gid INT, name varchar(2048), last_seen ts, deleted INT)
+
+NEW:
+  ID - each file entry will will include the directory.id to track it's parent
+       directory.
+  last-seen - every run of the walker will record every thing it sees by recording
+              the timestamp in last_seen
+  Deleted - once a file/directory is not seen it willb e marked deleted.
+  All other fields - whatever is required to accurately and efficiently record
+                     all file/directory metadata.  Goal #1 will be go running
+                     on linux so uid, gid, file permissions.  Other filesystems/OSs
+                     later.  See dirdump.go for all fields needed.
 
 Schema for files:
 
+OLD:
 create table files (id INTEGER PRIMARY KEY, st_mode INT, st_ino BIGINT, st_dev BIGINT, st_nlink INT, st_uid INT, st_gid INT, st_size BIGINT, st_atime BIGINT, st_mtime BIGINT, st_ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))
+
+New:
+  Last-seen - see dir description
+  Deleted - see dir description
+  Foreign Key (dirID) - the id field of the directory that the file is in
+  
 
 #keep in mind local walker need a peer ID.
 Schema for peers:
