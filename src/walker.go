@@ -21,17 +21,17 @@ var (
 	}
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
-	newDB = flag.Bool("new-database", false, "true = creates a new database | false = use existing database")
+	newDB = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 )
 
 type file_info_t struct {
 	id int64
-	mode int64
-	ino int64
-	dev int64
+	mode uint32
+	ino uint64
+	dev uint64
 	nlink int64
-	uid int64
-	gid int64
+	uid uint32
+	gid uint32
 	size int64
 	atime int64
 	mtime int64
@@ -89,6 +89,11 @@ func backupDir(db *sql.DB, dirList string) error {
 			if !fi.IsDir() {
 				entry.name = fi.Name()
 				entry.size = fi.Size()
+				entry.gid = unixStat.Gid
+				entry.uid = unixStat.Uid
+				entry.ino = unixStat.Ino
+				entry.dev = unixStat.Dev
+				entry.mode = unixStat.Mode
 				entry.mtime = unixStat.Mtim.Sec
 				entry.atime = unixStat.Atim.Sec
 				entry.ctime = unixStat.Ctim.Sec
@@ -96,6 +101,10 @@ func backupDir(db *sql.DB, dirList string) error {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
 				entry.size = 0	// VERY IMPORTANT! 
 				entry.name = fi.Name()
+				entry.gid = unixStat.Gid
+				entry.uid = unixStat.Uid
+				entry.ino = unixStat.Ino
+				entry.mode = unixStat.Mode
 			}
 
 			makeEntry(db, entry)
@@ -105,35 +114,35 @@ func backupDir(db *sql.DB, dirList string) error {
 	return nil
 }
 
-func makeEntry(db *sql.DB, entry *file_info_t) error {
+func makeEntry(db *sql.DB, e *file_info_t) error {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
 	}
 
-	if entry.size != 0 {	// is it a file or a dir entry?
-		stmt, err := tx.Prepare("insert into files(name, size, mtime, atime, ctime) values(?,?,?,?,?)")
+	if e.size != 0 {	// is it a file or a dir entry?
+		stmt, err := tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime) values(?,?,?,?,?,?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(entry.name, entry.size, entry.mtime, entry.atime, entry.ctime)
+		_, err = stmt.Exec(e.name, e.size, e.mode, e.gid, e.uid, e.ino, e.dev, e.mtime, e.atime, e.ctime)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 
 	} else {
-		stmt, err := tx.Prepare("insert into dirs(name) values(?)")
+		stmt, err := tx.Prepare("insert into dirs(name,mode,gid,uid,ino) values(?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(entry.name)
+		_, err = stmt.Exec(e.name, e.mode, e.gid, e.uid, e.ino)
 		if err != nil {
 			log.Println(err)
 			return err
