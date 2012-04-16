@@ -3,20 +3,20 @@ package main
 import "C"
 
 import (
-	"database/sql"
-	"flag"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 	"os"
+	"log"
+	"flag"
 	"time"
 	"strings"
+	"database/sql"
 )
 
 var (
 	sqls = []string {
-		"create table dirs (id INTEGER PRIMARY KEY,st_mode INT, st_ino BIGINT, st_uid INT, st_gid INT, name varchar(2048), last_seen ts, deleted INT)",
-		"create table files (id INTEGER PRIMARY KEY, st_mode INT, st_ino BIGINT, st_dev BIGINT, st_nlink INT, st_uid INT, st_gid INT, st_size BIGINT, st_atime BIGINT, st_mtime BIGINT, st_ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
+		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, name varchar(2048), last_seen ts, deleted INT)",
+		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, nlink INT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen ts, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
 	}
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
@@ -25,16 +25,16 @@ var (
 
 type file_info_t struct {
 	id int
-	st_mode int
-	st_ino int
-	st_dev int
-	st_nlink int
-	st_uid int
-	st_gid int
-	st_size int64
-	st_atime int
-	st_mtime int
-	st_ctime int
+	mode int
+	ino int
+	dev int
+	nlink int
+	uid int
+	gid int
+	size int64
+	atime int
+	mtime int
+	ctime int
 	name string
 	dirID int
 	last_seen int
@@ -86,10 +86,10 @@ func backupDir(db *sql.DB, dirList string) error {
 		for _, fi := range fi {
 			if !fi.IsDir() {
 				entry.name = fi.Name()
-				entry.st_size = fi.Size()
+				entry.size = fi.Size()
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				entry.st_size = 0	// VERY IMPORTANT! 
+				entry.size = 0	// VERY IMPORTANT! 
 				entry.name = fi.Name()
 			}
 
@@ -106,15 +106,15 @@ func makeEntry(db *sql.DB, entry *file_info_t) error {
 		log.Println(err)
 	}
 
-	if entry.st_size != 0 {	// is it a file or a dir entry?
-		stmt, err := tx.Prepare("insert into files(name, st_size) values(?, ?)")
+	if entry.size != 0 {	// is it a file or a dir entry?
+		stmt, err := tx.Prepare("insert into files(name, size) values(?, ?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(entry.name, entry.st_size)
+		_, err = stmt.Exec(entry.name, entry.size)
 		if err != nil {
 			log.Println(err)
 			return err
