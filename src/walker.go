@@ -3,45 +3,45 @@ package main
 import "C"
 
 import (
-	"os"
-	"log"
-	"flag"
-	"time"
 	"bufio"
-	"strings"
-	"syscall"
 	"database/sql"
+	"flag"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
+	"os"
+	"strings"
+	"syscall"
+	"time"
 )
 
 var (
-	sqls = []string {
+	sqls = []string{
 		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)",
 		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
 	}
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
-	newDB = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
+	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 )
 
 type file_info_t struct {
-	id int64
-	mode uint32
-	ino uint64
-	dev uint64
-	nlink int64
-	uid uint32
-	gid uint32
-	size int64
-	atime int64
-	mtime int64
-	ctime int64
-	name string
-	path string
-	dirID int
+	id        int64
+	mode      uint32
+	ino       uint64
+	dev       uint64
+	nlink     int64
+	uid       uint32
+	gid       uint32
+	size      int64
+	atime     int64
+	mtime     int64
+	ctime     int64
+	name      string
+	path      string
+	dirID     int
 	last_seen int64
-	deleted int
+	deleted   int
 }
 
 func init_db(dataBaseName string) (db *sql.DB, err error) {
@@ -81,7 +81,7 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 	writer := bufio.NewWriter(file)
 
 	log.Printf("backupDir received %s", dirList)
-	dirArray := strings.Split(dirList," ")
+	dirArray := strings.Split(dirList, " ")
 	for i < len(dirArray) {
 		dirname = dirArray[i]
 		log.Printf("backing up dir %s", dirname)
@@ -109,14 +109,14 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 				entry.ctime = unixStat.Ctim.Sec
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				writer.WriteString(dirname+"/"+fi.Name()+"\n")
+				writer.WriteString(dirname + "/" + fi.Name() + "\n")
 				writer.Flush()
-				entry.size = 0	// VERY IMPORTANT! 
+				entry.size = 0 // VERY IMPORTANT! 
 				entry.gid = unixStat.Gid
 				entry.uid = unixStat.Uid
 				entry.ino = unixStat.Ino
 				entry.mode = unixStat.Mode
-				entry.path = dirname+"/"+fi.Name()
+				entry.path = dirname + "/" + fi.Name()
 			}
 
 			makeEntry(db, entry)
@@ -132,7 +132,7 @@ func makeEntry(db *sql.DB, e *file_info_t) error {
 		log.Println(err)
 	}
 
-	if e.size != 0 {	// is it a file or a dir entry?
+	if e.size != 0 { // is it a file or a dir entry?
 		stmt, err := db.Prepare("select id from dirs where path = ?")
 		if err != nil {
 			log.Println(err)
