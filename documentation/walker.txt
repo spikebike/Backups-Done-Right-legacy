@@ -39,7 +39,7 @@ for i < len(dirArray)
     // Do not add files to SQL until they have been ACTUALLY uploaded
 }
 
-// launch a go routing to feed to_upload.txt to uploader
+// launch a go routine to feed to_upload.txt to uploader
 
 go feed_uploader
 	while <lines in to_upload.txt>
@@ -47,6 +47,7 @@ go feed_uploader
 		send file to Upchannel/Uploader
 	}
 
+// launch a go routine to update SQL for each file that was successfully uploaded
 go update_sql
 	while (fi:=FileHasBeenUploaded(DownChannel)	)
 	{
