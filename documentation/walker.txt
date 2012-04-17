@@ -38,6 +38,7 @@ for i < len(dirArray)
 	}
     // Do not add files to SQL until they have been ACTUALLY uploaded
 }
+close("to_upload.txt");
 
 // launch a go routine to feed to_upload.txt to uploader
 
