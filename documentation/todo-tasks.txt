@@ -1,32 +1,35 @@
 
-	Status    	Description
-	====== 		===========
+Num Status  Description
+=== ======  ========== 
 
 
-	spikebike  	Please write very clear documentation about every single field
+#1  Done	Please write very clear documentation about every single field
 			in database and descripe what it is for and what should be
 			written in it
 
-	Unassigned 	file system walker - depends on #1, iterates over backup_dirs 
+#2 Unassigned 	file system walker - depends on #1, iterates over backup_dirs 
 			noting any new files, changed files, and deleted files.  Keeps 
 			state in sqlite (permission, size, timestamps, uid/gid).  Builds
 			queue of new/changed files.  See walker.txt and schema.txt.
+#2A unassigned Write a simple example that sends a filename over a channel
 
-	Unassigned 	Uploader depends on #1 - For each file in the queue it reads, 
+#3	Unassigned 	Uploader depends on #1 - For each file in the queue it reads, 
 			compresses, and checksums it.  Ideally multiple core friendly.  
 			As files are finished upload them to p2p server.  See 
 			uploader.txt.  Depends on #4 and #5 to actually upload.
+#3A unassigned write a simple example that received a filename over a channel
 
-	Unassigned 	P2P server - speaks the p2p protocol for trading blobs, 
-               		including those from the uploader.  Depends on #5 protocol and 
-               		#1 init file.  Continuously trades blobs, makes challenges, 
-               		accepts challenges monitors and maintains redundancy.
-  	Unassigned	get test case with a few unique blobs each to successfully 
-               		transfer blobs between peers.
+#4	Unassigned 	P2P server - speaks the p2p protocol for trading blobs, 
+               	including those from the uploader.  Depends on #5 protocol and 
+               	#1 init file.  Continuously trades blobs, makes challenges, 
+               	accepts challenges monitors and maintains redundancy.
+#4a Unassigned	get test case with a few unique blobs each to successfully 
+				transfer blobs between peers.
 
-  	Unassigned 	implement code to implement p2p protocol (see protocol.txt) 
+#5  Unassigned 	implement code to implement p2p protocol (see protocol.txt) 
          		between SSL connected peers.  Connections should only be 
-               		allowed to complete if the peer presents the public key in 
-			the sqlite database that tracks peers.
+               	allowed to complete if the peer presents the public key in 
+				the sqlite database that tracks peers.
 
-	Unassigned	implement REQUEST, REPLY, and GET.  See protocol.txt
+#6	spikebike  implement REQUEST, REPLY, and GET.  See protocol.txt
+

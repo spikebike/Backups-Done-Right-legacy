@@ -19,30 +19,39 @@ func main() {
 	var i int32;
 	var intptr *int32;
 	var strptr *string;
-	randBytes := make([]byte,16)
-	_,_ = C.Read(randBytes)
+	var randBytes []byte
 	str1:="Hello"
 	s1=1024
 
 // I had hoped just repeating the records would work.
 //
 //	t1:= &bdr_proto.RequestBlob{Sha256: &str1, Bsize: &s1, Sha256: &str2, Bsize: &s2}
+    // build an array of 32 RequestBlob
 	Blobarray := make([]bdr_proto.RequestBlob,32)
+	//* build an array of Requestblob pointers
 	BlobarrayPtr := make([]*bdr_proto.RequestBlob,32)
 	t1:= new(bdr_proto.Request)
 	t1.Blobarray=BlobarrayPtr;
 	for i =0; i<32; i++ {
+		// read in 16 bytes from /dev/urandom to sha256
+		randBytes = make([]byte,16)
+		_,_ = C.Read(randBytes)
+		// create a new hash, and do a crypty hash of the random bytes.
 		hash:=sha256.New()
 		_,_ = hash.Write(randBytes)
-		_,_ = C.Read(randBytes)
+		// build a new string and store the hash in it
 		strptr=new(string)
 		*strptr=fmt.Sprintf("%x",hash.Sum(nil))
+		/* point each array to the address of the invidual blob */
 		t1.Blobarray[i]=&Blobarray[i];
+		/* for that blob set the sha256 to the address of the new sha256 */
 		t1.Blobarray[i].Sha256=strptr;
+		/* create a new int32, store a random number in it, and assign
+		  it to bsize */
 		intptr=new(int32)
 		*intptr=M.Int31();
-		fmt.Printf("i= %2d size= %10d sha256=%s\n",i,*intptr,*strptr);
 		t1.Blobarray[i].Bsize=intptr;
+		fmt.Printf("i= %2d size= %10d sha256=%s\n",i,*intptr,*strptr);
 	}
 	t2:= &bdr_proto.RequestBlob{Sha256: &str1, Bsize: &s1}
 	fmt.Printf("t1 = %+v\n",t1)
