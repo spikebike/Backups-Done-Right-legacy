@@ -23,6 +23,7 @@ var (
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
+	debug	   = flag.Bool("debug", false, "activates debug mode")
 )
 
 type file_info_t struct {
@@ -84,7 +85,9 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 	dirArray := strings.Split(dirList, " ")
 	for i < len(dirArray) {
 		dirname = dirArray[i]
-		log.Printf("backing up dir %s", dirname)
+		if *debug == true {
+			log.Printf("backing up dir %s", dirname)
+		}
 		d, err := os.Open(dirname)
 		if err != nil {
 			log.Printf("failed to open %s error : %s", dirname, err)
