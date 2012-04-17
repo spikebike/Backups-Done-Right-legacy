@@ -36,13 +36,14 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	fmt.Printf("tx = %#v tx=%T\n",tx,tx)
 	stmt, err := tx.Prepare("insert into foo(id, name) values(?, ?)")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer stmt.Close()
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 12; i++ {
 		_, err = stmt.Exec(i, fmt.Sprintf("Hello World! %03d", i))
 		if err != nil {
 			fmt.Println(err)

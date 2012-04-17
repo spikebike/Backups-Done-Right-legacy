@@ -130,7 +130,7 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 	return nil
 }
 
-func makeEntry(db *sql.DB, e *file_info_t) error {
+func makeEntry(db *sql.DB, e *file_info_t) (*sql.tx ,error) {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
@@ -178,7 +178,7 @@ func makeEntry(db *sql.DB, e *file_info_t) error {
 
 	tx.Commit()
 
-	return nil
+	return (tx,err)
 }
 
 func main() {
