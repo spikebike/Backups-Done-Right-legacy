@@ -32,22 +32,18 @@ func main() {
 	t1:= new(bdr_proto.Request)
 	t1.Blobarray=BlobarrayPtr;
 	for i =0; i<32; i++ {
-		fmt.Printf("i=%d\n",i)
 		hash:=sha256.New()
 		_,_ = hash.Write(randBytes)
 		_,_ = C.Read(randBytes)
 		strptr=new(string)
-		*strptr=fmt.Sprintf("i=%v",hash.Sum(nil))
-		fmt.Printf("sha256 for i=%d is %s\n",i,strptr);
-//		BlobarrayPtr[i]{Sha256: &str1, Bsize: &s1}
+		*strptr=fmt.Sprintf("%x",hash.Sum(nil))
 		t1.Blobarray[i]=&Blobarray[i];
 		t1.Blobarray[i].Sha256=strptr;
 		intptr=new(int32)
 		*intptr=M.Int31();
+		fmt.Printf("i= %2d size= %10d sha256=%s\n",i,*intptr,*strptr);
 		t1.Blobarray[i].Bsize=intptr;
-	//	t1.Blobarray[i].RequestBlob{Sha256: &str1, Bsize: &i}
 	}
-//	t1.Blobarray = &Blobarray
 	t2:= &bdr_proto.RequestBlob{Sha256: &str1, Bsize: &s1}
 	fmt.Printf("t1 = %+v\n",t1)
 	fmt.Printf("t2 = %+v\n",t2)
