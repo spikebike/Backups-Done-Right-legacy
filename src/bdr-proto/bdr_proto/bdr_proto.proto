@@ -3,8 +3,8 @@ package bdr_proto;
 
 message request {
 	message blob {
-		required string sha256 = 1;
-		required int32    bsize  = 2;
+		required string sha256 = 1; // the sha256 checksum of the blob
+		required int32  bsize  = 2; // the size of the blob 
 	}
 	repeated blob blobarray= 1;
 }

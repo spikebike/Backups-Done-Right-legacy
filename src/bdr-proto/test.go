@@ -3,7 +3,11 @@ package main
 import (
 	"./bdr_proto"
 	"fmt"
+	"crypto/sha256"
 	)
+
+import M "math/rand"
+import C "crypto/rand"
 
 func main() {
 // not sure how to create more than 1 blob message within a single request.  
@@ -13,6 +17,10 @@ func main() {
 // the bdr_proto/bdr_proto.pb.go makes no mention of add.
 	var s1 int32;
 	var i int32;
+	var intptr *int32;
+	var strptr *string;
+	randBytes := make([]byte,16)
+	_,_ = C.Read(randBytes)
 	str1:="Hello"
 	s1=1024
 
@@ -25,9 +33,18 @@ func main() {
 	t1.Blobarray=BlobarrayPtr;
 	for i =0; i<32; i++ {
 		fmt.Printf("i=%d\n",i)
+		hash:=sha256.New()
+		_,_ = hash.Write(randBytes)
+		_,_ = C.Read(randBytes)
+		strptr=new(string)
+		*strptr=fmt.Sprintf("i=%v",hash.Sum(nil))
+		fmt.Printf("sha256 for i=%d is %s\n",i,strptr);
 //		BlobarrayPtr[i]{Sha256: &str1, Bsize: &s1}
-//		t1.Blobarray[i]=&Blobarray[i];
-		t1.Blobarray[i]=&Blobarray[i]{Sha256: &str1, Bsize: &s1};
+		t1.Blobarray[i]=&Blobarray[i];
+		t1.Blobarray[i].Sha256=strptr;
+		intptr=new(int32)
+		*intptr=M.Int31();
+		t1.Blobarray[i].Bsize=intptr;
 	//	t1.Blobarray[i].RequestBlob{Sha256: &str1, Bsize: &i}
 	}
 //	t1.Blobarray = &Blobarray
