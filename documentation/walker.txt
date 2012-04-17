@@ -7,13 +7,36 @@ files/directories.  Then build a queue of the changed files sorted by inode.
 First note the time of the start of the backup.
 
 So something like this python code to talk a dir:
-top="/home/bill/imp/src/bdr"
-addDir(top)
-for root, dirs, files in os.walk(top, topdown=True):
-    for name in dirs:
-        addDir(os.path.join(root,name))
-    for name in files:
-        addFile(root,name)
+
+// interate through the directory array
+for i < len(dirArray)
+{
+	// inside add_dir_to_sql should only insert if dir isn't in sql
+	add_dir_to_sql(i)
+
+	// build list of files in this directory
+	d, err := os.Open(dirname)
+	fi, err := d.Readdir(-1)
+
+	// build list of files from sql
+	sqlList  = get_list_of_files_in_dir(i)
+
+	// iterate over list of files in current directory
+	for _, fi := range fi {
+		if !fi.IsDir() {
+			// compare the local modified time for this file to the one in sql
+			if fi.Modified_time > sqlList(fi.Name().ModifiedTime)
+				insert_local_file_meta_data_into_sql(...)
+			}
+		} else {
+			// if dir isn't in sql add it 
+			// if dir isn't in dirArray append it.
+		}
+	}
+}
+
+
+
 
 Once done the encryption queue should be sorted by inode.
 
