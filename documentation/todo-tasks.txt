@@ -7,17 +7,22 @@ Num Status  Description
 			in database and descripe what it is for and what should be
 			written in it
 
-#2 Unassigned 	file system walker - depends on #1, iterates over backup_dirs 
+#2	Tectu	file system walker - depends on #1, iterates over backup_dirs 
 			noting any new files, changed files, and deleted files.  Keeps 
 			state in sqlite (permission, size, timestamps, uid/gid).  Builds
 			queue of new/changed files.  See walker.txt and schema.txt.
 #2A unassigned Write a simple example that sends a filename over a channel
+#2B done    Write a directory dump command that records all filesystem
+            metadata.
+#2C done    Write a sqlite3 example that builds a table and does an insert
+            and selet.
 
 #3	Unassigned 	Uploader depends on #1 - For each file in the queue it reads, 
 			compresses, and checksums it.  Ideally multiple core friendly.  
 			As files are finished upload them to p2p server.  See 
 			uploader.txt.  Depends on #4 and #5 to actually upload.
 #3A unassigned write a simple example that received a filename over a channel
+#3B Done    Write a sha256 and aes512 example.
 
 #4	Unassigned 	P2P server - speaks the p2p protocol for trading blobs, 
                	including those from the uploader.  Depends on #5 protocol and 
@@ -32,4 +37,5 @@ Num Status  Description
 				the sqlite database that tracks peers.
 
 #6	spikebike  implement REQUEST, REPLY, and GET.  See protocol.txt
-
+               REQUEST partially completed.
+#6A Done       Write a client/server that uses protobuf over SSL to handle RPC
