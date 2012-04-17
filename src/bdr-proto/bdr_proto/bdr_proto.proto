@@ -1,0 +1,10 @@
+package bdr_proto;
+
+
+message request {
+	message blob {
+		required string sha256 = 1;
+		required int32    bsize  = 2;
+	}
+	repeated blob blobarray= 1;
+}
