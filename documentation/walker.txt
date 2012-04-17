@@ -31,12 +31,15 @@ for i < len(dirArray)
 			// compare the local modified time for this file to the one in sql
 			if fi.Modified_time > modtime
 				insert_local_file_meta_data_into_sql(...)
-				append_to_backup_list(fi.name());
-			}
-		} else {
+				send_to_upload_channel(Upchannel,fi)
+			} else {
 			// if dir isn't in sql add it 
 			// if dir isn't in dirArray append it.
 		}
+	}
+	while (fi:=FileHasBeenUploaded(DownChannel)	)
+	{
+		insert_file(fi)
 	}
 }
 
