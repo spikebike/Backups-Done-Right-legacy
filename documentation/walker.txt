@@ -38,6 +38,10 @@ for i < len(dirArray)
 	}
     // Do not add files to SQL until they have been ACTUALLY uploaded
 }
+closeDB()
+copy_file(config.sql_file,config.sql_file+".tmp")
+append_file(config.sql_file+".tmp");
+openDB();
 close("to_upload.txt");
 
 // launch a go routine to feed to_upload.txt to uploader
