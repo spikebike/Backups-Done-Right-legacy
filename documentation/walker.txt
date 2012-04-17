@@ -30,18 +30,28 @@ for i < len(dirArray)
 			modtime := get_modified_time(sqllist(fi.Name))
 			// compare the local modified time for this file to the one in sql
 			if fi.Modified_time > modtime
-				send_to_upload_channel(Upchannel,fi)
+				append_file("to_upload.txt").
 			} else {
 			// if dir isn't in sql add it 
 			// if dir isn't in dirArray append it.
 		}
 	}
     // Do not add files to SQL until they have been ACTUALLY uploaded
+}
+
+// launch a go routing to feed to_upload.txt to uploader
+
+go feed_uploader
+	while <lines in to_upload.txt>
+	{
+		send file to Upchannel/Uploader
+	}
+
+go update_sql
 	while (fi:=FileHasBeenUploaded(DownChannel)	)
 	{
 		insert_file(fi)
 	}
-}
 
 Once done the encryption queue should be sorted by inode.
 
