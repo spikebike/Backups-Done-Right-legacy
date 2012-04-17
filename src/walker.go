@@ -97,6 +97,7 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 		for _, fi := range fi {
 			unixStat, _ := fi.Sys().(*syscall.Stat_t)
 			if !fi.IsDir() {
+				entry.deleted = 0
 				entry.name = fi.Name()
 				entry.size = fi.Size()
 				entry.gid = unixStat.Gid
@@ -107,15 +108,18 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 				entry.mtime = unixStat.Mtim.Sec
 				entry.atime = unixStat.Atim.Sec
 				entry.ctime = unixStat.Ctim.Sec
+				entry.last_seen = time.Now().Unix()
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
 				writer.WriteString(dirname + "/" + fi.Name() + "\n")
 				writer.Flush()
-				entry.size = 0 // VERY IMPORTANT! 
+				entry.size = 0 // VERY IMPORTANT!
+				entry.deleted = 0
 				entry.gid = unixStat.Gid
 				entry.uid = unixStat.Uid
 				entry.ino = unixStat.Ino
 				entry.mode = unixStat.Mode
+				entry.last_seen = time.Now().Unix()
 				entry.path = dirname + "/" + fi.Name()
 			}
 
@@ -145,27 +149,27 @@ func makeEntry(db *sql.DB, e *file_info_t) error {
 			return err
 		}
 
-		stmt, err = tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,dirID) values(?,?,?,?,?,?,?,?,?,?,?)")
+		stmt, err = tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,last_seen,dirID,deleted) values(?,?,?,?,?,?,?,?,?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(e.name, e.size, e.mode, e.gid, e.uid, e.ino, e.dev, e.mtime, e.atime, e.ctime, e.dirID)
+		_, err = stmt.Exec(e.name, e.size, e.mode, e.gid, e.uid, e.ino, e.dev, e.mtime, e.atime, e.ctime, e.last_seen, e.dirID, e.deleted)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 	} else {
-		stmt, err := tx.Prepare("insert into dirs(path,mode,gid,uid,ino) values(?,?,?,?,?)")
+		stmt, err := tx.Prepare("insert into dirs(path,mode,gid,uid,ino,last_seen,deleted) values(?,?,?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(e.path, e.mode, e.gid, e.uid, e.ino)
+		_, err = stmt.Exec(e.path, e.mode, e.gid, e.uid, e.ino, e.last_seen, e.deleted)
 		if err != nil {
 			log.Println(err)
 			return err
