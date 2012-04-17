@@ -37,6 +37,7 @@ for i < len(dirArray)
 			// if dir isn't in dirArray append it.
 		}
 	}
+    // Do not add files to SQL until they have been ACTUALLY uploaded
 	while (fi:=FileHasBeenUploaded(DownChannel)	)
 	{
 		insert_file(fi)
