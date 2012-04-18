@@ -19,7 +19,7 @@ table dirs:
 
 table files:
 	"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, 
-	mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))"
+	mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))"
 
 
 	field name	field type	field description
@@ -38,3 +38,4 @@ table files:
 	dirID		For. Key	id from the parent directory (dirs table)
 	last_seen	BIGINT		last time walker walked through it in seconds from 1970
 	deleted		INT		0 when file exists, 1 when file got deleted
+	do_upload	INT		1 when have to upload, 0 when not
