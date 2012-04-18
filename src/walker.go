@@ -3,7 +3,6 @@ package main
 import "C"
 
 import (
-	"bufio"
 	"database/sql"
 	"flag"
 	"github.com/kless/goconfig/config"
@@ -68,19 +67,11 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 	return db, err
 }
 
-func backupDir(db *sql.DB, dirList string, upfilepath string, bufsize int) error {
+func backupDir(db *sql.DB, dirList string, bufsize int) error {
 	var i int
 	var dirname string
 	entry := &file_info_t{}
 	i = 0
-
-	os.Remove(upfilepath)
-	file, err := os.Create(upfilepath)
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
-	writer := bufio.NewWriter(file)
 
 	log.Printf("backupDir received %s", dirList)
 	dirArray := strings.Split(dirList, " ")
@@ -116,8 +107,6 @@ func backupDir(db *sql.DB, dirList string, upfilepath string, bufsize int) error
 				entry.last_seen = time.Now().Unix()
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				writer.WriteString(dirname + "/" + fi.Name() + "\n")
-				writer.Flush()
 				entry.size = 0 // VERY IMPORTANT!
 				entry.deleted = 0
 				entry.gid = unixStat.Gid
@@ -206,12 +195,11 @@ func main() {
 
 	db, err := init_db(dataBaseName)
 
-	upfilepath, _ := config.String("Client", "upload_file")
 	bufsize, _ := config.Int("Client", "buffer_size")
 
 	t0 := time.Now()
 	log.Printf("start walking...")
-	err = backupDir(db, dirList, upfilepath, bufsize)
+	err = backupDir(db, dirList, bufsize)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 
