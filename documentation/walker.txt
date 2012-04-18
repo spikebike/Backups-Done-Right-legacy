@@ -11,6 +11,26 @@ Please note in the common case (most files already backed up)
 it does one SQL statement per directory.
 
 // NOT a go routine
+queueROWID(db, rowBuf, ROWID, config.SQLBuffer)
+{
+	if (len(rowBuf)<MAXBuffSize)
+	{ 
+		rowBuf=append(fiBuf,fi)
+	}
+	else
+	{
+		db.Begin()
+		for i:=0; i<MAXBuffSize; i++
+		{
+			// add the file and set NeedsToBeUploaded = True
+			db.prepare ("update files set ToUpload=False where ROWID=$ROWID)
+			db.exec	
+		}
+		db.Commit()
+		// zero fiBuf
+	}
+}
+
 
 func queue_file ( db, fiBuf, fi, MAXBuffSize)
 {
