@@ -6,19 +6,16 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"os"
 	"time"
-	"flag"
 )
 
 var (
-	arg1 = flag.Int("values", 1000, "Number of values to be inserted")
-	arg2 = flag.Int("chunks", 64, "Size of statements per commit")
+	values int
+	chunks int
 )
 
 const DataBaseName = "./foo.db"
 
 func run() {
-	var values int = *arg1
-	var bufsize int = *arg2
 	var tx *sql.Tx
 
 	os.Remove(DataBaseName)
@@ -41,13 +38,18 @@ func run() {
 		fmt.Println(err)
 	}
 
-	commits := values / bufsize
+	commits := values / chunks
 
 	fmt.Printf("values: %d\n", values)
-	fmt.Printf("chunks: %d\n", bufsize)
+	fmt.Printf("chunks: %d\n", chunks)
+	if( commits < 2) {
+		fmt.Printf("%d statement per commit\n", commits)
+	} else {
+		fmt.Printf("%d statements per commit\n", commits)
+	}
 
 	for a := 0; a <= commits; a++ {
-		for i := 0; i <= bufsize; i++ {
+		for i := 0; i <= chunks; i++ {
 			stmt, err := tx.Prepare("insert into foo(id) values(?)")
 			if err != nil {
 				fmt.Println(err)
@@ -66,7 +68,10 @@ func run() {
 }
 
 func main() {
-	flag.Parse()
+	fmt.Printf("Values: ")
+	fmt.Scanf("%d", &values)
+	fmt.Printf("Chunks: ")
+	fmt.Scanf("%d", &chunks)
 
 	t0 := time.Now()
 	run()
