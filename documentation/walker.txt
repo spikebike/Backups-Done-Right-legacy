@@ -27,11 +27,11 @@ queueROWID(db, rowBuf, ROWID, config.SQLBuffer)
 			db.exec	
 		}
 		db.Commit()
-		// zero fiBuf
+		// zero rowBuf
 	}
 }
 
-
+// NOT a go routine
 func queue_file ( db, fiBuf, fi, MAXBuffSize)
 {
 	if (len(fiBuf)<MAXBuffSize)
