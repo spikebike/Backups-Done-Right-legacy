@@ -44,6 +44,10 @@ func run() {
 	fmt.Printf("chunks: %d\n", chunks)
 
 	for a := 0; a <= chunks; a++ {
+		tx, err = db.Begin()
+		if err != nil {
+			fmt.Println(err)
+		}
 		for i := 0; i <= bufsize; i++ {
 			stmt, err := tx.Prepare("insert into foo(id) values(?)")
 			if err != nil {
