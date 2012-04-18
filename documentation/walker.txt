@@ -39,10 +39,11 @@ for i < len(dirArray)
     // Do not add files to SQL until they have been ACTUALLY uploaded
 }
 closeDB()
+// every backup should include an updated metadata database
 copy_file(config.sql_file,config.sql_file+".tmp")
 append_file(config.sql_file+".tmp");
-openDB();
 close("to_upload.txt");
+openDB();
 
 // launch a go routine to feed to_upload.txt to uploader
 
