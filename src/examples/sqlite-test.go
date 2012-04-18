@@ -36,7 +36,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("tx = %#v tx=%T\n",tx,tx)
+	fmt.Printf("tx = %#v tx=%T\n", tx, tx)
 	stmt, err := tx.Prepare("insert into foo(id, name) values(?, ?)")
 	if err != nil {
 		fmt.Println(err)

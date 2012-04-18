@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"os"
@@ -9,9 +10,9 @@ import (
 )
 
 var (
-	values int
-	chunks int
-	bufsize int
+	inserts int
+	chunks  int
+	PerCommit int
 )
 
 const DataBaseName = "./foo.db"
@@ -39,16 +40,14 @@ func run() {
 		fmt.Println(err)
 	}
 
-	chunks := values / bufsize
-
-	fmt.Printf("chunks: %d\n", chunks)
+	chunks := inserts / PerCommit
 
 	for a := 0; a <= chunks; a++ {
 		tx, err = db.Begin()
 		if err != nil {
 			fmt.Println(err)
 		}
-		for i := 0; i <= bufsize; i++ {
+		for i := 0; i <= PerCommit; i++ {
 			stmt, err := tx.Prepare("insert into foo(id) values(?)")
 			if err != nil {
 				fmt.Println(err)
@@ -66,16 +65,26 @@ func run() {
 	}
 }
 
+func usage() {
+		fmt.Fprintf(os.Stderr, "usage sqlite-performacetest <number of inserts> <inserts per commit>\n")
+		flag.PrintDefaults()
+		os.Exit(2)
+}
+
 func main() {
-	fmt.Printf("values: ")
-	fmt.Scanf("%d", &values)
-	fmt.Printf("values per Chunk: ")
-	fmt.Scanf("%d", &bufsize)
-
-	t0 := time.Now()
+	flag.Usage = usage
+	flag.Parse()
+	args := flag.Args()
+	if len(args) != 2 {
+				usage()
+	}
+	fmt.Sscanf(args[0], "%d", &inserts)
+	fmt.Sscanf(args[1], "%d", &PerCommit)
+	fmt.Printf("\nStarting inserts = %d PerCommit=%d\n", inserts, PerCommit)
+	t0 := time.Now().UnixNano()
 	run()
-	t1 := time.Now()
+	t1 := time.Now().UnixNano()
+	duration := float64(t1-t0) / 1000000000
+	fmt.Printf("%d inserts, %3d inserts/commit in %4.1f seconds for %8.2f inserts/sec\n", inserts, PerCommit,duration, float64(inserts)/duration)
 
-	fmt.Printf("Done!\n")
-	fmt.Printf("Duration: %v\n", t1.Sub(t0))
 }
