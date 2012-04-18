@@ -71,7 +71,42 @@ append_file(config.sql_file+".tmp");
 close("to_upload.txt");
 openDB();
 
-// launch a go routine to feed to_upload.txt to uploader
+UpChannel   = MakeChannel, buffered, 100 x (ROWID, FullPath)
+DownChannel = MakeChannel, buffered, 100 x (ROWID, Err)
+preBuffer = config.UploadBuffer
+res = select * from Files where ToUpload=True
+
+// Preload Channel
+while (preBuffer and res)
+	UpChannel <- res
+	preBuffer--
+
+// Keep Channel Full
+while (res)
+	UpChannel <- res
+	ROWID, Err <-  DownChannel
+    if (Err == nil)
+	{
+		queueROWID(db, rowBuf, ROWID, config.SQLBuffer)
+	} else {
+		log.Warning("Error uploading %s", err)
+	}
+}
+
+// Flush channel
+while i := range downChannel {
+	ROWID, Err <-  DownChannel
+    if (Err == nil)
+	{
+		queueROWID(db, rowBuf, ROWID, config.SQLBuffer)
+	} else {
+		log.Warning("Error uploading %s", err)
+	}
+}
+	
+	
+
+	
 
 go feed_uploader
 	res = "select * from files where NeedsToBeUploaded=True	
