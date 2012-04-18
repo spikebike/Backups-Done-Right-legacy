@@ -46,6 +46,9 @@ for i < len(dirArray)
 	sqlList  = get_list_of_files_in_dir(i)
 
 	// iterate over list of files in current directory
+    // fibuf is allocated here only so it is preserved
+    // across called to queue_file, if possible
+    // move this inside queue_file
     fiBuf=make(fi,config.SQLBuffer)
 	for _, fi := range fi {
 		if !fi.IsDir() {
@@ -71,7 +74,8 @@ openDB();
 // launch a go routine to feed to_upload.txt to uploader
 
 go feed_uploader
-	while <lines in to_upload.txt>
+	res = "select * from files where NeedsToBeUploaded=True	
+	while <res>
 	{
 		send file to Upchannel/Uploader
 	}
