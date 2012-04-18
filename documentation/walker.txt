@@ -53,6 +53,7 @@ func queue_file ( db, fiBuf, fi, MAXBuffSize)
 }
 
 // interate through the directory array
+startTime=gettimeofday() // seconds since 1970
 for i < len(dirArray)
 {
 	// inside add_dir_to_sql should only insert if dir isn't in sql
@@ -84,6 +85,9 @@ for i < len(dirArray)
 	}
     // Do not add files to SQL until they have been ACTUALLY uploaded
 }
+// Any files we don't see must have been deleted.
+db.exec("update files set deleted=Y where deleted=N and last_seen<startTime")
+
 closeDB()
 // every backup should include an updated metadata database
 copy_file(config.sql_file,config.sql_file+".tmp")
@@ -96,6 +100,9 @@ DownChannel = MakeChannel, buffered, 100 x (ROWID, Err)
 preBuffer = config.UploadBuffer
 res = select * from Files where ToUpload=True
 
+// launch goroutine uploader who does NOT have access to SQL/DB directly.
+go uploaded(UpChannel,DownChannel,config.MAXTHREADS)
+ 
 // Preload Channel
 while (preBuffer and res)
 	UpChannel <- res
@@ -103,7 +110,9 @@ while (preBuffer and res)
 
 // Keep Channel Full
 while (res)
+	// likely to block, that's ok.
 	UpChannel <- res
+	// Will rarely/if ever block
 	ROWID, Err <-  DownChannel
     if (Err == nil)
 	{
@@ -112,8 +121,7 @@ while (res)
 		log.Warning("Error uploading %s", err)
 	}
 }
-
-// Flush channel
+// Flush DownChannel now that there's no more files for UpChannel
 while i := range downChannel {
 	ROWID, Err <-  DownChannel
     if (Err == nil)
@@ -123,41 +131,4 @@ while i := range downChannel {
 		log.Warning("Error uploading %s", err)
 	}
 }
-	
-	
-
-	
-
-go feed_uploader
-	res = "select * from files where NeedsToBeUploaded=True	
-	while <res>
-	{
-		send file to Upchannel/Uploader
-	}
-
-// launch a go routine to update SQL for each file that was successfully uploaded
-go update_sql
-	while (fi:=FileHasBeenUploaded(DownChannel)	)
-	{
-		insert_file(fi)
-	}
-
-Once done the encryption queue should be sorted by inode.
-
-Then addDir and addFile are functions that compare what's on the filesystem with what is
-in the database:
-* BOTH addFile and addDir update last_seen for EVERYTHING it sees.
-* NEVER modify a file or directory with metadata from stat, ALWAYS insert.
-* Add directory to SQL if missing or modified.
-* Adds file to sql if missing,modified metadata, or modified conetns, and queue it for encryption
-
-One key step is that after the above any file with last_seen older than
-the start of the current backup must have been deleted and that needs
-to be noted.
-
-Something like:
-update files set deleted=TRUE where deleted=FALSE and last_seen < $start_of_backup.
-
-
-
  
