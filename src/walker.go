@@ -18,7 +18,7 @@ import (
 var (
 	sqls = []string{
 		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)",
-		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
+		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
 	}
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
@@ -43,6 +43,7 @@ type file_info_t struct {
 	dirID     int
 	last_seen int64
 	deleted   int
+	do_upload int
 }
 
 func init_db(dataBaseName string) (db *sql.DB, err error) {
@@ -101,6 +102,7 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 			unixStat, _ := fi.Sys().(*syscall.Stat_t)
 			if !fi.IsDir() {
 				entry.deleted = 0
+				entry.do_upload = 0
 				entry.name = fi.Name()
 				entry.size = fi.Size()
 				entry.gid = unixStat.Gid
@@ -152,14 +154,14 @@ func makeEntry(db *sql.DB, e *file_info_t) error {
 			return err
 		}
 
-		stmt, err = tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,last_seen,dirID,deleted) values(?,?,?,?,?,?,?,?,?,?,?,?,?)")
+		stmt, err = tx.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(e.name, e.size, e.mode, e.gid, e.uid, e.ino, e.dev, e.mtime, e.atime, e.ctime, e.last_seen, e.dirID, e.deleted)
+		_, err = stmt.Exec(e.name, e.size, e.mode, e.gid, e.uid, e.ino, e.dev, e.mtime, e.atime, e.ctime, e.last_seen, e.dirID, e.deleted, e.do_upload)
 		if err != nil {
 			log.Println(err)
 			return err
