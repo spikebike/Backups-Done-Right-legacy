@@ -11,6 +11,7 @@ import (
 var (
 	values int
 	chunks int
+	bufsize int
 )
 
 const DataBaseName = "./foo.db"
@@ -38,18 +39,12 @@ func run() {
 		fmt.Println(err)
 	}
 
-	commits := values / chunks
+	chunks := values / bufsize
 
-	fmt.Printf("values: %d\n", values)
 	fmt.Printf("chunks: %d\n", chunks)
-	if( commits < 2) {
-		fmt.Printf("%d statement per commit\n", commits)
-	} else {
-		fmt.Printf("%d statements per commit\n", commits)
-	}
 
-	for a := 0; a <= commits; a++ {
-		for i := 0; i <= chunks; i++ {
+	for a := 0; a <= chunks; a++ {
+		for i := 0; i <= bufsize; i++ {
 			stmt, err := tx.Prepare("insert into foo(id) values(?)")
 			if err != nil {
 				fmt.Println(err)
@@ -68,10 +63,10 @@ func run() {
 }
 
 func main() {
-	fmt.Printf("Values: ")
+	fmt.Printf("values: ")
 	fmt.Scanf("%d", &values)
-	fmt.Printf("Chunks: ")
-	fmt.Scanf("%d", &chunks)
+	fmt.Printf("values per Chunk: ")
+	fmt.Scanf("%d", &bufsize)
 
 	t0 := time.Now()
 	run()
