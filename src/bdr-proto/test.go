@@ -23,7 +23,7 @@ func main() {
 		sha := sha256.New()
 		sha.Write(randBytes)
 		strhash := fmt.Sprintf("%x", sha.Sum(nil))
-		fmt.Printf("i=%d sha=%x size=%d\n", i,strhash,size)
+		fmt.Printf("i=%d sha=%s size=%d\n", i,strhash,size)
 		
 		req.Blobarray = append(req.Blobarray, &bdr_proto.RequestBlob{Sha256: &strhash, Bsize: &size})
 	}
