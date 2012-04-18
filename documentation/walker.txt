@@ -51,6 +51,30 @@ func queue_file ( db, fiBuf, fi, MAXBuffSize)
 		// zero fiBuf
 	}
 }
+// NOT a go routine
+func queue_seen( db, seenBuf, fi, timestamp, MAXBuffSize)
+{
+	if (len(seenBuf)<MAXBuffSize)
+	{ 
+		seenBuf=append(seenBuf,fi,timestamp)
+	}
+	else
+	{
+		db.Begin()
+		for i:=0; i<MAXBuffSize; i++
+		{
+			// add the file and set NeedsToBeUploaded = True
+			db.prepare ("update files set lastseen ...", fseenBuf[i]...., timetamp
+			db.exec	
+		}
+		db.Commit()
+		// zero  seenBuf
+	}
+}
+// NOT a go routine
+func queue_file ( db, seenBuf, fi, MAXBuffSize)
+{
+	
 
 // interate through the directory array
 startTime=gettimeofday() // seconds since 1970
@@ -79,6 +103,9 @@ for i < len(dirArray)
 			if fi.Modified_time > modtime
 				queue_file(db, fiBuf, fi, config.SQLBuffer)
 			} else {
+				queue_file_seen(db,seenBuf, fi, config.SQLBuffer)
+			}
+		} else {
 			// if dir isn't in sql add it 
 			// if dir isn't in dirArray append it.
 		}
