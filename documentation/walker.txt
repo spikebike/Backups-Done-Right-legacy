@@ -10,6 +10,28 @@ First note the time of the start of the backup.
 Please note in the common case (most files already backed up)
 it does one SQL statement per directory.
 
+// NOT a go routine
+
+func queue_file ( db, fiBuf, fi, MAXBuffSize)
+{
+	if (len(fiBuf)<MAXBuffSize)
+	{ 
+		fiBuf=append(fiBuf,fi)
+	}
+	else
+	{
+		db.Begin()
+		for i:=0; i<MAXBuffSize; i++
+		{
+			// add the file and set NeedsToBeUploaded = True
+			db.prepare ("insert into files .... ",fiBuf[i]....
+			db.exec	
+		}
+		db.Commit()
+		// zero fiBuf
+	}
+}
+
 // interate through the directory array
 for i < len(dirArray)
 {
@@ -24,13 +46,14 @@ for i < len(dirArray)
 	sqlList  = get_list_of_files_in_dir(i)
 
 	// iterate over list of files in current directory
+    fiBuf=make(fi,config.SQLBuffer)
 	for _, fi := range fi {
 		if !fi.IsDir() {
 			// modtime = zero if file not in SQL.
 			modtime := get_modified_time(sqllist(fi.Name))
 			// compare the local modified time for this file to the one in sql
 			if fi.Modified_time > modtime
-				append_file("to_upload.txt").
+				queue_file(db, fiBuf, fi, config.SQLBuffer)
 			} else {
 			// if dir isn't in sql add it 
 			// if dir isn't in dirArray append it.
