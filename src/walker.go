@@ -68,7 +68,7 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 	return db, err
 }
 
-func backupDir(db *sql.DB, upfilepath string, dirList string) error {
+func backupDir(db *sql.DB, dirList string, upfilepath string, bufsize int) error {
 	var i int
 	var dirname string
 	entry := &file_info_t{}
@@ -128,10 +128,16 @@ func backupDir(db *sql.DB, upfilepath string, dirList string) error {
 				entry.path = dirname + "/" + fi.Name()
 			}
 
+			queue_file(db, fi, bufsize)
 			makeEntry(db, entry)
 		}
 		i++
 	}
+	return nil
+}
+
+func queue_file(db *sql.DB, fi os.FileInfo, bufsize int) error {
+
 	return nil
 }
 
@@ -201,10 +207,11 @@ func main() {
 	db, err := init_db(dataBaseName)
 
 	upfilepath, _ := config.String("Client", "upload_file")
+	bufsize, _ := config.Int("Client", "buffer_size")
 
 	t0 := time.Now()
 	log.Printf("start walking...")
-	err = backupDir(db, upfilepath, dirList)
+	err = backupDir(db, dirList, upfilepath, bufsize)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 
