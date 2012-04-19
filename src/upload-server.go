@@ -12,8 +12,8 @@ type Request struct{}
 
 func (Request) Request(in *bdrservice.RequestMessage, out *bdrservice.RequestACKMessage) error {
 	var records int32
-	for _, i := range in.Blobarray { 
-		log.Printf("server: blobarray=%v %T", *i.Sha256,*i.Sha256)
+	for _, blob := range in.Blobarray { 
+		log.Printf("server: blobarray=%v %T", *blob.Sha256,*blob.Sha256)
 		records++
 	}
 
