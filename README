@@ -1,7 +1,7 @@
 Project Maintainers:
 
-	Bill Broaley 	aka spikebike 	<bill@broadley.org>
-	Joel Bodenmann 	aka Tectu       <joel@unormal.org>
+	Bill Broaldey   aka spikebike 	<bill@broadley.org>
+	Joel Bodenmann  aka Tectu       <joel@unormal.org>
 
 IMPORTANT: Please change the settings in config.cfg before you try to run the software first!!!
 
@@ -17,7 +17,7 @@ Backups Done Right depends on 3 external packages that need installed:
 	go get -v -u github.com/kylelemons/go-rpcgen/protoc-gen-go'
 
 Then to make certificates run:
-cd Backups-Done-Right
+cd Backups-Done-Right/src
 ./makecerts <your email address>
 
 

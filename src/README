@@ -1,0 +1,10 @@
+
+To generate certs:
+    ./makecert.sh <email address>
+
+To watch a demonstration of the REQUEST protocol (documentation/protocol.txt):
+	go run upload-server.go
+
+In another terminal:
+	go run upload-client.go
+
