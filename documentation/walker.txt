@@ -125,7 +125,7 @@ openDB();
 UpChannel   = MakeChannel, buffered, 100 x (ROWID, FullPath)
 DownChannel = MakeChannel, buffered, 100 x (ROWID, Err)
 preBuffer = config.UploadBuffer
-res = select * from Files where ToUpload=True
+res = select * from Files where ToUpload=True order by Inode
 
 // launch goroutine uploader who does NOT have access to SQL/DB directly.
 go uploaded(UpChannel,DownChannel,config.MAXTHREADS)
