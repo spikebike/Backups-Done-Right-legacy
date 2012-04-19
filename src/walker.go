@@ -22,7 +22,7 @@ var (
 
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
-	debug	   = flag.Bool("debug", false, "activates debug mode")
+	debug      = flag.Bool("debug", false, "activates debug mode")
 )
 
 type file_info_t struct {

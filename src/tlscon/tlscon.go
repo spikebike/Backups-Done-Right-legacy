@@ -1,7 +1,6 @@
 package tlscon
 
 import (
-	"./addservice"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
