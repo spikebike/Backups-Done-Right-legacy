@@ -27,7 +27,7 @@ func (Add) Add(in *addservice.AddMessage, out *addservice.SumMessage) error {
 	return nil
 }
 
-func handleClient(conn net.Conn, f func()) {
+func handleClient(conn net.Conn, f func(conn net.Conn)) {
 	tlscon, ok := conn.(*tls.Conn)
 	if ok {
 		log.Print("server: conn: type assert to TLS succeedded")
@@ -76,7 +76,7 @@ func serverTLSListen(service string, f func()) {
 		}
 		log.Printf("server: accepted from %s", conn.RemoteAddr())
 		// Fire off go routing to handle rest of connection.
-		go handleClient(conn, f)
+		go handleClient(conn, f())
 	}
 }
 
