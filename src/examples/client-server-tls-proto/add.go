@@ -45,7 +45,7 @@ func handleClient(conn net.Conn, f func()) {
 		}
 		// Now that we have completed SSL/TLS 
 		// hopefully F does the same as below
-		f()
+		f(conn)
 		//		addservice.ServeAddService(tlscon, Add{})
 	}
 }
