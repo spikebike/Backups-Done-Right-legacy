@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	inserts int
-	chunks  int
+	inserts   int
+	chunks    int
 	PerCommit int
 )
 
@@ -66,9 +66,9 @@ func run() {
 }
 
 func usage() {
-		fmt.Fprintf(os.Stderr, "Usage: sqlite-performacetest <number of inserts> <inserts per commit>\n")
-		flag.PrintDefaults()
-		os.Exit(2)
+	fmt.Fprintf(os.Stderr, "Usage: sqlite-performacetest <number of inserts> <inserts per commit>\n")
+	flag.PrintDefaults()
+	os.Exit(2)
 }
 
 func main() {
@@ -76,7 +76,7 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 	if len(args) != 2 {
-				usage()
+		usage()
 	}
 	fmt.Sscanf(args[0], "%d", &inserts)
 	fmt.Sscanf(args[1], "%d", &PerCommit)
@@ -85,6 +85,6 @@ func main() {
 	run()
 	t1 := time.Now().UnixNano()
 	duration := float64(t1-t0) / 1000000000
-	fmt.Printf("%d inserts, %3d inserts/commit in %4.1f seconds for %8.2f inserts/sec\n", inserts, PerCommit,duration, float64(inserts)/duration)
+	fmt.Printf("%d inserts, %3d inserts/commit in %4.1f seconds for %8.2f inserts/sec\n", inserts, PerCommit, duration, float64(inserts)/duration)
 
 }
