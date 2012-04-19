@@ -13,6 +13,10 @@ type Request struct{}
 func (Request) Request(in *bdrservice.RequestMessage, out *bdrservice.RequestACKMessage) error {
 	log.Printf("server: blobarray=%v %T", *in.Blobarray[0].Sha256,*in.Blobarray[0].Sha256)
 	log.Printf("server: blobarray=%v %T", *in.Blobarray[0],*in.Blobarray[0])
+//	for _, i := range in.Blobarray[] { 
+//		log.Printf("server: blobarray=%v %T", *in.Blobarray[i].Sha256,*in.Blobarray[i].Sha256)
+//	}
+
 	
 	out.Received = new(int32)
 	*out.Received = 5 
