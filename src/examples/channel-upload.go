@@ -1,19 +1,19 @@
 package main
 
 import (
-		"fmt"
-		"time"
+	"fmt"
+	"time"
 )
 
-func server (UpChan chan string,done chan bool) {
+func server(UpChan chan string, done chan bool) {
 	for f := range UpChan {
-		fmt.Printf("Server: received %s\n",f)
+		fmt.Printf("Server: received %s\n", f)
 	}
 	fmt.Print("Server: Channel closed, existing\n")
 }
 
-func client (UpChan chan string, done chan bool) {
-	for i:=0; i<10;i++ {
+func client(UpChan chan string, done chan bool) {
+	for i := 0; i < 10; i++ {
 		fmt.Print("Client: sending file\n")
 		UpChan <- "/home/bill/test"
 		time.Sleep(400 * time.Millisecond)
@@ -22,13 +22,12 @@ func client (UpChan chan string, done chan bool) {
 	done <- true
 }
 
-
 func main() {
-	done   := make(chan bool)
+	done := make(chan bool)
 	UpChan := make(chan string)
-	go server(UpChan,done)
-	go client(UpChan,done)
-	<- done
+	go server(UpChan, done)
+	go client(UpChan, done)
+	<-done
 	fmt.Print("Main: Client finished closing server\n")
 	close(UpChan)
 }

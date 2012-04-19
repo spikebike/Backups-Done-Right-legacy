@@ -25,7 +25,7 @@ func main() {
 	if flag.NArg() > 0 {
 		filename = flag.Arg(0)
 	} else {
-		filename = "1MB"
+		filename = "sha256-test.go"
 	}
 
 	if file, err = os.Open(filename); err != nil {
