@@ -1,3 +1,4 @@
+ 1000 inserts,   1 inserts/commit in 77.5 seconds for    12.91 inserts/sec
 10000 inserts,  10 inserts/commit in 83.2 seconds for   120.14 inserts/sec
 10000 inserts,  20 inserts/commit in 41.4 seconds for   241.71 inserts/sec
 10000 inserts,  40 inserts/commit in 21.1 seconds for   474.90 inserts/sec

@@ -66,7 +66,7 @@ func run() {
 }
 
 func usage() {
-		fmt.Fprintf(os.Stderr, "usage sqlite-performacetest <number of inserts> <inserts per commit>\n")
+		fmt.Fprintf(os.Stderr, "Usage: sqlite-performacetest <number of inserts> <inserts per commit>\n")
 		flag.PrintDefaults()
 		os.Exit(2)
 }
