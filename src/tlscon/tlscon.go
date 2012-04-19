@@ -3,8 +3,10 @@ package tlscon
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"crypto/rand"
 	"fmt"
 	"log"
+	"net"
 )
 
 func OpenTLSClient(ipPort string) (*tls.Conn, error) {
