@@ -125,6 +125,11 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 	return nil
 }
 
+func queue_rowid(db *sql.DB, fi []os.FileInfo, buffsize int) error {
+
+	return nil
+}
+
 func queue_file(db *sql.DB, fi os.FileInfo, bufsize int) error {
 
 	return nil
