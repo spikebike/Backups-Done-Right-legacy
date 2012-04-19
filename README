@@ -3,27 +3,22 @@ Project Maintainers:
 	Bill Broaley 	aka spikebike 	<bill@broadley.org>
 	Joel Bodenmann 	aka Tectu       <joel@unormal.org>
 
--------------------------------------------
-
 IMPORTANT: Please change the settings in config.cfg before you try to run the software first!!!
 
--------------------------------------------
+Backups Done Right depends on 3 external packages that need installed:
 
-You need the goconfig package to use the config readout (example in src/examples/config-test.go).
+1. goconfig, install with:
+	go get github.com/kless/goconfig/config'
 
-Use the following command:    	'go get github.com/kless/goconfig/config'
+2. gosqlite3, install with:
+	go get github.com/mattn/go-sqlite3'
 
--------------------------------------------
+3. go-rpcgen, install with:
+	go get -v -u github.com/kylelemons/go-rpcgen/protoc-gen-go'
 
-You need the gosqlite3 package to use the sqlite database (example in src/examples/database-test.go).
+Then to make certificates run:
+cd Backups-Done-Right
+./makecerts <your email address>
 
-Use the following command:	'go get github.com/mattn/go-sqlite3'
-
--------------------------------------------
-You need the go-rpcgen to use the Protobufs and go
-
-Use the following command:	'go get -v -u github.com/kylelemons/go-rpcgen/protoc-gen-go'
-
--------------------------------------------
 
 Please see documentation/* for the rest

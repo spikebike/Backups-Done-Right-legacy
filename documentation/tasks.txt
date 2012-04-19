@@ -22,7 +22,7 @@ Num Status  Description
 			compresses, and checksums it.  Ideally multiple core friendly.  
 			As files are finished upload them to p2p server.  See 
 			uploader.txt.  Depends on #4 and #5 to actually upload.
-#3A unassigned write a simple example that received a filename over a channel
+#3A Done    write a simple example that received a filename over a channel
 #3B Done    Write a sha256 and aes512 example.
 
 #4	Unassigned 	P2P server - speaks the p2p protocol for trading blobs, 
