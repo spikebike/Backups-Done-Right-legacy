@@ -25,26 +25,6 @@ var (
 	debug      = flag.Bool("debug", false, "activates debug mode")
 )
 
-type file_info_t struct {
-	id        int64
-	mode      uint32
-	ino       uint64
-	dev       uint64
-	nlink     int64
-	uid       uint32
-	gid       uint32
-	size      int64
-	atime     int64
-	mtime     int64
-	ctime     int64
-	name      string
-	path      string
-	dirID     int
-	last_seen int64
-	deleted   int
-	do_upload int
-}
-
 func init_db(dataBaseName string) (db *sql.DB, err error) {
 	if *newDB == true {
 		os.Remove(dataBaseName)
@@ -70,7 +50,9 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 func backupDir(db *sql.DB, dirList string, bufsize int) error {
 	var i int
 	var dirname string
-	entry := &file_info_t{}
+	file_buffer := make(os.FileInfo, bufsize)
+	dir_buffer := make(os.FileInfo, bufsize) 
+
 	i = 0
 
 	log.Printf("backupDir received %s", dirList)
@@ -92,45 +74,22 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 		for _, fi := range fi {
 			unixStat, _ := fi.Sys().(*syscall.Stat_t)
 			if !fi.IsDir() {
-				entry.deleted = 0
-				entry.do_upload = 0
-				entry.name = fi.Name()
-				entry.size = fi.Size()
-				entry.gid = unixStat.Gid
-				entry.uid = unixStat.Uid
-				entry.ino = unixStat.Ino
-				entry.dev = unixStat.Dev
-				entry.mode = unixStat.Mode
-				entry.mtime = unixStat.Mtim.Sec
-				entry.atime = unixStat.Atim.Sec
-				entry.ctime = unixStat.Ctim.Sec
-				entry.last_seen = time.Now().Unix()
+				//queue_file(db, )
 			} else {
 				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				entry.size = 0 // VERY IMPORTANT!
-				entry.deleted = 0
-				entry.gid = unixStat.Gid
-				entry.uid = unixStat.Uid
-				entry.ino = unixStat.Ino
-				entry.mode = unixStat.Mode
-				entry.last_seen = time.Now().Unix()
-				entry.path = dirname + "/" + fi.Name()
 			}
-
-			queue_file(db, fi, bufsize)
-			makeEntry(db, entry)
 		}
 		i++
 	}
 	return nil
 }
 
-func queue_rowid(db *sql.DB, fi []os.FileInfo, buffsize int) error {
+func queue_rowid(db *sql.DB, /*buffer*/) error {
 
 	return nil
 }
 
-func queue_file(db *sql.DB, fi os.FileInfo, bufsize int) error {
+func queue_file(db *sql.DB, fi /*buffer*/) error {
 
 	return nil
 }
