@@ -27,7 +27,7 @@ func (Add) Add(in *addservice.AddMessage, out *addservice.SumMessage) error {
 	return nil
 }
 
-func handleClient(conn net.Conn) {
+func handleClient(conn net.Conn, f func()) {
 	tlscon, ok := conn.(*tls.Conn)
 	if ok {
 		log.Print("server: conn: type assert to TLS succeedded")
@@ -44,11 +44,13 @@ func handleClient(conn net.Conn) {
 			log.Print(x509.MarshalPKIXPublicKey(v.PublicKey))
 		}
 		// Now that we have completed SSL/TLS 
-		addservice.ServeAddService(tlscon, Add{})
+		// hopefully F does the same as below
+		f()
+		//		addservice.ServeAddService(tlscon, Add{})
 	}
 }
 
-func serverTLSListen(service string) {
+func serverTLSListen(service string, f func()) {
 
 	// Load x509 certificates for our private/public key, makecert.sh will
 	// generate them for you.
@@ -74,11 +76,16 @@ func serverTLSListen(service string) {
 		}
 		log.Printf("server: accepted from %s", conn.RemoteAddr())
 		// Fire off go routing to handle rest of connection.
-		go handleClient(conn)
+		go handleClient(conn, f)
 	}
+}
+
+func AddFunc(conn net.Conn) {
+	addservice.ServeAddService(conn, Add{})
 }
 
 func main() {
 	flag.Parse()
-	serverTLSListen("0.0.0.0:8000")
+	fptr := AddFunc()
+	serverTLSListen("0.0.0.0:8000", fptr())
 }
