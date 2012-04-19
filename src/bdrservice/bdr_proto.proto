@@ -1,0 +1,17 @@
+package bdrservice;
+
+message request_message {
+	message blob {
+		required string sha256 = 1; // the sha256 checksum of the blob
+		required int32  bsize  = 2; // the size of the blob 
+	}
+	repeated blob blobarray= 1;
+}
+
+message requestACK_message {
+ 	required int32 received=1;
+}
+
+service request_service {
+	rpc request (request_message) returns (requestACK_message);
+}
