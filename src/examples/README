@@ -1,15 +1,23 @@
-This is for small examples that exercise functionality needed for this project.
+This is for small examples for learning go and/or functionality needed for bdr.
 
-Examples so far:
-aes-test.go       tests AES encrypting/decrypting, needed by uploader, task 3A
-sha256-test.go    tests sha256 by checksumming any file given on the command 
-                  line, needed by uploader, task 3B
-client-server-tls tests client<->server TLS connection, needed by p2p daemon,
-                  task 5A
+Examples:
+aes-test.go         tests AES encrypting/decrypting, needed by uploader
+                    line, needed by uploader
+channel-upload.go   Channel example for sending file names via channels, needed
+                    up walker and uploader.
+client-server-tls   tests client<->server TLS connection, needed by p2p daemon,
 
-client-server-tls-proto tests client<->server with protobuts, needed by p2p 
-                        daemon, task 5C
-
-walk.go           shows filesystem walking.
-dirinfo.go        shows directory reading
+client-server-tls-proto tests client<->server with protobufs, needed by p2p 
+                    daemon and uploader
+config-test.go      demonstration of goconfig
+dirinfo.go          shows directory reading
+function-passing.go show function passing
+inode.go            symbolic link, inode, and metadata for files
+list2.go            Scanning and appending to lists/arrays.
+rand-read.go        Read crypto pseudonumbers.
+sha256-test.go      tests sha256 by checksumming any file given on the command 
+shuffle.go          simple shuffle demo
+sqlite-perf.go      test inserts/sec performance while varying inserts/commit
+sqlite-test.go      test of simple sql functionality
+walk.go             shows filesystem walking.
 
