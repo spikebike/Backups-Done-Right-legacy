@@ -2,9 +2,9 @@ package tlscon
 
 import (
 	"crypto/tls"
-	"crypto/x509"
+//	"crypto/x509"
 	"crypto/rand"
-	"fmt"
+	"crypto/rsa"
 	"log"
 	"net"
 )
@@ -28,8 +28,8 @@ func OpenTLSClient(ipPort string) (*tls.Conn, error) {
 	// we could terminate the connection based on the public key if desired.
 	state := conn.ConnectionState()
 	for _, v := range state.PeerCertificates {
-		fmt.Println("Client: Server public key is:")
-		fmt.Println(x509.MarshalPKIXPublicKey(v.PublicKey))
+		// thanks smw 
+		log.Printf("Client: Server public key is:\n%x\n",v.PublicKey.(*rsa.PublicKey).N)
 	}
 	// Lets verify behind the doubt that both ends of the connection
 	// have completed the handshake and negotiated a SSL connection
@@ -54,7 +54,8 @@ func handleClient(conn net.Conn, f func(conn net.Conn)) {
 		// Note we could reject clients if we don't like their public key.      
 		log.Println("Server: client public key is:")
 		for _, v := range state.PeerCertificates {
-			log.Print(x509.MarshalPKIXPublicKey(v.PublicKey))
+//			fmt.Printf("Client: Server public key is:\n%x\n",v.PublicKey.(*rsa.PublicKey).N)
+			log.Printf("Client: Server public key is:\n%x\n",v.PublicKey.(*rsa.PublicKey).N)
 		}
 		// Now that we have completed SSL/TLS 
 		// hopefully F does the same as below
