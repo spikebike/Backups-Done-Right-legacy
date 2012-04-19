@@ -1,4 +1,4 @@
-package main
+package bdr-proto
 
 import (
 	"./bdr_proto"
