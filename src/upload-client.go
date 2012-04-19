@@ -3,7 +3,7 @@ package main
 import (
 	"./bdrservice" // defines BDR related protocols
 	"./tlscon"     // handles SSL connections
-	C "crypto/rand"
+	"crypto/rand"
 	"crypto/sha256"
 	"fmt"
 	"log"
@@ -21,7 +21,7 @@ func main() {
 	for i := 0; i < 4; i++ {
 		// read in 16 bytes from /dev/urandom to sha256
 		randBytes := make([]byte, 16)
-		C.Read(randBytes)
+		rand.Read(randBytes)
 
 		// get its size
 		size := int32(len(randBytes))
