@@ -79,11 +79,11 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 		dirname = dirArray[i]
 		// does dirname exist in the dir table
 		rows,dirID=select * from directories where name=dirname
-		if rows==0 {  // not in table, inset
+		if rows<1 {  // not in table, inset
 			dir.id=	insert into directory set name=$dirname
 		}
 //      add code here
-//		sqlFiles = "select FI from files,directories where dir.id=$dirID and files.deleted=fales
+//		sqlFiles = "select FI from files,directories where dir.id=$dirID and files.deleted=false
 
 		if *debug == true {
 			log.Printf("backing up dir %s", dirname)
@@ -107,12 +107,12 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 				// and it's been modified since last backup
 				if fi.Modfile<=sqlModTime { //already backed up
 					"update files set Last_seen=now() where name=fi.Name and deted=fales"
-				} else { // Either fi is newer or modofied
+				} else { // Either fi is newer or modified
 					makeSQLEntry(db, fi)
 				}
 			} else {
 				Fullpath:=dirname+"/"+fi.Name()
-				if Fullpath not in dirArray:
+				if Fullpath not in dirArray { // directory needs walked
 					dirArray = append(dirArray, dirname+"/"+fi.Name())
 				}
 			}
