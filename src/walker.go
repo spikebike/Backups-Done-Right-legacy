@@ -77,6 +77,14 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 	dirArray := strings.Split(dirList, " ")
 	for i < len(dirArray) {
 		dirname = dirArray[i]
+		// does dirname exist in the dir table
+		rows,dirID=select * from directories where name=dirname
+		if rows==0 {  // not in table, inset
+			dir.id=	insert into directory set name=$dirname
+		}
+//      add code here
+//		sqlFiles = "select FI from files,directories where dir.id=$dirID and files.deleted=fales
+
 		if *debug == true {
 			log.Printf("backing up dir %s", dirname)
 		}
@@ -90,52 +98,31 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 			log.Printf("directory %s failed with error %s", dirname, err)
 		}
 		for _, fi := range fi {
+			// add code here
+			// return zero if fi.Name not in sqlfiles
+			// sqlModTime = getModTime(sqlFiles,fi.Name())
 			unixStat, _ := fi.Sys().(*syscall.Stat_t)
+			// if it's a file not a dir
 			if !fi.IsDir() {
-				entry.deleted = 0
-				entry.do_upload = 0
-				entry.name = fi.Name()
-				entry.size = fi.Size()
-				entry.gid = unixStat.Gid
-				entry.uid = unixStat.Uid
-				entry.ino = unixStat.Ino
-				entry.dev = unixStat.Dev
-				entry.mode = unixStat.Mode
-				entry.mtime = unixStat.Mtim.Sec
-				entry.atime = unixStat.Atim.Sec
-				entry.ctime = unixStat.Ctim.Sec
-				entry.last_seen = time.Now().Unix()
+				// and it's been modified since last backup
+				if fi.Modfile<=sqlModTime { //already backed up
+					"update files set Last_seen=now() where name=fi.Name and deted=fales"
+				} else { // Either fi is newer or modofied
+					makeSQLEntry(db, fi)
+				}
 			} else {
-				dirArray = append(dirArray, dirname+"/"+fi.Name())
-				entry.size = 0 // VERY IMPORTANT!
-				entry.deleted = 0
-				entry.gid = unixStat.Gid
-				entry.uid = unixStat.Uid
-				entry.ino = unixStat.Ino
-				entry.mode = unixStat.Mode
-				entry.last_seen = time.Now().Unix()
-				entry.path = dirname + "/" + fi.Name()
+				Fullpath:=dirname+"/"+fi.Name()
+				if Fullpath not in dirArray:
+					dirArray = append(dirArray, dirname+"/"+fi.Name())
+				}
 			}
-
-			queue_file(db, fi, bufsize)
-			makeEntry(db, entry)
 		}
 		i++
 	}
 	return nil
 }
 
-func queue_rowid(db *sql.DB, fi []os.FileInfo, buffsize int) error {
-
-	return nil
-}
-
-func queue_file(db *sql.DB, fi os.FileInfo, bufsize int) error {
-
-	return nil
-}
-
-func makeEntry(db *sql.DB, e *file_info_t) error {
+func makeSQLEntry(db *sql.DB, e *file_info_t) error {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Println(err)
