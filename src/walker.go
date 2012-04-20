@@ -70,9 +70,10 @@ func init_db(dataBaseName string) (db *sql.DB, err error) {
 func backupDir(db *sql.DB, dirList string, bufsize int) error {
 	var i int
 	var dirname string
+	var start int	
 	entry := &file_info_t{}
 	i = 0
-
+	start=unix.time.now()
 	log.Printf("backupDir received %s", dirList)
 	dirArray := strings.Split(dirList, " ")
 	for i < len(dirArray) {
@@ -119,6 +120,8 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 		}
 		i++
 	}
+	// once done walking any file not seen must have been deleted.
+	Update files set deleted=True where last_seen < $start;
 	return nil
 }
 
