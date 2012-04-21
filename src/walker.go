@@ -28,6 +28,15 @@ var (
 	debug      = flag.Bool("debug", false, "activates debug mode")
 )
 
+func checkPath(dirArray []string, dir string) bool {
+	for _,i:=  range dirArray {
+		if i==dir {
+			return true
+		}
+	}
+	return false
+}
+
 func backupDir(db *sql.DB, dirList string) error {
 	var i int
 	var dirname string
@@ -64,7 +73,14 @@ func backupDir(db *sql.DB, dirList string) error {
 					log.Printf("backup needed for %s \n",f.Name())
 					bdrsql.InsertSQLFile(db,f,dirID)
 				}
-					 //already backed up
+			} else { // is directory
+				log.Printf("dirArray is %T\n",dirArray)
+				fullpath := dirname + "/" + f.Name()
+				// avoid an infinite loop 
+				if !checkPath(dirArray,fullpath) {
+					dirArray = append(dirArray, fullpath)
+				}
+			}
 				//					"update files set Last_seen=now() where name=fi.Name and deted=fales"
 				//			} else { // Either fi is newer or modified
 				//					makeSQLEntry(db, fi)
@@ -73,7 +89,6 @@ func backupDir(db *sql.DB, dirList string) error {
 				//				if Fullpath not in dirArray { // directory needs walked
 				//					dirArray = append(dirArray, dirname+"/"+fi.Name())
 				//				}
-			}
 		}
 		i++
 	}
