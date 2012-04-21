@@ -132,8 +132,8 @@ func main() {
 		log.Printf("Opened database %v\n", db)
 	}
 
-	t0 := time.Now()
 	log.Printf("start walking...")
+	t0 := time.Now()
 	err = backupDir(db, dirList)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
