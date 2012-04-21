@@ -125,7 +125,7 @@ func main() {
 	}
 	log.Printf("attempting to open %s", dataBaseName)
 
-	db, err := bdrsql.Init_db(dataBaseName, *newDB)
+	db, err := bdrsql.Init_db(dataBaseName, *newDB, *debug)
 	if err != nil {
 		log.Printf("could not open %s, error: %s", dataBaseName, err)
 	} else {

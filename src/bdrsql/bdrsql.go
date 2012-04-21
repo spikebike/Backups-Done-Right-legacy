@@ -20,7 +20,7 @@ var (
 	// create index pathindex on dirs (path)
 )
 
-func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
+func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error) {
 	if newDB == true {
 		os.Remove(dataBaseName)
 	}
@@ -40,10 +40,13 @@ func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
 	}
 	// Allow commits to be buffered, MUCH faster.  
 	// Handy to turn off for debugging to slow things down
-	_, rerr = db.Exec("PRAGMA synchronous=OFF")
-	if rerr != nil {
-		log.Printf("%s", rerr)
+	if debug == false {
+		_, rerr = db.Exec("PRAGMA synchronous=OFF")
+		if rerr != nil {
+			log.Printf("%s", rerr)
+		}
 	}
+
 	return db, err
 }
 
@@ -134,7 +137,7 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 }
 
 func main_test() {
-	db, _ := Init_db("fsmeta.sql", true)
+	db, _ := Init_db("fsmeta.sql", true, true)
 	id, _ := GetSQLID(db, "dirs", "path", "/home/bill/bdr/src/bdrsql")
 	fmt.Printf("I found id=%d\n", id)
 	d, _ := os.Open(".")
