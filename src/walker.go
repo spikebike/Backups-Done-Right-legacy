@@ -96,7 +96,7 @@ func backupDir(db *sql.DB, dirList string) error {
 		t1 := time.Now().UnixNano()
 		bdrsql.SetSQLSeen(db, Fmap, dirID)
 		t2 := time.Now().UnixNano()
-		fmt.Printf("files=%d dirs=%d duration=%d\n", dFile, dDir, (t2-t1)/1000000)
+		fmt.Printf("files=%d dirs=%d duration=%dms\n", dFile, dDir, (t2-t1)/1000000)
 		i++
 	}
 	// if we have seen the files since start it must have been deleted.
