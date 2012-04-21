@@ -17,11 +17,6 @@ import (
 )
 
 var (
-	sqls = []string{
-		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)",
-		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
-	}
-
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 	debug      = flag.Bool("debug", false, "activates debug mode")
@@ -76,10 +71,10 @@ func backupDir(db *sql.DB, dirList string) error {
 				dFile++
 				// and it's been modified since last backup
 				if f.ModTime().Unix() <= SQLmap[f.Name()] {
-					//					log.Printf("NO backup needed for %s \n",f.Name())
+					// log.Printf("NO backup needed for %s \n",f.Name())
 					Fmap[f.Name()] = f.ModTime().Unix()
 				} else {
-					//					log.Printf("backup needed for %s \n",f.Name())
+					// log.Printf("backup needed for %s \n",f.Name())
 					bdrsql.InsertSQLFile(db, f, dirID)
 				}
 			} else { // is directory
@@ -99,7 +94,7 @@ func backupDir(db *sql.DB, dirList string) error {
 		fmt.Printf("files=%d dirs=%d duration=%dms\n", dFile, dDir, (t2-t1)/1000000)
 		i++
 	}
-	// if we have seen the files since start it must have been deleted.
+	// if we have not seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db, start)
 	log.Printf("fileC=%d dirC=%d\n", fileC, dirC)
 	return nil
