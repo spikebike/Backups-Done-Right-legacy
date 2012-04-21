@@ -7,16 +7,16 @@ Num Status  Description
 			in database and descripe what it is for and what should be
 			written in it
 
-#2	Tectu	file system walker - depends on #1, iterates over backup_dirs 
+#2	Done	file system walker - depends on #1, iterates over backup_dirs 
 			noting any new files, changed files, and deleted files.  Keeps 
 			state in sqlite (inode, permission, size, timestamps, uid/gid).  
-            Builds queue of new/changed files.  See walker.txt and schema.txt.
-#2A unassigned Write a simple example that sends a filename over a channel
-#2B done    Write a directory dump command that records all filesystem
+            See walker.txt and schema.txt.
+#2A Done    Write a simple example that sends a filename over a channel
+#2B Done    Write a directory dump command that records all filesystem
             metadata.
-#2C done    Write a sqlite3 example that builds a table and does an insert
+#2C Done    Write a sqlite3 example that builds a table and does an insert
             and selet.
-#2D done    Write an example to implement a reasonable config file format
+#2D Done    Write an example to implement a reasonable config file format
 
 #3	Unassigned 	Uploader depends on #2 - For each file in the queue it reads, 
 			compresses, and checksums it.  Ideally multiple core friendly.  

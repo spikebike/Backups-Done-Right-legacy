@@ -38,6 +38,12 @@ func Init_db(dataBaseName string) (db *sql.DB, err error) {
 	if rerr != nil {
 		log.Printf("%s", rerr)
 	}
+	// Allow commits to be buffered, MUCH faster.  
+	// Handy to turn off for debugging to slow things down
+	_, rerr = db.Exec("PRAGMA synchronous=OFF")
+	if rerr != nil {
+		log.Printf("%s", rerr)
+	}
 	return db, err
 }
 
@@ -60,10 +66,9 @@ func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
 func  SetSQLSeen(db *sql.DB, fmap map[string] int64,dirID int64) {
 	now:=time.Now().Unix()
 	update := fmt.Sprintf("update files set last_seen=%d where name=? and dirID=%d and deleted=0 and ctime=?",now,dirID)
-	log.Printf("update=%s\n",update)
 	stmt, _ := db.Prepare(update)
 	for i,_ := range fmap {
-		log.Printf("file = %v dirID=%d\n",i,dirID)
+//		log.Printf("file = %v dirID=%d\n",i,dirID)
 		stmt.Exec(i,fmap[i])
 	}
 }

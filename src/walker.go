@@ -41,7 +41,6 @@ func backupDir(db *sql.DB, dirList string) error {
 	var dirname string
 	var i int
 	start:=time.Now().Unix()
-	log.Printf("backupDir received %s", dirList)
 	dirArray := strings.Split(dirList, " ")
 	i=0
 	for i < len(dirArray) {
@@ -50,7 +49,7 @@ func backupDir(db *sql.DB, dirList string) error {
 		dirID, err := bdrsql.GetSQLID(db, "dirs", "path", dirname)
 		// get a map for filename -> modified time
 		SQLmap := bdrsql.GetSQLFiles(db, dirID)
-		log.Printf("backing up dir %s id=%d", dirname,dirID)
+		log.Printf("Scanning dir %s id=%d", dirname,dirID)
 		d, err := os.Open(dirname)
 		if err != nil {
 			log.Printf("failed to open %s error : %s", dirname, err)
@@ -73,7 +72,6 @@ func backupDir(db *sql.DB, dirList string) error {
 					bdrsql.InsertSQLFile(db,f,dirID)
 				}
 			} else { // is directory
-				log.Printf("dirArray is %T\n",dirArray)
 				fullpath := dirname + "/" + f.Name()
 				// avoid an infinite loop 
 				if !checkPath(dirArray,fullpath) {
@@ -85,6 +83,7 @@ func backupDir(db *sql.DB, dirList string) error {
 		bdrsql.SetSQLSeen(db,Fmap,dirID)
 		i++
 	}
+	// if we have seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db,start)
 	return nil
 }
