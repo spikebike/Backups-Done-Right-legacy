@@ -20,7 +20,20 @@ var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 	debug      = flag.Bool("debug", false, "activates debug mode")
+
+	upchan = make(chan upchan_t, 100)
+	downchan = make(chan downchan_t, 100)
 )
+
+type upchan_t struct {
+	rowid int
+	path string
+}
+
+type downchan_t struct {
+	rowid int
+	err error
+}
 
 func checkPath(dirArray []string, dir string) bool {
 	for _, i := range dirArray {
