@@ -2,14 +2,13 @@ package bdrsql
 
 import (
 	"database/sql"
-//	"flag"
+	//	"flag"
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
 	"syscall"
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
@@ -54,40 +53,38 @@ func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
 	var mtime int64
 	stmt, err := db.Prepare("select name,mtime from files where dirID=? and deleted=0")
 	if err != nil {
-		fmt.Printf("GetSQLFiles prepare of select failed: %s\n",err)
+		fmt.Printf("GetSQLFiles prepare of select failed: %s\n", err)
 	}
-	rows,err := stmt.Query(dirID)
+	rows, err := stmt.Query(dirID)
 	if err != nil {
-		fmt.Printf("GetSQLFiles query failed: %s\n",err)
+		fmt.Printf("GetSQLFiles query failed: %s\n", err)
 	}
 	for rows.Next() {
 		rows.Scan(&name, &mtime)
-		fileMap[name] = mtime 
+		fileMap[name] = mtime
 	}
 	return fileMap
 }
 
-func  SetSQLSeen(db *sql.DB, fmap map[string] int64,dirID int64) {
-	now:=time.Now().Unix()
-//	tx,_ := db.Begin()
-	update := fmt.Sprintf("update files set last_seen=%d where name=? and dirID=%d and deleted=0 and ctime=?",now,dirID)
+func SetSQLSeen(db *sql.DB, fmap map[string]int64, dirID int64) {
+	now := time.Now().Unix()
+	//	tx,_ := db.Begin()
+	update := fmt.Sprintf("update files set last_seen=%d where name=? and dirID=%d and deleted=0 and ctime=?", now, dirID)
 	stmt, _ := db.Prepare(update)
-	for i,_ := range fmap {
-//		log.Printf("file = %v dirID=%d\n",i,dirID)
-		stmt.Exec(i,fmap[i])
+	for i, _ := range fmap {
+		//		log.Printf("file = %v dirID=%d\n",i,dirID)
+		stmt.Exec(i, fmap[i])
 	}
-//	tx.Commit()
+	//	tx.Commit()
 }
 
-
-func SetSQLDeleted(db *sql.DB,now int64) {
+func SetSQLDeleted(db *sql.DB, now int64) {
 	stmt, err := db.Prepare("update files set deleted=1 where last_seen<?")
 	if err != nil {
 		log.Println(err)
 	}
 	stmt.Exec(now)
 }
-
 
 func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, error) {
 
@@ -96,14 +93,14 @@ func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, 
 	dirID = -1
 
 	query := "select id from " + tablename + " where " + field + "= (?)"
-//	fmt.Printf("query=%s\n", query)
+	//	fmt.Printf("query=%s\n", query)
 	stmt, err := db.Prepare(query)
 	if err != nil {
-		log.Printf("GetSQLID: prepare select failed: %s\n",err)
+		log.Printf("GetSQLID: prepare select failed: %s\n", err)
 	}
 	err = stmt.QueryRow(value).Scan(&dirID)
 	if err != nil {
-		log.Printf("GetSQLID: missing %s, error %s\n",value,err)
+		log.Printf("GetSQLID: missing %s, error %s\n", value, err)
 
 		insert := "insert into " + tablename + "(" + field + ") values(?);"
 		stmt, err := db.Prepare(insert)
@@ -118,7 +115,7 @@ func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, 
 }
 
 func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
-	now:=time.Now().Unix()
+	now := time.Now().Unix()
 	e, _ := fi.Sys().(*syscall.Stat_t)
 
 	stmt, err := db.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
@@ -130,7 +127,7 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 
 	_, err = stmt.Exec(fi.Name(), e.Size, e.Mode, e.Gid, e.Uid, e.Ino, e.Dev, e.Mtim.Sec, e.Atim.Sec, e.Ctim.Sec, now, dirID, 0, 1)
 	if err != nil {
-		log.Printf("InsertSQL Exec: %s\n",err)
+		log.Printf("InsertSQL Exec: %s\n", err)
 		return err
 	}
 	return err
