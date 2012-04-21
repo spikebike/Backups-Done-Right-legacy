@@ -17,3 +17,17 @@ SSD: OZC Vertex II - 60GB
 10000 inserts, 320 inserts/commit in  0.3 seconds for 34085.49 inserts/sec
 10000 inserts, 640 inserts/commit in  0.2 seconds for 47547.05 inserts/sec
 --------------------------------------------------------------------------
+
+Device: Lenovo ThinkPad T410
+CPU: i5-M520 @ 2.4GHz
+GPU: i5 internal GPU
+RAM: 4GB DDRIII
+SSD: Crurial M64 - 64GB
+
+10000 inserts,  20 inserts/commit in 13.3 seconds for   751.59 inserts/sec
+10000 inserts,  40 inserts/commit in  7.0 seconds for  1430.32 inserts/sec
+10000 inserts,  80 inserts/commit in  3.7 seconds for  2676.61 inserts/sec
+10000 inserts, 160 inserts/commit in  2.0 seconds for  4881.97 inserts/sec
+10000 inserts, 320 inserts/commit in  1.2 seconds for  8018.62 inserts/sec
+10000 inserts, 640 inserts/commit in  0.9 seconds for 11498.38 inserts/sec
+--------------------------------------------------------------------------
