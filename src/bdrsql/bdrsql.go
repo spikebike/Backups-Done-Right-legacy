@@ -21,11 +21,10 @@ var (
 	// create index pathindex on dirs (path)
 )
 
-func Init_db(dataBaseName string) (db *sql.DB, err error) {
-// How are we supposed to get the global config
-//	if *newDB == true {
-//		os.Remove(dataBaseName)
-//	}
+func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
+	if newDB == true {
+		os.Remove(dataBaseName)
+	}
 
 	db, err = sql.Open("sqlite3", dataBaseName)
 	if err != nil {
@@ -138,7 +137,7 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 }
 
 func main_test() {
-	db, _ := Init_db("fsmeta.sql")
+	db, _ := Init_db("fsmeta.sql", true)
 	id, _ := GetSQLID(db, "dirs", "path", "/home/bill/bdr/src/bdrsql")
 	fmt.Printf("I found id=%d\n", id)
 	d, _ := os.Open(".")

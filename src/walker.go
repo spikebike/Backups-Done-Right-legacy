@@ -125,11 +125,11 @@ func main() {
 	}
 	log.Printf("attempting to open %s", dataBaseName)
 
-	db, err := bdrsql.Init_db(dataBaseName)
+	db, err := bdrsql.Init_db(dataBaseName, *newDB)
 	if err != nil {
 		log.Printf("could not open %s, error: %s", dataBaseName, err)
 	} else {
-		log.Printf("Opened database %v\n", db)
+		log.Printf("opened database %v\n", db)
 	}
 
 	log.Printf("start walking...")
@@ -139,7 +139,7 @@ func main() {
 	duration := t1.Sub(t0)
 
 	if err != nil {
-		log.Printf("Walking didn't finished successfully. Error: %s", err)
+		log.Printf("walking didn't finished successfully. Error: %s", err)
 	} else {
 		log.Printf("walking successfully finished")
 	}
