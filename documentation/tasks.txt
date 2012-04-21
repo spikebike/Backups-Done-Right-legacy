@@ -1,42 +1,41 @@
 
-Num Status  Description
-=== ======  ========== 
+Num 	Status  	Description
+===	======  	========== 
 
-
-#1  Done	Please write very clear documentation about every single field
+#1  	Done		Please write very clear documentation about every single field
 			in database and descripe what it is for and what should be
 			written in it
 
-#2	Done	file system walker - depends on #1, iterates over backup_dirs 
+#2  	Done		file system walker - depends on #1, iterates over backup_dirs 
 			noting any new files, changed files, and deleted files.  Keeps 
 			state in sqlite (inode, permission, size, timestamps, uid/gid).  
-            See walker.txt and schema.txt.
-#2A Done    Write a simple example that sends a filename over a channel
-#2B Done    Write a directory dump command that records all filesystem
-            metadata.
-#2C Done    Write a sqlite3 example that builds a table and does an insert
-            and selet.
-#2D Done    Write an example to implement a reasonable config file format
+            		See walker.txt and schema.txt.
+#2A 	Done		Write a simple example that sends a filename over a channel
+#2B 	Done		Write a directory dump command that records all filesystem
+			metadata.
+#2C 	Done		Write a sqlite3 example that builds a table and does an insert
+			and selet.
+#2D 	Done		Write an example to implement a reasonable config file format
 
 #3	Unassigned 	Uploader depends on #2 - For each file in the queue it reads, 
 			compresses, and checksums it.  Ideally multiple core friendly.  
 			As files are finished upload them to p2p server.  See 
 			uploader.txt.  Depends on #4 and #5 to actually upload.
-#3A Done    write a simple example that received a filename over a channel
-#3B Done    Write a sha256 and aes512 example.
+#3A 	Done		write a simple example that received a filename over a channel
+#3B 	Done		Write a sha256 and aes512 example.
 
-#4	Unassigned 	P2P server - speaks the p2p protocol for trading blobs, 
-               	including those from the uploader.  Depends on #5 protocol and 
-               	#1 init file.  Continuously trades blobs, makes challenges, 
-               	accepts challenges monitors and maintains redundancy.
-#4a Unassigned	get test case with a few unique blobs each to successfully 
-				transfer blobs between peers.
+#4	Unassigned	P2P server - speaks the p2p protocol for trading blobs, 
+               		including those from the uploader.  Depends on #5 protocol and 
+			#1 init file.  Continuously trades blobs, makes challenges, 
+			accepts challenges monitors and maintains redundancy.
+#4a 	Unassigned	get test case with a few unique blobs each to successfully 
+			transfer blobs between peers.
 
-#5  Unassigned 	implement code to implement p2p protocol (see protocol.txt) 
+#5  	Unassigned 	implement code to implement p2p protocol (see protocol.txt) 
          		between SSL connected peers.  Connections should only be 
-               	allowed to complete if the peer presents the public key in 
-				the sqlite database that tracks peers.
+			allowed to complete if the peer presents the public key in 
+			the sqlite database that tracks peers.
 
-#6	spikebike  implement REQUEST, REPLY, and GET.  See protocol.txt
-               REQUEST partially completed.
-#6A Done       Write a client/server that uses protobuf over SSL to handle RPC
+#6	spikebike	implement REQUEST, REPLY, and GET.  See protocol.txt
+			REQUEST partially completed.
+#6A 	Done		Write a client/server that uses protobuf over SSL to handle RPC
