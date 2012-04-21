@@ -9,11 +9,9 @@ import (
 	"os"
 	"strings"
 	//	"syscall"
-	"time"
 	"fmt"
-
+	"time"
 	"./bdrsql"
-
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -30,8 +28,8 @@ var (
 )
 
 func checkPath(dirArray []string, dir string) bool {
-	for _,i:=  range dirArray {
-		if i==dir {
+	for _, i := range dirArray {
+		if i == dir {
 			return true
 		}
 	}
@@ -42,16 +40,16 @@ func backupDir(db *sql.DB, dirList string) error {
 	var dirname string
 	var i int
 	var fileC int64
-	var dirC  int64
+	var dirC int64
 	var dFile int64
 	var dDir int64
-	fileC=0
-	dirC=0
-	dFile=0
-	dDir=0
-	start:=time.Now().Unix()
+	fileC = 0
+	dirC = 0
+	dFile = 0
+	dDir = 0
+	start := time.Now().Unix()
 	dirArray := strings.Split(dirList, " ")
-	i=0
+	i = 0
 	for i < len(dirArray) {
 		dirname = dirArray[i]
 		// get dirID of dirname, even if it needs inserted.
@@ -68,42 +66,42 @@ func backupDir(db *sql.DB, dirList string) error {
 		if err != nil {
 			log.Printf("directory %s failed with error %s", dirname, err)
 		}
-		Fmap := map[string] int64 {}
+		Fmap := map[string]int64{}
 		// Iterate over the entire directory
-		dFile=0
-		dDir=0
+		dFile = 0
+		dDir = 0
 		for _, f := range fi {
 			if !f.IsDir() {
 				fileC++
 				dFile++
 				// and it's been modified since last backup
 				if f.ModTime().Unix() <= SQLmap[f.Name()] {
-//					log.Printf("NO backup needed for %s \n",f.Name())
-					Fmap[f.Name()]=f.ModTime().Unix()
+					//					log.Printf("NO backup needed for %s \n",f.Name())
+					Fmap[f.Name()] = f.ModTime().Unix()
 				} else {
-//					log.Printf("backup needed for %s \n",f.Name())
-					bdrsql.InsertSQLFile(db,f,dirID)
+					//					log.Printf("backup needed for %s \n",f.Name())
+					bdrsql.InsertSQLFile(db, f, dirID)
 				}
 			} else { // is directory
 				dirC++
 				dDir++
 				fullpath := dirname + "/" + f.Name()
 				// avoid an infinite loop 
-				if !checkPath(dirArray,fullpath) {
+				if !checkPath(dirArray, fullpath) {
 					dirArray = append(dirArray, fullpath)
 				}
 			}
 		}
 		// All files that we've seen, set last_seen
-		t1:=time.Now().UnixNano()
-		bdrsql.SetSQLSeen(db,Fmap,dirID)
-		t2:=time.Now().UnixNano()
-		fmt.Printf("files=%d dirs=%d d=%d\n",dFile,dDir,(t2-t1)/1000000);
+		t1 := time.Now().UnixNano()
+		bdrsql.SetSQLSeen(db, Fmap, dirID)
+		t2 := time.Now().UnixNano()
+		fmt.Printf("files=%d dirs=%d d=%d\n", dFile, dDir, (t2-t1)/1000000)
 		i++
 	}
 	// if we have seen the files since start it must have been deleted.
-	bdrsql.SetSQLDeleted(db,start)
-	log.Printf("fileC=%d dirC=%d\n",fileC,dirC)
+	bdrsql.SetSQLDeleted(db, start)
+	log.Printf("fileC=%d dirC=%d\n", fileC, dirC)
 	return nil
 }
 
