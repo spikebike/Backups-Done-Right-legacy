@@ -38,22 +38,19 @@ func checkPath(dirArray []string, dir string) bool {
 }
 
 func backupDir(db *sql.DB, dirList string) error {
-	var i int
 	var dirname string
-
-	//	entry := &file_info_t{}
-	i = 0
-	//	start:=time.Now().Unix()
+	var i int
+	start:=time.Now().Unix()
 	log.Printf("backupDir received %s", dirList)
 	dirArray := strings.Split(dirList, " ")
+	i=0
 	for i < len(dirArray) {
 		dirname = dirArray[i]
 		// get dirID of dirname, even if it needs inserted.
 		dirID, err := bdrsql.GetSQLID(db, "dirs", "path", dirname)
 		// get a map for filename -> modified time
-		Fmap := bdrsql.GetSQLFiles(db, dirID)
-		log.Printf("map=%T map=%#v dirID=%d\n", Fmap, Fmap, dirID)
-		log.Printf("backing up dir %s id=", dirname, dirID)
+		SQLmap := bdrsql.GetSQLFiles(db, dirID)
+		log.Printf("backing up dir %s id=%d", dirname,dirID)
 		d, err := os.Open(dirname)
 		if err != nil {
 			log.Printf("failed to open %s error : %s", dirname, err)
@@ -63,12 +60,14 @@ func backupDir(db *sql.DB, dirList string) error {
 		if err != nil {
 			log.Printf("directory %s failed with error %s", dirname, err)
 		}
-
+		Fmap := map[string] int64 {}
+		// Iterate over the entire directory
 		for _, f := range fi {
 			if !f.IsDir() {
 				// and it's been modified since last backup
-				if f.ModTime().Unix() <= Fmap[f.Name()] {
+				if f.ModTime().Unix() <= SQLmap[f.Name()] {
 					log.Printf("NO backup needed for %s \n",f.Name())
+					Fmap[f.Name()]=f.ModTime().Unix()
 				} else {
 					log.Printf("backup needed for %s \n",f.Name())
 					bdrsql.InsertSQLFile(db,f,dirID)
@@ -81,19 +80,12 @@ func backupDir(db *sql.DB, dirList string) error {
 					dirArray = append(dirArray, fullpath)
 				}
 			}
-				//					"update files set Last_seen=now() where name=fi.Name and deted=fales"
-				//			} else { // Either fi is newer or modified
-				//					makeSQLEntry(db, fi)
-				//			} else {
-				//				Fullpath:=dirname+"/"+fi.Name()
-				//				if Fullpath not in dirArray { // directory needs walked
-				//					dirArray = append(dirArray, dirname+"/"+fi.Name())
-				//				}
 		}
+		// All files that we've seen, set last_seen
+		bdrsql.SetSQLSeen(db,Fmap,dirID)
 		i++
 	}
-	// once done walking any file not seen must have been deleted.
-	//	Update files set deleted=True where last_seen < $start;
+	bdrsql.SetSQLDeleted(db,start)
 	return nil
 }
 

@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"syscall"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -55,6 +56,28 @@ func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
 	}
 	return fileMap
 }
+
+func  SetSQLSeen(db *sql.DB, fmap map[string] int64,dirID int64) {
+	now:=time.Now().Unix()
+	update := fmt.Sprintf("update files set last_seen=%d where name=? and dirID=%d and deleted=0 and ctime=?",now,dirID)
+	log.Printf("update=%s\n",update)
+	stmt, _ := db.Prepare(update)
+	for i,_ := range fmap {
+		log.Printf("file = %v dirID=%d\n",i,dirID)
+		stmt.Exec(i,fmap[i])
+	}
+}
+
+
+func SetSQLDeleted(db *sql.DB,now int64) {
+	stmt, err := db.Prepare("update files set deleted=1 where last_seen<?")
+	if err != nil {
+		log.Println(err)
+	}
+	stmt.Exec(now)
+}
+
+
 func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, error) {
 
 	var dirID int64
@@ -62,7 +85,7 @@ func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, 
 	dirID = -1
 
 	query := "select id from " + tablename + " where " + field + "= (?)"
-	fmt.Printf("query=%s\n", query)
+//	fmt.Printf("query=%s\n", query)
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		log.Println(err)
@@ -84,6 +107,7 @@ func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, 
 }
 
 func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
+	now:=time.Now().Unix()
 	e, _ := fi.Sys().(*syscall.Stat_t)
 
 	stmt, err := db.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
@@ -93,7 +117,7 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(fi.Name(), e.Size, e.Mode, e.Gid, e.Uid, e.Ino, e.Dev, e.Mtim.Sec, e.Atim.Sec, e.Ctim.Sec, "now", dirID, 0, 1)
+	_, err = stmt.Exec(fi.Name(), e.Size, e.Mode, e.Gid, e.Uid, e.Ino, e.Dev, e.Mtim.Sec, e.Atim.Sec, e.Ctim.Sec, now, dirID, 0, 1)
 	if err != nil {
 		log.Println(err)
 		return err
