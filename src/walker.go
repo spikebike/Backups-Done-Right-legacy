@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 	"strings"
-//	"syscall"
+	//	"syscall"
 	"time"
 
 	"./bdrsql"
@@ -28,26 +28,23 @@ var (
 	debug      = flag.Bool("debug", false, "activates debug mode")
 )
 
-func backupDir(db *sql.DB, dirList string, bufsize int) error {
+func backupDir(db *sql.DB, dirList string) error {
 	var i int
 	var dirname string
 
-//	entry := &file_info_t{}
+	//	entry := &file_info_t{}
 	i = 0
-//	start:=time.Now().Unix()
+	//	start:=time.Now().Unix()
 	log.Printf("backupDir received %s", dirList)
 	dirArray := strings.Split(dirList, " ")
 	for i < len(dirArray) {
 		dirname = dirArray[i]
-		// does dirname exist in the dir table
-		dirID,err := bdrsql.GetSQLID(db,"dirs","path",dirname)
-//      add code here
-//		sqlFiles = "select FI from files,directories where dir.id=$dirID and files.deleted=false
-		Fmap:=bdrsql.GetSQLFiles(db,1)
-		log.Printf("map=%T map=%#v dirID=%d\n",Fmap,Fmap,dirID)
-		if *debug == true {
-			log.Printf("backing up dir %s", dirname)
-		}
+		// get dirID of dirname, even if it needs inserted.
+		dirID, err := bdrsql.GetSQLID(db, "dirs", "path", dirname)
+		// get a map for filename -> modified time
+		Fmap := bdrsql.GetSQLFiles(db, dirID)
+		log.Printf("map=%T map=%#v dirID=%d\n", Fmap, Fmap, dirID)
+		log.Printf("backing up dir %s id=", dirname, dirID)
 		d, err := os.Open(dirname)
 		if err != nil {
 			log.Printf("failed to open %s error : %s", dirname, err)
@@ -57,30 +54,31 @@ func backupDir(db *sql.DB, dirList string, bufsize int) error {
 		if err != nil {
 			log.Printf("directory %s failed with error %s", dirname, err)
 		}
-		for _, fi := range fi {
-			// add code here
-			// return zero if fi.Name not in sqlfiles
-			// sqlModTime = getModTime(sqlFiles,fi.Name())
-//			unixStat, _ := fi.Sys().(*syscall.Stat_t)
-			// if it's a file not a dir
-			if !fi.IsDir() {
-				log.Printf("found %s file\n",fi.Name())
+
+		for _, f := range fi {
+			if !f.IsDir() {
 				// and it's been modified since last backup
-//				if fi.Modfile<=sqlModTime { //already backed up
-//					"update files set Last_seen=now() where name=fi.Name and deted=fales"
-//			} else { // Either fi is newer or modified
-//					makeSQLEntry(db, fi)
-//			} else {
-//				Fullpath:=dirname+"/"+fi.Name()
-//				if Fullpath not in dirArray { // directory needs walked
-//					dirArray = append(dirArray, dirname+"/"+fi.Name())
-//				}
+				if f.ModTime().Unix() <= Fmap[f.Name()] {
+					log.Printf("NO backup needed for %s \n",f.Name())
+				} else {
+					log.Printf("backup needed for %s \n",f.Name())
+					bdrsql.InsertSQLFile(db,f,dirID)
+				}
+					 //already backed up
+				//					"update files set Last_seen=now() where name=fi.Name and deted=fales"
+				//			} else { // Either fi is newer or modified
+				//					makeSQLEntry(db, fi)
+				//			} else {
+				//				Fullpath:=dirname+"/"+fi.Name()
+				//				if Fullpath not in dirArray { // directory needs walked
+				//					dirArray = append(dirArray, dirname+"/"+fi.Name())
+				//				}
 			}
 		}
 		i++
 	}
 	// once done walking any file not seen must have been deleted.
-//	Update files set deleted=True where last_seen < $start;
+	//	Update files set deleted=True where last_seen < $start;
 	return nil
 }
 
@@ -88,26 +86,37 @@ func main() {
 	flag.Parse()
 
 	log.Printf("loading config file from %s\n", *configFile)
-	config, _ := config.ReadDefault(*configFile)
-
-	dirList, _ := config.String("Client", "backup_dirs_secure")
+	configF, err := config.ReadDefault("../etc/config.cfg")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+	dirList, err := configF.String("Client", "backup_dirs_secure")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
 	log.Printf("backing up these directories: %s\n", dirList)
 
-	dataBaseName, _ := config.String("Client", "sql_file")
+	dataBaseName, err := configF.String("Client", "sql_file")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
 	log.Printf("attempting to open %s", dataBaseName)
 
 	db, err := bdrsql.Init_db(dataBaseName)
-
-	bufsize, _ := config.Int("Client", "buffer_size")
+	if err != nil {
+		log.Printf("could not open %s, error: %s", dataBaseName, err)
+	} else {
+		log.Printf("Opened database %v\n", db)
+	}
 
 	t0 := time.Now()
 	log.Printf("start walking...")
-	err = backupDir(db, dirList, bufsize)
+	err = backupDir(db, dirList)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 
 	if err != nil {
-		log.Printf("Walking didn't finished successfully. Error: ", err)
+		log.Printf("Walking didn't finished successfully. Error: %s", err)
 	} else {
 		log.Printf("walking successfully finished")
 	}

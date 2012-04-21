@@ -2,7 +2,7 @@ package bdrsql
 
 import (
 	"database/sql"
-	"flag"
+//	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -16,16 +16,13 @@ var (
 		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)",
 		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(255), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
 	}
-
-	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
-	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
-	debug      = flag.Bool("debug", false, "activates debug mode")
 )
 
 func Init_db(dataBaseName string) (db *sql.DB, err error) {
-	if *newDB == true {
-		os.Remove(dataBaseName)
-	}
+// How are we supposed to get the global config
+//	if *newDB == true {
+//		os.Remove(dataBaseName)
+//	}
 
 	db, err = sql.Open("sqlite3", dataBaseName)
 	if err != nil {
@@ -47,7 +44,7 @@ func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
 	var fileMap = map[string]int64{}
 	var name string
 	var mtime int64
-	stmt, err := db.Prepare("select name,mtime from files where dirID=?")
+	stmt, err := db.Prepare("select name,mtime from files where dirID=? and deleted=0")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -86,11 +83,8 @@ func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, 
 	return dirID, err
 }
 
-func insertSQLFile(db *sql.DB, fi os.FileInfo) error {
+func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 	e, _ := fi.Sys().(*syscall.Stat_t)
-	fmt.Printf("fi %T %#v\n", fi, fi)
-	fmt.Printf("fi.name %T %#v\n\n", fi.Name(), fi.Name())
-	fmt.Printf("e %T %#v\n\n", e, e)
 
 	stmt, err := db.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
@@ -99,7 +93,7 @@ func insertSQLFile(db *sql.DB, fi os.FileInfo) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(fi.Name(), e.Size, e.Mode, e.Gid, e.Uid, e.Ino, e.Dev, e.Mtim.Sec, e.Atim.Sec, e.Ctim.Sec, "now", -1, 0, 1)
+	_, err = stmt.Exec(fi.Name(), e.Size, e.Mode, e.Gid, e.Uid, e.Ino, e.Dev, e.Mtim.Sec, e.Atim.Sec, e.Ctim.Sec, "now", dirID, 0, 1)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -117,7 +111,7 @@ func main_test() {
 		//		unixStat, _ := fi.Sys().(*syscall.Stat_t)
 		//		fmt.Printf("%T %#v\n",&fi,&fi)
 		//		fmt.Printf("%T %#v\n\n", unixStat, unixStat)
-		insertSQLFile(db, fi)
+		InsertSQLFile(db, fi, -1)
 		//		fmt.Printf("%T %#v\n\n", unixStat.Ino, unixStat.Ino)
 	}
 }
