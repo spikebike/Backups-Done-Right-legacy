@@ -20,7 +20,7 @@ func main() {
 	defer db.Close()
 
 	sqls := []string{
-		"create table foo (id integer not null primary key, name text)",
+		"create table foo (name text)",
 		"delete from foo",
 	}
 	for _, sql := range sqls {
@@ -37,14 +37,18 @@ func main() {
 		return
 	}
 	fmt.Printf("tx = %#v tx=%T\n", tx, tx)
-	stmt, err := tx.Prepare("insert into foo(id, name) values(?, ?)")
+	stmt, err := tx.Prepare("insert into foo (name) values(?)")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer stmt.Close()
 	for i := 0; i < 12; i++ {
-		_, err = stmt.Exec(i, fmt.Sprintf("Hello World! %03d", i))
+		result, err := stmt.Exec(fmt.Sprintf("Hello World! %03d", i))
+		id, err := result.LastInsertId()
+		r, err := result.RowsAffected()
+
+		fmt.Printf("last inserted ID = %d RowsAffected=%d\n", id, r)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -52,21 +56,21 @@ func main() {
 	}
 	tx.Commit()
 
-	rows, err := db.Query("select id, name from foo")
+	rows, err := db.Query("select rowid,name from foo")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var id int
+		var rowid int64
 		var name string
-		rows.Scan(&id, &name)
-		println(id, name)
+		rows.Scan(&rowid, &name)
+		println(rowid, name)
 	}
 	rows.Close()
 
-	stmt, err = db.Prepare("select name from foo where id = ?")
+	stmt, err = db.Prepare("select name from foo where rowid = ?")
 	if err != nil {
 		fmt.Println(err)
 		return

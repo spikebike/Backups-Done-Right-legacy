@@ -23,6 +23,12 @@ func main() {
 		fmt.Printf("we haave a link!!!\n")
 	}
 
+	fi, err = os.Stat("inode.go")
+	if fi.Mode()&os.ModeSymlink != 0 {
+		fmt.Printf("we haave a link!!!\n")
+	}
+	fmt.Printf("%T %#v\n", fi, fi)
+
 	if err != nil {
 		log.Fatal(err)
 	}

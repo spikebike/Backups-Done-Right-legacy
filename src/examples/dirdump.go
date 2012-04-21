@@ -40,6 +40,10 @@ func main() {
 			fmt.Printf("ctime: %+v\n", t)
 			t = time.Unix(unixStat.Mtim.Sec, unixStat.Mtim.Nsec)
 			fmt.Printf("mtime: %+v\n", t)
+			t2 := time.Unix(unixStat.Atim.Sec, unixStat.Atim.Nsec).Unix()
+			fmt.Printf("t2: %d\n", t2)
+			t3 := unixStat.Atim.Sec
+			fmt.Printf("t3: %d\n", t3)
 		} else {
 			fmt.Printf("found directory %s\n", fi.Name())
 		}
