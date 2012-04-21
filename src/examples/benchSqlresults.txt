@@ -5,6 +5,7 @@ This is just for fun, please also note your system specs:
 
 
 --------------------------------------------------------------------------
+Device: homebrew
 CPU: i3-550 @ 3.2GHz
 GPU: GigaByte GTX-560 Windforce 2
 RAM: 8GB DDRIII
