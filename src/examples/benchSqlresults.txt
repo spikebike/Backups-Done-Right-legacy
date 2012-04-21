@@ -1,0 +1,19 @@
+
+In this file, you can add your result from running ./benchSql.sh
+
+This is just for fun, please also note your system specs:
+
+
+--------------------------------------------------------------------------
+CPU: i3-550 @ 3.2GHz
+GPU: GigaByte GTX-560 Windforce 2
+RAM: 8GB DDRIII
+SSD: OZC Vertex II - 60GB
+
+10000 inserts,  20 inserts/commit in  2.4 seconds for  4222.22 inserts/sec
+10000 inserts,  40 inserts/commit in  1.2 seconds for  8054.20 inserts/sec
+10000 inserts,  80 inserts/commit in  0.7 seconds for 14231.69 inserts/sec
+10000 inserts, 160 inserts/commit in  0.4 seconds for 22921.16 inserts/sec
+10000 inserts, 320 inserts/commit in  0.3 seconds for 34085.49 inserts/sec
+10000 inserts, 640 inserts/commit in  0.2 seconds for 47547.05 inserts/sec
+--------------------------------------------------------------------------
