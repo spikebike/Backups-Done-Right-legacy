@@ -32,3 +32,16 @@ SSD: Crurial M64 - 64GB
 10000 inserts, 320 inserts/commit in  1.2 seconds for  8018.62 inserts/sec
 10000 inserts, 640 inserts/commit in  0.9 seconds for 11498.38 inserts/sec
 --------------------------------------------------------------------------
+Device: Whitebox/home built
+CPU: Intel Xeon X3450@2.67 GHz/Lynnfield core
+GPU: ATI Radeon 6850
+RAM: 8GB DDRIII
+Disk: WD Green 1TB (WD10EACS)
+
+10000 inserts,  20 inserts/commit in 39.4 seconds for   253.70 inserts/sec
+10000 inserts,  40 inserts/commit in 20.2 seconds for   494.77 inserts/sec
+10000 inserts,  80 inserts/commit in 11.2 seconds for   893.13 inserts/sec
+10000 inserts, 160 inserts/commit in  5.4 seconds for  1836.28 inserts/sec
+10000 inserts, 320 inserts/commit in  3.5 seconds for  2880.04 inserts/sec
+10000 inserts, 640 inserts/commit in  1.9 seconds for  5344.33 inserts/sec
+
