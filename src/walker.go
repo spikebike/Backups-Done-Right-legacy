@@ -109,7 +109,7 @@ func backupDir(db *sql.DB, dirList string) error {
 	}
 	// if we have not seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db, start)
-	log.Printf("fileC=%d dirC=%d\n", fileC, dirC)
+	log.Printf("files: %d directories: %d\n", fileC, dirC)
 	return nil
 }
 
