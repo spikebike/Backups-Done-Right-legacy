@@ -15,9 +15,9 @@ var (
 	sqls = []string{
 		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)",
 		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(254), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
-	} // need to add something like: 
-	// create index ctimeindex on files (ctime)
-	// create index pathindex on dirs (path)
+		"create index ctimeindex on files (ctime)",
+		"create index pathindex on dirs (path)",
+	}
 )
 
 func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error) {
@@ -30,20 +30,19 @@ func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error
 		log.Printf("couldn't open database: %s", err)
 		os.Exit(1)
 	}
-	_, rerr := db.Exec(sqls[0])
-	if rerr != nil {
-		log.Printf("%s", rerr)
-	}
-	_, rerr = db.Exec(sqls[1])
-	if rerr != nil {
-		log.Printf("%s", rerr)
+
+	for _, sql := range sqls {
+		_, err = db.Exec(sql)
+		if err != nil {
+			log.Printf("%s", err)
+		}
 	}
 	// Allow commits to be buffered, MUCH faster.  
 	// Handy to turn off for debugging to slow things down
 	if debug == false {
-		_, rerr = db.Exec("PRAGMA synchronous=OFF")
-		if rerr != nil {
-			log.Printf("%s", rerr)
+		_, err = db.Exec("PRAGMA synchronous=OFF")
+		if err != nil {
+			log.Printf("%s", err)
 		}
 	}
 
