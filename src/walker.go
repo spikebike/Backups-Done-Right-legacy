@@ -109,6 +109,7 @@ func backupDir(db *sql.DB, dirList string) error {
 	}
 	// if we have not seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db, start)
+
 	log.Printf("files: %d directories: %d\n", fileC, dirC)
 	return nil
 }
@@ -121,11 +122,17 @@ func main() {
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
+
 	dirList, err := configF.String("Client", "backup_dirs_secure")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
-	log.Printf("backing up these directories: %s\n", dirList)
+
+	bufsize, err := configF.Int("Client", "buffer_size")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+	bufsize += 42 //just for compiling without errors
 
 	dataBaseName, err := configF.String("Client", "sql_file")
 	if err != nil {
@@ -140,6 +147,7 @@ func main() {
 		log.Printf("opened database %v\n", db)
 	}
 
+	log.Printf("backing up these directories: %s\n", dirList)
 	log.Printf("start walking...")
 	t0 := time.Now()
 	err = backupDir(db, dirList)
