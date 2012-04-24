@@ -20,7 +20,7 @@ var (
 	}
 )
 
-func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error) {
+func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
 	if newDB == true {
 		os.Remove(dataBaseName)
 	}
@@ -31,8 +31,12 @@ func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error
 		os.Exit(1)
 	}
 
+	return db, err
+}
+
+func CreateBDRTables(db *sql.DB, debug bool) {
 	for _, sql := range sqls {
-		_, err = db.Exec(sql)
+		_, err := db.Exec(sql)
 		if err != nil {
 			log.Printf("%s", err)
 		}
@@ -40,13 +44,11 @@ func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error
 	// Allow commits to be buffered, MUCH faster.  
 	// Handy to turn off for debugging to slow things down
 	if debug == false {
-		_, err = db.Exec("PRAGMA synchronous=OFF")
+		_, err := db.Exec("PRAGMA synchronous=OFF")
 		if err != nil {
 			log.Printf("%s", err)
 		}
 	}
-
-	return db, err
 }
 
 func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
@@ -136,7 +138,7 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 }
 
 func main_test() {
-	db, _ := Init_db("fsmeta.sql", true, true)
+	db, _ := Init_db("fsmeta.sql", true)
 	id, _ := GetSQLID(db, "dirs", "path", "/home/bill/bdr/src/bdrsql")
 	fmt.Printf("I found id=%d\n", id)
 	d, _ := os.Open(".")

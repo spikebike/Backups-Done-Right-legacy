@@ -140,11 +140,18 @@ func main() {
 	}
 	log.Printf("attempting to open %s", dataBaseName)
 
-	db, err := bdrsql.Init_db(dataBaseName, *newDB, *debug)
+	db, err := bdrsql.Init_db(dataBaseName, *newDB)
 	if err != nil {
 		log.Printf("could not open %s, error: %s", dataBaseName, err)
 	} else {
 		log.Printf("opened database %v\n", db)
+	}
+
+	bdrsql.CreateBDRTables(db, *debug)
+	if err != nil {
+		log.Printf("couldn't create tables: %s", err)
+	} else {
+		log.Printf("created tables\n")
 	}
 
 	log.Printf("backing up these directories: %s\n", dirList)
