@@ -147,7 +147,7 @@ func main() {
 		log.Printf("opened database %v\n", db)
 	}
 
-	bdrsql.CreateBDRTables(db, *debug)
+	err = bdrsql.CreateBDRTables(db, *debug)
 	if err != nil {
 		log.Printf("couldn't create tables: %s", err)
 	} else {

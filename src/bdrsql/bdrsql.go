@@ -34,9 +34,11 @@ func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
 	return db, err
 }
 
-func CreateBDRTables(db *sql.DB, debug bool) {
+func CreateBDRTables(db *sql.DB, debug bool) error {
+	var err error
+
 	for _, sql := range sqls {
-		_, err := db.Exec(sql)
+		_, err = db.Exec(sql)
 		if err != nil {
 			log.Printf("%s", err)
 		}
@@ -44,11 +46,13 @@ func CreateBDRTables(db *sql.DB, debug bool) {
 	// Allow commits to be buffered, MUCH faster.  
 	// Handy to turn off for debugging to slow things down
 	if debug == false {
-		_, err := db.Exec("PRAGMA synchronous=OFF")
+		_, err = db.Exec("PRAGMA synchronous=OFF")
 		if err != nil {
 			log.Printf("%s", err)
 		}
 	}
+
+	return err
 }
 
 func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
