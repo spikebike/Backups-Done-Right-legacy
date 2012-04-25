@@ -2,7 +2,6 @@ package bdrsql
 
 import (
 	"database/sql"
-	//	"flag"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"io"
@@ -49,7 +48,7 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 		return
 	}
 	defer src.Close()
-	log.Printf("dest=%#v\n", dstName)
+	//log.Printf("dest=%#v\n", dstName)
 
 	dst, err := os.Create(dstName)
 	if err != nil {
