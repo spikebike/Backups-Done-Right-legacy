@@ -86,7 +86,7 @@ func main() {
 	fmt.Printf("file info from database:\n")
 	printStruct(f)
 
-	fmt.Printf("I restore this file now...\n")
+	fmt.Printf("I'll restore this file now...\n")
 	err = createFile(f)
 	if err != nil {
 		fmt.Println("couldn't restore file")

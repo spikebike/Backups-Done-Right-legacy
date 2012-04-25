@@ -176,13 +176,10 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 }
 
 func GetDBSize(DataBaseName string) int64 {
-	d, err := os.Open(DataBaseName)
+	fi, err := os.Stat(DataBaseName)
 	if err != nil {
-		log.Printf("couldn't open %s ERROR: %s\n", DataBaseName, err)
+		log.Printf("couldn't open file %s with ERROR: %s\n", DataBaseName, err)
 	}
-	defer d.Close()
-
-	fi, _ := d.Readdir(-1)
 
 	return fi.Size()
 }

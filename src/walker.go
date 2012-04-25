@@ -112,6 +112,14 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	// shutdown database, make a copy, open it, backup copy of db
 	db,_ = bdrsql.BackupDB(db,dataBaseName)
 	log.Printf("TOTAL files: %d directories: %d\n", fileC, dirC)
+
+	bytes := bdrsql.GetDBSize(dataBaseName)
+	if bytes > 1048576 {
+		log.Printf("size of the database: %1.1f MB\n", float64(bytes)/1024/1024)
+	} else {
+		log.Printf("size of the database: %1.1f KB\n", float64(bytes)/1024)
+	}
+
 	return nil
 }
 
