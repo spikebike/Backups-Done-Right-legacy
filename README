@@ -1,7 +1,27 @@
-Project Maintainers:
+# Backups-Done-Right
 
-	Bill Broaldey   aka spikebike 	<bill@broadley.org>
-	Joel Bodenmann  aka Tectu       <joel@unormal.org>
+Backups-Done-Right is an easy way to do fast, simple and secure backups.
+
+
+## Features
+
+* file transfer is always encrypted
+
+* simple installation (static linked build)
+
+* open source
+
+
+
+## Maintainers
+
+Backups-Done-Right does have two project maintainers:
+
+* Bill Broaldey   aka spikebike 	<bill@broadley.org>
+* Joel Bodenmann  aka Tectu       <joel@unormal.org>
+
+
+## Build & Run
 
 Backups Done Right depends on 3 external packages that need installed:
 
@@ -18,8 +38,6 @@ Then to make certificates run:
 	$ cd Backups-Done-Right/src
 	$ ./makecerts <your email address>
 
-
-
 Before you can run the software the first time, you need to create
 a config file which fits your needs:
 
@@ -29,6 +47,7 @@ a config file which fits your needs:
 Then, edit the config file to your needs.
 
 
+## Misc
 
 Please see documentation/* for feature informations
 
