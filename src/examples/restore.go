@@ -73,7 +73,7 @@ func readFileInfo(db *sql.DB, fname string) *file_info_t{
 }
 
 func main() {
-	db, err := bdrsql.Init_db(DataBaseName, false);
+	db, err := bdrsql.Init_db(DataBaseName, false, false);
 	if err != nil {
 		fmt.Println("coudln't open database. Error: %s", err)
 	} else {

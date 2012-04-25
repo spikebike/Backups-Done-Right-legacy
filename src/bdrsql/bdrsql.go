@@ -22,7 +22,7 @@ var (
 	}
 )
 
-func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
+func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error) {
 	if newDB == true {
 		os.Remove(dataBaseName)
 	}
@@ -68,7 +68,7 @@ func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
 	CopyFile(tmpDBName, dbname) // make a snapshot
 	fi, err := os.Stat(tmpDBName)
 	directory, _ := filepath.Split(tmpDBName)
-	db2, err := Init_db(dbname, false)
+	db2, err := Init_db(dbname, false, false)
 	if err != nil {
 		log.Fatalf("Init_DB failed with: %s\n", err)
 	}
@@ -177,7 +177,7 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 }
 
 func main_test() {
-	db, _ := Init_db("fsmeta.sql", true)
+	db, _ := Init_db("fsmeta.sql", true, false)
 	id, _ := GetSQLID(db, "dirs", "path", "/home/bill/bdr/src/bdrsql")
 	fmt.Printf("I found id=%d\n", id)
 	d, _ := os.Open(".")
