@@ -23,16 +23,13 @@ Backups-Done-Right does have two project maintainers:
 Backups Done Right depends on 3 external packages that need installed:
 
 goconfig - to install, simply run:
-
-	go get github.com/kless/goconfig/config'
+	$ go get github.com/kless/goconfig/config'
 
 goconfig - to install, simply run:
-
-	go get github.com/mattn/go-sqlite3'
+	$ go get github.com/mattn/go-sqlite3'
 
 go-rpcgen - to install, simply run:
-
-	go get github.com/kylelemons/go-rpcgen/protoc-gen-go'
+	$ go get github.com/kylelemons/go-rpcgen/protoc-gen-go'
 
 Then to make certificates run:
 	$ cd Backups-Done-Right/src
@@ -42,7 +39,7 @@ Before you can run the software the first time, you need to create
 a config file which fits your needs:
 
 	$ cd Backups-Done-Right/etc
-	cp config.cfg.example config.cf
+	$ cp config.cfg.example config.cf
 
 Then, edit the config file to your needs.
 
