@@ -22,13 +22,15 @@ Backups-Done-Right does have two project maintainers:
 
 Backups Done Right depends on 3 external packages that need installed:
 
-* goconfig
-* go-sqlite3
-* go-rpcgen
+goconfig - to install, simply run:
 
 	go get github.com/kless/goconfig/config'
 
+goconfig - to install, simply run:
+
 	go get github.com/mattn/go-sqlite3'
+
+go-rpcgen - to install, simply run:
 
 	go get github.com/kylelemons/go-rpcgen/protoc-gen-go'
 
