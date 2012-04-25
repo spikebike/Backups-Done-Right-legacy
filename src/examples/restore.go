@@ -29,5 +29,5 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("id 1 name %s", name)
+	fmt.Printf("id 1 name %s\n", name)
 }
