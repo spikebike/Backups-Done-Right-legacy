@@ -42,7 +42,8 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 		return
 	}
 	defer src.Close()
-
+	log.Printf("dest=%#v\n",dstName)
+	
 	dst, err := os.Create(dstName)
 	if err != nil {
 		return
@@ -54,7 +55,7 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 
 func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
 	time := time.Now().UnixNano()
-	tmpDBName := fmt.Sprintf("%s.%d\n", dbname, time)
+	tmpDBName := fmt.Sprintf("%s.%d", dbname, time)
 	log.Printf("backing up %s to %s\n",dbname,tmpDBName)
 	db.Close()                  // Insure that ALL writes are completed.
 	CopyFile(tmpDBName, dbname) // make a snapshot
