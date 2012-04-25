@@ -44,7 +44,7 @@ func checkPath(dirArray []string, dir string) bool {
 	return false
 }
 
-func backupDir(db *sql.DB, dirList string) error {
+func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	var dirname string
 	var i int
 	var fileC int64
@@ -80,8 +80,8 @@ func backupDir(db *sql.DB, dirList string) error {
 		dDir = 0
 		for _, f := range fi {
 			if !f.IsDir() {
-				fileC++
-				dFile++
+				fileC++ //track files per backup
+				dFile++ //trace files per directory
 				// and it's been modified since last backup
 				if f.ModTime().Unix() <= SQLmap[f.Name()] {
 					// log.Printf("NO backup needed for %s \n",f.Name())
@@ -91,8 +91,8 @@ func backupDir(db *sql.DB, dirList string) error {
 					bdrsql.InsertSQLFile(db, f, dirID)
 				}
 			} else { // is directory
-				dirC++
-				dDir++
+				dirC++ //track directories per backup
+				dDir++ //track subdirs per directory
 				fullpath := dirname + "/" + f.Name()
 				// avoid an infinite loop 
 				if !checkPath(dirArray, fullpath) {
@@ -109,8 +109,9 @@ func backupDir(db *sql.DB, dirList string) error {
 	}
 	// if we have not seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db, start)
-
-	log.Printf("files: %d directories: %d\n", fileC, dirC)
+	// shutdown database, make a copy, open it, backup copy of db
+	db,_ = bdrsql.BackupDB(db,dataBaseName)
+	log.Printf("TOTAL files: %d directories: %d\n", fileC, dirC)
 	return nil
 }
 
@@ -157,7 +158,7 @@ func main() {
 	log.Printf("backing up these directories: %s\n", dirList)
 	log.Printf("start walking...")
 	t0 := time.Now()
-	err = backupDir(db, dirList)
+	err = backupDir(db, dirList, dataBaseName)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 

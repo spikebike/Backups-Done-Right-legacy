@@ -5,8 +5,10 @@ import (
 	//	"flag"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"syscall"
 	"time"
 )
@@ -32,6 +34,39 @@ func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
 	}
 
 	return db, err
+}
+
+func CopyFile(dstName, srcName string) (written int64, err error) {
+	src, err := os.Open(srcName)
+	if err != nil {
+		return
+	}
+	defer src.Close()
+
+	dst, err := os.Create(dstName)
+	if err != nil {
+		return
+	}
+	defer dst.Close()
+
+	return io.Copy(dst, src)
+}
+
+func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
+	time := time.Now().UnixNano()
+	tmpDBName := fmt.Sprintf("%s.%d\n", dbname, time)
+	log.Printf("backing up %s to %s\n",dbname,tmpDBName)
+	db.Close()                  // Insure that ALL writes are completed.
+	CopyFile(tmpDBName, dbname) // make a snapshot
+	fi, err := os.Stat(tmpDBName)
+	directory, _ := filepath.Split(tmpDBName)
+	db2, err := Init_db(dbname, false)
+	if err != nil {
+			log.Fatalf("Init_DB failed with: %s\n",err)
+	}
+	dirID, err := GetSQLID(db2, "dirs", "path", directory)
+	InsertSQLFile(db2, fi, dirID)
+	return db2, err
 }
 
 func CreateBDRTables(db *sql.DB, debug bool) error {
