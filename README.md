@@ -3,6 +3,7 @@
 Backups-Done-Right is an easy way to do fast, simple and secure backups.
 
 
+
 ## Features
 
 * file transfer is always encrypted
@@ -19,6 +20,7 @@ Backups-Done-Right does have two project maintainers:
 
 * Bill Broaldey   aka spikebike 	<bill@broadley.org>
 * Joel Bodenmann  aka Tectu       <joel@unormal.org>
+
 
 
 ## Build & Run
@@ -45,6 +47,7 @@ a config file which fits your needs:
 	cp config.cfg.example config.cf
 
 Then, edit the config file to your needs.
+
 
 
 ## Misc
