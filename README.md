@@ -6,10 +6,12 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 ## Features
 
 * file transfer is always encrypted
-* very fast file system walker
+* very fast filesystem walker
 * posibility to run more than one fs walker at once (huge speed increasing on multi HDD systems)
 * simple configuration - just one config file
+* allows to have one server and multiple clients
 * simple installation (static linked build)
+* restores with permissions, symlinks etc.
 * open source
 
 
@@ -19,6 +21,12 @@ Backups-Done-Right does have two project maintainers:
 
 * Bill Broaldey   aka spikebike	<bill@broadley.org>	(english)
 * Joel Bodenmann  aka Tectu	<joel@unormal.org>	(german / english)
+
+
+## Technical Description
+
+Once the filesystem walker created a database for the directories that have to be backed up, it will just update the database on every run. On each run the walker decides if the file got any changes. If yes, the file gets encrypted over AES-512 and gets uploaded to the backup server over an SSL secured TCP/IP connection. The server keeps the files encryptet - this is much safer when we have more than one client on the same backup server.
+Whenever we need a backup, we can select which files need to be restored (mostly over the last-modified time). The server will send the encrypted files to the matching client over an SSL secured TCP/IP connection again. The client will then decrypt the received files and restores the complete directory tree with all the permissions, symlinks etc. 
 
 
 ## Build
@@ -53,7 +61,7 @@ Before you can run the software the first time, you need to create a config file
 
 Then, edit the config file to your needs.
 
-You do also need certificates for the encryption:
+You do also need certificates for the SSL encryption:
 
 	$ cd Backups-Done-Right/src
 	$ ./makecerts <your_email_address>
