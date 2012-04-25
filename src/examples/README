@@ -4,21 +4,36 @@ Example			Description
 =======			===========
 
 config-test.go      	demonstration of goconfig
+
 dirinfo.go          	shows directory reading
+
 function-passing.go 	show function passing
+
 inode.go            	symbolic link, inode, and metadata for files
+
 list2.go            	Scanning and appending to lists/arrays.
+
 rand-read.go        	Read crypto pseudonumbers.
+
 sha256-test.go      	tests sha256 by checksumming any file given on the command 
+
 shuffle.go          	simple shuffle demo
+
 sqlite-perf.go      	test inserts/sec performance while varying inserts/commit
+
 sqlite-test.go      	test of simple sql functionality
+
 walk.go             	shows filesystem walking.
-restore.go		restores a (an empty) file with UID/GID/name from example-db.sql
+
+restore.go		demonstrates the restoring from a file from example-db.sql
+			with given uid/gid/size/name etc.
+
 aes-test.go         	tests AES encrypting/decrypting, needed by uploader
                     	line, needed by uploader
+
 channel-upload.go   	Channel example for sending file names via channels, needed
                     	up walker and uploader.
+
 client-server-tls   	tests client<->server TLS connection, needed by p2p daemon,
 
 client-server-tls-proto tests client<->server with protobufs, needed by p2p 

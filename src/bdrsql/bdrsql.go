@@ -175,6 +175,11 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 	return err
 }
 
+func RemoveEntriesOlderThan(db *sql.DB) error {
+
+	return nil
+}
+
 func main_test() {
 	db, _ := Init_db("fsmeta.sql", true, false)
 	id, _ := GetSQLID(db, "dirs", "path", "/home/bill/bdr/src/bdrsql")
