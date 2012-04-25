@@ -1,6 +1,6 @@
 # Backups-Done-Right
 
-Backups-Done-Right is an easy way to do fast, simple and secure backups. Beside the local backups, Backups-Done-Right allows to do offsite backups. Therefor, the encrypted files are transfered over an SSL secured TCP/IP connection. Please note that even the file transfers to a local backup server are encrypted.
+Backups-Done-Right is a P2P backup program providing easy, fast and secure encrypted off-site backups.
 
 
 ## Features
