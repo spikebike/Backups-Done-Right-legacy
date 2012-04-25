@@ -60,7 +60,7 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 }
 
 func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
-	time := time.Now().UnixNano()
+	time := time.Now().Unix()
 	tmpDBName := fmt.Sprintf("%s.%d", dbname, time)
 	log.Printf("backing up %s to %s\n", dbname, tmpDBName)
 	db.Close()                  // Insure that ALL writes are completed.
