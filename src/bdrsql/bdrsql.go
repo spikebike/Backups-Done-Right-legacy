@@ -32,7 +32,14 @@ func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
 		log.Printf("couldn't open database: %s", err)
 		os.Exit(1)
 	}
-
+	// Allow commits to be buffered, MUCH faster.  
+	// debug = true makes database writes synchronous and much slower,
+	if debug == false {
+		_, err = db.Exec("PRAGMA synchronous=OFF")
+		if err != nil {
+			log.Printf("%s", err)
+		}
+	}
 	return db, err
 }
 
@@ -42,6 +49,7 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 		return
 	}
 	defer src.Close()
+	log.Printf("dest=%#v\n", dstName)
 
 	dst, err := os.Create(dstName)
 	if err != nil {
@@ -54,15 +62,15 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 
 func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
 	time := time.Now().UnixNano()
-	tmpDBName := fmt.Sprintf("%s.%d\n", dbname, time)
-	log.Printf("backing up %s to %s\n",dbname,tmpDBName)
+	tmpDBName := fmt.Sprintf("%s.%d", dbname, time)
+	log.Printf("backing up %s to %s\n", dbname, tmpDBName)
 	db.Close()                  // Insure that ALL writes are completed.
 	CopyFile(tmpDBName, dbname) // make a snapshot
 	fi, err := os.Stat(tmpDBName)
 	directory, _ := filepath.Split(tmpDBName)
 	db2, err := Init_db(dbname, false)
 	if err != nil {
-			log.Fatalf("Init_DB failed with: %s\n",err)
+		log.Fatalf("Init_DB failed with: %s\n", err)
 	}
 	dirID, err := GetSQLID(db2, "dirs", "path", directory)
 	InsertSQLFile(db2, fi, dirID)
@@ -74,14 +82,6 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 
 	for _, sql := range sqls {
 		_, err = db.Exec(sql)
-		if err != nil {
-			log.Printf("%s", err)
-		}
-	}
-	// Allow commits to be buffered, MUCH faster.  
-	// Handy to turn off for debugging to slow things down
-	if debug == false {
-		_, err = db.Exec("PRAGMA synchronous=OFF")
 		if err != nil {
 			log.Printf("%s", err)
 		}
