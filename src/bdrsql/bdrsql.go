@@ -33,7 +33,7 @@ func Init_db(dataBaseName string, newDB bool) (db *sql.DB, err error) {
 		os.Exit(1)
 	}
 	// Allow commits to be buffered, MUCH faster.  
-	// Handy to turn off for debugging to slow things down
+	// debug = true makes database writes synchronous and much slower,
 	if debug == false {
 		_, err = db.Exec("PRAGMA synchronous=OFF")
 		if err != nil {
