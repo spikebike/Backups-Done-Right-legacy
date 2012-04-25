@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"fmt"
 	"../bdrsql"
 	"database/sql"
@@ -27,26 +28,40 @@ type file_info_t struct {
 }
 
 func printStruct(f *file_info_t) {
-	fmt.Println("name: ", f.name)
-	fmt.Println("uid: ", f.uid)
-	fmt.Println("gid: ", f.gid)
-	fmt.Println("size: ", f.size)
+	fmt.Println("name:  ", f.name)
+	fmt.Println("uid:   ", f.uid)
+	fmt.Println("gid:   ", f.gid)
+	fmt.Println("size:  ", f.size)
 	fmt.Println("mtime: ", f.mtime)
 	fmt.Println("atime: ", f.atime)
 	fmt.Println("ctime: ", f.ctime)
 }
 
+func createFile(f *file_info_t) error {
+	os.Remove(f.name)
+
+	file, err := os.Create(f.name)
+	if err != nil {
+		fmt.Println("couldn't create file. ERROR: %s", err)
+	}
+
+	file.Truncate(f.size)
+	file.Chown(f.uid, f.gid)
+
+	return nil
+}
+
 func readFileInfo(db *sql.DB, fname string) *file_info_t{
 	f := &file_info_t{}
 
-        stmt, err := db.Prepare("select mode, ino, uid, gid, size, mtime, atime, ctime from files where name = ?")
+        stmt, err := db.Prepare("select mode, uid, gid, size, mtime, atime, ctime from files where name = ?")
         if err != nil {
                 fmt.Println(err)
                 return nil
         }
         defer stmt.Close()
 
-	err = stmt.QueryRow(fname).Scan(&f.mode, &f.ino, &f.uid, &f.gid, &f.size, &f.mtime, &f.atime, &f.ctime)
+	err = stmt.QueryRow(fname).Scan(&f.mode, &f.uid, &f.gid, &f.size, &f.mtime, &f.atime, &f.ctime)
         if err != nil {
                 fmt.Println(err)
                 return nil
@@ -66,5 +81,15 @@ func main() {
 	defer db.Close()
 
 	f := readFileInfo(db, "avr.odt")
+
+	fmt.Printf("file info from database:\n")
 	printStruct(f)
+
+	fmt.Printf("I restore this file now...\n")
+	err = createFile(f)
+	if err != nil {
+		fmt.Println("couldn't restore file")
+	}
+
+	fmt.Printf("finished restoring\n")
 }
