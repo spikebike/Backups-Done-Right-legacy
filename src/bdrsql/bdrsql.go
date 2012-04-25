@@ -175,9 +175,16 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 	return err
 }
 
-func RemoveEntriesOlderThan(db *sql.DB) error {
+func GetDBSize(DataBaseName string) int64 {
+	d, err := os.Open(DataBaseName)
+	if err != nil {
+		log.Printf("couldn't open %s ERROR: %s\n", DataBaseName, err)
+	}
+	defer d.Close()
 
-	return nil
+	fi, _ := d.Readdir(-1)
+
+	return fi.Size()
 }
 
 func main_test() {
