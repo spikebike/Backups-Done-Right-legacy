@@ -54,6 +54,8 @@ func createFile(f *file_info_t) error {
 func readFileInfo(db *sql.DB, fname string) *file_info_t{
 	f := &file_info_t{}
 
+	f.name = fname
+
         stmt, err := db.Prepare("select mode, uid, gid, size, mtime, atime, ctime from files where name = ?")
         if err != nil {
                 fmt.Println(err)
@@ -66,7 +68,6 @@ func readFileInfo(db *sql.DB, fname string) *file_info_t{
                 fmt.Println(err)
                 return nil
         }
-	f.name = fname
 
 	return f
 }
