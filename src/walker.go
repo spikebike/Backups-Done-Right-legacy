@@ -117,6 +117,9 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 		log.Printf("size of the database: %1.1f KB\n", float64(bytes)/1024)
 	}
 
+	ids := bdrsql.GetSQLIDsToUpload(db)
+	log.Printf("We got %d entries in file entries\n", len(ids))
+
 	return nil
 }
 

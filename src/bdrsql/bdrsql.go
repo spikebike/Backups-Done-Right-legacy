@@ -92,20 +92,31 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 }
 
 func GetSQLIDsToUpload(db *sql.DB) []int64 {
-	var id []int64
 	var i int64 = 0
+	var entries int64
 
-	rows, err := db.Query("select id from files where do_upload = 1")
+	rows, err := db.Query("select count(1) from files")
+	if err != nil {
+		fmt.Printf("GetSQLIDsToUpload query failed: %s\n", err)
+	}
+	for rows.Next() {
+		rows.Scan(&entries)
+	}
+	rows.Close()
+
+	ids := make([]int64, entries)
+
+	rows, err = db.Query("select id from files where do_upload = 1")
 	if err != nil {
 		fmt.Printf("GetSQLIDsToUpload query failed: %s\n", err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		rows.Scan(&id[i])
+		rows.Scan(&ids[i])
 		i++
 	}
-	return id
+	return ids
 }
 
 func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
