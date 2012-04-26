@@ -197,7 +197,7 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 	now := time.Now().Unix()
 	e, _ := fi.Sys().(*syscall.Stat_t)
 
-	stmt, err := db.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		log.Printf("InsertSQL prepare: %s\n", err)
 		return err
