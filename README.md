@@ -33,7 +33,7 @@ goconfig - to install, simply run:
 	$ go get github.com/kless/goconfig/gonfig
 
 
-goconfig - to install, simply run:
+go-sqlite3 - to install, simply run:
 
 	$ go get github.com/mattn/go-sqlite3
 
@@ -65,7 +65,7 @@ You do also need certificates for the SSL encryption:
 ## Technical Description
 
 Once the filesystem walker created a database of the directories that have to be backed up, it will just update the database on every run. On each run the walker decides if the file got any changes. If yes, the file gets encrypted over AES-512 and gets uploaded to the backup server over an SSL secured TCP/IP connection. The server keeps the files encrypted.
-Whenever we need a backup, we send the encrypted checksum of the file, which is also stored in the database to the server. The server will send the encrypted file to the matching client over an SSL secured TCP/IP connection again. The client will then decrypt the received file and restores the complete directory tree with all the permissions, symlinks etc.
+Whenever we need a backup, we send the encrypted checksum (SHA-512) of the file, which is also stored in the database to the server. The server will send the encrypted file to the matching client over an SSL secured TCP/IP connection again. The client will then decrypt the received file and restores the complete directory tree with all the permissions, symlinks etc.
 
 
 ## Misc

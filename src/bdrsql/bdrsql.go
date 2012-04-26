@@ -23,7 +23,7 @@ var (
 
 func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error) {
 	if newDB == true {
-		// remove databasename*  (all backups)
+		// rm dataBaseName*  (all backups)
 		fps, _ := filepath.Glob(dataBaseName + "*")
 		for _, fp := range fps {
 			os.Remove(fp)
