@@ -104,10 +104,10 @@ func GetSQLToUpload(db *sql.DB) (fullpaths []string, rowids []int64) {
 	}
 	rows.Close()
 
-	names := make([]string, entries)	// will not return (need to get fullpath)
-	dirIDs := make([]int64, entries)	// will not return (need to get fullpath)
-	rowIDs := make([]int64, entries)		// will return
-	fullpaths = make([]string, entries)	// will return
+	names := make([]string, entries)
+	dirIDs := make([]int64, entries)
+	rowIDs := make([]int64, entries)
+	fullpaths = make([]string, entries)
 
 	rows, err = db.Query("select name, id, dirID from files where do_upload = 1")
 	if err != nil {
@@ -120,13 +120,12 @@ func GetSQLToUpload(db *sql.DB) (fullpaths []string, rowids []int64) {
 		i++
 	}
 
-
 	stmt, err := db.Prepare("select path from dirs where id = ?")
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer stmt.Close()
-		
+
 	i = 0
 	for i, _ := range rowIDs {
 		err = stmt.QueryRow(rowIDs[i]).Scan(&fullpaths[i])
