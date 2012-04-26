@@ -24,12 +24,6 @@ Backups-Done-Right does have two project maintainers:
 * Joel Bodenmann  aka Tectu	<joel@unormal.org>	(german / english)
 
 
-## Technical Description
-
-Once the filesystem walker created a database for the directories that have to be backed up, it will just update the database on every run. On each run the walker decides if the file got any changes. If yes, the file gets encrypted over AES-512 and gets uploaded to the backup server over an SSL secured TCP/IP connection. The server keeps the files encrypted.
-Whenever we need a backup, we can select which files need to be restored (mostly over the last-modified time). The server will send the encrypted files to the matching client over an SSL secured TCP/IP connection again. The client will then decrypt the received files and restores the complete directory tree with all the permissions, symlinks etc.
-
-
 ## Build
 
 Backups Done Right depends on 3 external go packages that need to be installed:
@@ -66,6 +60,12 @@ You do also need certificates for the SSL encryption:
 
 	$ cd Backups-Done-Right/src
 	$ ./makecerts <your_email_address>
+
+
+## Technical Description
+
+Once the filesystem walker created a database of the directories that have to be backed up, it will just update the database on every run. On each run the walker decides if the file got any changes. If yes, the file gets encrypted over AES-512 and gets uploaded to the backup server over an SSL secured TCP/IP connection. The server keeps the files encrypted.
+Whenever we need a backup, we send the encrypted checksum of the file, which is also stored in the database to the server. The server will send the encrypted file to the matching client over an SSL secured TCP/IP connection again. The client will then decrypt the received file and restores the complete directory tree with all the permissions, symlinks etc.
 
 
 ## Misc
