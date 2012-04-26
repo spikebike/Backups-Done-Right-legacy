@@ -91,7 +91,7 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 	return err
 }
 
-func GetSQLIDsToUpload(db *sql.DB) []int64 {
+func GetSQLToUpload(db *sql.DB) (fullpaths []string, rowids []int64) {
 	var i int64 = 0
 	var entries int64
 
@@ -104,19 +104,36 @@ func GetSQLIDsToUpload(db *sql.DB) []int64 {
 	}
 	rows.Close()
 
-	ids := make([]int64, entries)
+	names := make([]string, entries)	// will not return (need to get fullpath)
+	dirIDs := make([]int64, entries)	// will not return (need to get fullpath)
+	rowIDs := make([]int64, entries)		// will return
+	fullpaths = make([]string, entries)	// will return
 
-	rows, err = db.Query("select id from files where do_upload = 1")
+	rows, err = db.Query("select name, id, dirID from files where do_upload = 1")
 	if err != nil {
-		fmt.Printf("GetSQLIDsToUpload query failed: %s\n", err)
+		fmt.Printf("GetSQLToUpload query failed: %s\n", err)
 	}
 	defer rows.Close()
-
+	i = 0
 	for rows.Next() {
-		rows.Scan(&ids[i])
+		rows.Scan(&names[i], &rowIDs[i], &dirIDs[i])
 		i++
 	}
-	return ids
+
+
+	stmt, err := db.Prepare("select path from dirs where id = ?")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer stmt.Close()
+		
+	i = 0
+	for i, _ := range rowIDs {
+		err = stmt.QueryRow(rowIDs[i]).Scan(&fullpaths[i])
+		fullpaths[i] = fullpaths[i] + string(filepath.Separator) + names[i]
+	}
+
+	return fullpaths, rowIDs
 }
 
 func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
