@@ -20,6 +20,9 @@ var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 	debug      = flag.Bool("debug", false, "activates debug mode")
+
+	upchan = make(chan *upchan_t, 100)
+	downchan = make(chan *downchan_t, 100)
 )
 
 type upchan_t struct {
@@ -137,15 +140,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
-
-	bufsize, err := configF.Int("Client", "buffer_size")
-	if err != nil {
-		log.Fatalf("ERROR: %s", err)
-	}
-	upchan := make(chan *upchan_t, bufsize)
-	downchan := make (chan *downchan_t, bufsize)
-	upchan <- nil
-	downchan <- nil
 
 	dataBaseName, err := configF.String("Client", "sql_file")
 	if err != nil {

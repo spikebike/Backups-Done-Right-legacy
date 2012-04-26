@@ -10,7 +10,6 @@ private_key = /etc/bdr/client/private.key
 public_key = /etc/bdr/client/public.key
 backup_dirs_secure = /home/tectu/pictures
 backup_dirs_less_secure = /usr /lib /var
-buffer_size = 64
 sql_file = fs-meta.sql
 server = my-master-p2p.domain.com
 purge_deleted_files = 30 #days
