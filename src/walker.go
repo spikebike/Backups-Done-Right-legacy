@@ -121,10 +121,6 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 
 	log.Printf("TOTAL files: %d directories: %d\n", fileC, dirC)
 
-	fullpath, rowid := bdrsql.GetSQLToUpload(db)
-	log.Printf("path: %v\n", fullpath[0])
-	log.Printf("rowid: %v\n", rowid[0])
-
 	return nil
 }
 
