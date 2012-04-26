@@ -28,7 +28,7 @@ Num 	Status  	Description
                		including those from the uploader.  Depends on #5 protocol and 
 			#1 init file.  Continuously trades blobs, makes challenges, 
 			accepts challenges monitors and maintains redundancy.
-#4a 	Unassigned	get test case with a few unique blobs each to successfully 
+#4A 	Unassigned	get test case with a few unique blobs each to successfully 
 			transfer blobs between peers.
 
 #5  	Unassigned 	implement code to implement p2p protocol (see protocol.txt) 

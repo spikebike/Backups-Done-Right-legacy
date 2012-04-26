@@ -31,7 +31,6 @@ table files:
 	uid		INT		user id value
 	gid		INT		group id value
 	size		BIGINT		size of the file in bytes
-	atime		BIGINT		atime in seconds since 1970
 	mtime		BIGINT		mtime in seconds since 1970
 	ctime		BIGINT		ctime in seconds since 1970
 	name		vchar(2048)	name of the file (no path)
