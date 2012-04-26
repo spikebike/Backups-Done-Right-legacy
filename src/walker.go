@@ -108,7 +108,9 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	bdrsql.SetSQLDeleted(db, start)
 	// shutdown database, make a copy, open it, backup copy of db
 	db,_ = bdrsql.BackupDB(db,dataBaseName)
-	log.Printf("TOTAL files: %d directories: %d\n", fileC, dirC)
+
+	ids := bdrsql.GetSQLIDsToUpload(db)
+	log.Printf("we got %d files to upload\n", len(ids))
 
 	bytes := bdrsql.GetDBSize(dataBaseName)
 	if bytes > 1048576 {
@@ -117,8 +119,7 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 		log.Printf("size of the database: %1.1f KB\n", float64(bytes)/1024)
 	}
 
-	ids := bdrsql.GetSQLIDsToUpload(db)
-	log.Printf("We got %d entries in file entries\n", len(ids))
+	log.Printf("TOTAL files: %d directories: %d\n", fileC, dirC)
 
 	return nil
 }

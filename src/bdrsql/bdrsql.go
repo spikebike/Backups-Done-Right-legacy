@@ -95,7 +95,7 @@ func GetSQLIDsToUpload(db *sql.DB) []int64 {
 	var i int64 = 0
 	var entries int64
 
-	rows, err := db.Query("select count(1) from files")
+	rows, err := db.Query("select count(1) from files") // how many IDs will we get?
 	if err != nil {
 		fmt.Printf("GetSQLIDsToUpload query failed: %s\n", err)
 	}
