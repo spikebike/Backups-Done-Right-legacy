@@ -15,7 +15,7 @@ import (
 var (
 	sqls = []string{
 		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)",
-		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, atime BIGINT, mtime BIGINT, ctime BIGINT, name varchar(254), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
+		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, mtime BIGINT, ctime BIGINT, name varchar(254), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
 		"create index ctimeindex on files (ctime)",
 		"create index pathindex on dirs (path)",
 	}
@@ -197,14 +197,14 @@ func InsertSQLFile(db *sql.DB, fi os.FileInfo, dirID int64) error {
 	now := time.Now().Unix()
 	e, _ := fi.Sys().(*syscall.Stat_t)
 
-	stmt, err := db.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,atime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("insert into files(name,size,mode,gid,uid,ino,dev,mtime,ctime,last_seen,dirID,deleted,do_upload) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		log.Printf("InsertSQL prepare: %s\n", err)
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(fi.Name(), e.Size, e.Mode, e.Gid, e.Uid, e.Ino, e.Dev, e.Mtim.Sec, e.Atim.Sec, e.Ctim.Sec, now, dirID, 0, 1)
+	_, err = stmt.Exec(fi.Name(), e.Size, e.Mode, e.Gid, e.Uid, e.Ino, e.Dev, e.Mtim.Sec, e.Ctim.Sec, now, dirID, 0, 1)
 	if err != nil {
 		log.Printf("InsertSQL Exec: %s\n", err)
 		return err
