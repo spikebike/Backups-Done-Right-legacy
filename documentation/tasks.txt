@@ -39,3 +39,5 @@ Num 	Status  	Description
 #6	spikebike	implement REQUEST, REPLY, and GET.  See protocol.txt
 			REQUEST partially completed.
 #6A 	Done		Write a client/server that uses protobuf over SSL to handle RPC
+
+#7	Unassigned	Add symlink support to database (field & entry / bdrsql routine)

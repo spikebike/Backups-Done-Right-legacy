@@ -14,6 +14,7 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 * restores with permissions, symlinks etc.
 * open source - be sure that nobody gets your data
 * backups are stored encrypted - you don't need to trust in your sysadmin
+* encryption key does not get transfered - you always keep the key on your side
 
 
 ## Maintainers
