@@ -82,29 +82,48 @@ func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
 
 func CreateBDRTables(db *sql.DB, debug bool) error {
 	var err error
-
 	for _, sql := range sqls {
 		_, err = db.Exec(sql)
 		if err != nil {
 			log.Printf("%s", err)
 		}
 	}
-
 	return err
+}
+
+func GetSQLIDsToUpload(db *sql.DB) []int64 {
+	var id []int64
+	var i int64 = 0
+
+	rows, err := db.Query("select id from files where do_upload = 1")
+	if err != nil {
+		fmt.Printf("GetSQLIDsToUpload query failed: %s\n", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		rows.Scan(&id[i])
+		i++
+	}
+	return id
 }
 
 func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
 	var fileMap = map[string]int64{}
 	var name string
 	var mtime int64
+
 	stmt, err := db.Prepare("select name,mtime from files where dirID=? and deleted=0")
 	if err != nil {
 		fmt.Printf("GetSQLFiles prepare of select failed: %s\n", err)
 	}
+	defer stmt.Close()
+
 	rows, err := stmt.Query(dirID)
 	if err != nil {
 		fmt.Printf("GetSQLFiles query failed: %s\n", err)
 	}
+	defer rows.Close()
 	for rows.Next() {
 		rows.Scan(&name, &mtime)
 		fileMap[name] = mtime
@@ -117,6 +136,7 @@ func SetSQLSeen(db *sql.DB, fmap map[string]int64, dirID int64) {
 	//	tx,_ := db.Begin()
 	update := fmt.Sprintf("update files set last_seen=%d where name=? and dirID=%d and deleted=0 and ctime=?", now, dirID)
 	stmt, _ := db.Prepare(update)
+	defer stmt.Close()
 	for i, _ := range fmap {
 		//		log.Printf("file = %v dirID=%d\n",i,dirID)
 		stmt.Exec(i, fmap[i])
@@ -129,11 +149,12 @@ func SetSQLDeleted(db *sql.DB, now int64) {
 	if err != nil {
 		log.Println(err)
 	}
+	defer stmt.Close()
+
 	stmt.Exec(now)
 }
 
 func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, error) {
-
 	var dirID int64
 
 	dirID = -1
@@ -157,6 +178,7 @@ func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, 
 		result, err := stmt.Exec(value)
 		dirID, err = result.LastInsertId()
 	}
+	defer stmt.Close()
 	return dirID, err
 }
 
@@ -184,7 +206,6 @@ func GetDBSize(DataBaseName string) int64 {
 	if err != nil {
 		log.Printf("couldn't open file %s with ERROR: %s\n", DataBaseName, err)
 	}
-
 	return fi.Size()
 }
 
