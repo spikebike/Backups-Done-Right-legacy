@@ -110,7 +110,7 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	// if we have not seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db, start)
 	// shutdown database, make a copy, open it, backup copy of db
-	db,_ = bdrsql.BackupDB(db,dataBaseName)
+	db, _ = bdrsql.BackupDB(db,dataBaseName)
 
 	bytes := bdrsql.GetDBSize(dataBaseName)
 	if bytes > 1048576 {
