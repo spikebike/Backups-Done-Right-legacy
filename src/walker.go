@@ -179,8 +179,8 @@ func main() {
 	// shutdown database, make a copy, open it, backup copy of db
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
-	for i:=0;i<pool;i++ {
-		go bdrupload.Server(upchan, done)
+	for i:=0; i<pool ;i++ {
+		go bdrupload.Uploader(upchan, done)
 	}
 	// send all files to be uploaded to server.
 	bdrsql.SQLUpload(db, upchan)

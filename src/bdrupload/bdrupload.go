@@ -24,7 +24,7 @@ var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
 
 const bufferSize = 524288
 
-func Server(upchan chan *Upchan_t, done chan bool) {
+func Uploader(upchan chan *Upchan_t, done chan bool) {
 	var count int
 	var size int64
 	readBuffer := make([]byte, bufferSize)
@@ -63,6 +63,6 @@ func Server(upchan chan *Upchan_t, done chan bool) {
 		fmt.Printf("%x %s %4.2f MB/sec\n", h.Sum(nil), f.Path, float64(size)/(1024*1024*seconds))
 
 	}
-	fmt.Print("Server: Channel closed, existing\n")
+	fmt.Print("Server: Channel closed\n")
 	done <- true
 }
