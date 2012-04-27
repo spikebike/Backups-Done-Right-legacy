@@ -11,12 +11,16 @@ import (
 	//	"syscall"
 	"fmt"
 	"time"
+	"runtime"
 	"./bdrsql"
 	"./mystructs"
 	"./upload"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+const pool = 8
+
 
 var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
@@ -132,6 +136,9 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 //}
 
 func main() {
+
+	runtime.GOMAXPROCS(pool) 
+
 	flag.Parse()
 
 	log.Printf("loading config file from %s\n", *configFile)
@@ -172,8 +179,15 @@ func main() {
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 	// shutdown database, make a copy, open it, backup copy of db
-	db, _ = bdrsql.BackupDB(db,dataBaseName)
+	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
+	go upload.Server(upchan)
+	go upload.Server(upchan)
+	go upload.Server(upchan)
+	go upload.Server(upchan)
+	go upload.Server(upchan)
+	go upload.Server(upchan)
+	go upload.Server(upchan)
 	go upload.Server(upchan)
 	// send all files to be uploaded to server.
 	bdrsql.SQLUpload(db, upchan)
