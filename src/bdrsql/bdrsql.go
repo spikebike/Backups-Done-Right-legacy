@@ -99,7 +99,8 @@ func SQLUpload(db *sql.DB, UpChan chan *mystructs.Upchan_t) error {
 	var olddirID int64
 	var name string
 	var dir string
-	var record mystructs.Upchan_t
+	var recptr *mystructs.Upchan_t
+
 	rows, err := db.Query("select name, id, dirID from files where do_upload = 1")
 	if err != nil {
 		fmt.Printf("GetSQLToUpload query failed: %s\n", err)
@@ -114,10 +115,11 @@ func SQLUpload(db *sql.DB, UpChan chan *mystructs.Upchan_t) error {
 		}
 		fullpath := filepath.Join(dir,name)
 		// send fullpath and rowID to channel
-		record.Rowid=rowID
-		record.Path=fullpath
-		UpChan <- &record
-		log.Printf("fp=%s",fullpath)
+		recptr=make(mystructs.Upchan_t)
+		recptr.Rowid=rowID
+		recptr.Path=fullpath
+		log.Printf("sending %s",fullpath)
+		UpChan <- recptr
 	}
 	return nil
 }

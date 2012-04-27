@@ -182,6 +182,6 @@ func main() {
 	} else {
 		log.Printf("walking successfully finished")
 	}
-
+	time.Sleep(1000*1000*1000*100)
 	log.Printf("walking took: %v\n", duration)
 }
