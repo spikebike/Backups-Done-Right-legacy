@@ -91,12 +91,13 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 	return err
 }
 
-struct SendF {
-	rowid int64
-	pathname string
+
+type upchan_t struct {
+	rowid int
+	path string
 }
 
-func SQLUpload(db *sql.DB, UpChan chan SendF) error {
+func SQLUpload(db *sql.DB, UpChan chan *upchan_t) error {
 	var rowID int64
 	var dirID int64
 	var olddirID int64

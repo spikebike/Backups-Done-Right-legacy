@@ -126,14 +126,9 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	return nil
 }
 
-struct SendF {
-		rowid int64
-		pathname string
-}
-
-func server(UpChan chan string, done chan bool) {
-	for dirID, name := range UpChan {
-		fmt.Printf("Server: received dirID=%d name=%s\n",dirID,name)
+func server(upchan chan *upchan_t) {
+	for f := range upchan {
+		fmt.Printf("Server: received rowID=%d path=%s\n",f.rowID,f.path)
 	}
 	fmt.Print("Server: Channel closed, existing\n")
 }
@@ -180,9 +175,8 @@ func main() {
 	duration := t1.Sub(t0)
 	// shutdown database, make a copy, open it, backup copy of db
 	db, _ = bdrsql.BackupDB(db,dataBaseName)
-	UpChan := make(chan SendF,100)
-	go UpServer(Upchan chan SendF)
-	bdrsql.SQLUpload(db, UpChan)
+	go server(upchan)
+	bdrsql.SQLUpload(db, upchan)
 	if err != nil {
 		log.Printf("walking didn't finished successfully. Error: %s", err)
 	} else {
