@@ -58,7 +58,7 @@ func Server(upchan chan *Upchan_t, done chan bool) {
 			h.Write(ciphertext[:count])
 		}
 		t1 := time.Now().UnixNano()
-		close(file)
+		file.Close()
 		seconds := float64(t1-t0) / 1000000000
 		fmt.Printf("%x %s %4.2f MB/sec\n", h.Sum(nil), f.Path, float64(size)/(1024*1024*seconds))
 
