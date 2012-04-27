@@ -92,10 +92,10 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 }
 
 
-type upchan_t struct {
-	rowid int
-	path string
-}
+//type upchan_t struct {
+//	rowid int
+//	path string
+//}
 
 func SQLUpload(db *sql.DB, UpChan chan *upchan_t) error {
 	var rowID int64

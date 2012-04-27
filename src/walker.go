@@ -128,7 +128,7 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 
 func server(upchan chan *upchan_t) {
 	for f := range upchan {
-		fmt.Printf("Server: received rowID=%d path=%s\n",f.rowID,f.path)
+		fmt.Printf("Server: received rowID=%d path=%s\n",f.rowid,f.path)
 	}
 	fmt.Print("Server: Channel closed, existing\n")
 }
