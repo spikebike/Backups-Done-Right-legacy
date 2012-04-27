@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"../mystructs"
+	"../bdrupload"
 	"syscall"
 	"time"
 )
@@ -93,7 +93,7 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 }
 
 
-func SQLUpload(db *sql.DB, UpChan chan *mystructs.Upchan_t) error {
+func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t) error {
 	var rowID int64
 	var dirID int64
 	var olddirID int64
@@ -114,7 +114,7 @@ func SQLUpload(db *sql.DB, UpChan chan *mystructs.Upchan_t) error {
 		}
 		fullpath := filepath.Join(dir,name)
 		// send fullpath and rowID to channel
-		recptr:=&mystructs.Upchan_t{}
+		recptr:=&bdrupload.Upchan_t{}
 		recptr.Rowid=rowID
 		recptr.Path=fullpath
 		log.Printf("sending %s",fullpath)

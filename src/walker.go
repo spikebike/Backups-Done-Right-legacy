@@ -12,7 +12,7 @@ import (
 	"time"
 	"runtime"
 	"./bdrsql"
-	"./mystructs"
+	"./bdrupload"
 	"./upload"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
@@ -23,8 +23,8 @@ var (
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 	debug      = flag.Bool("debug", false, "activates debug mode")
 
-	upchan = make(chan *mystructs.Upchan_t, 100)
-	downchan = make(chan *mystructs.Downchan_t, 100)
+	upchan = make(chan *bdrupload.Upchan_t, 100)
+	downchan = make(chan *bdrupload.Downchan_t, 100)
 )
 
 func checkPath(dirArray []string, dir string) bool {

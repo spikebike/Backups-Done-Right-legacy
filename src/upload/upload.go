@@ -1,7 +1,7 @@
 package upload
 
 import (
-	"../mystructs"
+	"../bdrupload"
 	"bufio"
 	"crypto/sha256"
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func Server(upchan chan *mystructs.Upchan_t) {
+func Server(upchan chan *bdrupload.Upchan_t) {
 	var count int
 	var size int64
 	buffer := make([]byte, 16384)
