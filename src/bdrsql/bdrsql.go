@@ -91,48 +91,29 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 	return err
 }
 
-func GetSQLToUpload(db *sql.DB) (fullpaths []string, rowids []int64) {
-	var i int64 = 0
-	var entries int64
-
-	rows, err := db.Query("select count(1) from files") // how many IDs will we get?
-	if err != nil {
-		fmt.Printf("GetSQLIDsToUpload query failed: %s\n", err)
-	}
-	for rows.Next() {
-		rows.Scan(&entries)
-	}
-	rows.Close()
-
-	names := make([]string, entries)
-	dirIDs := make([]int64, entries)
-	rowIDs := make([]int64, entries)
-	fullpaths = make([]string, entries)
-
-	rows, err = db.Query("select name, id, dirID from files where do_upload = 1")
+func SQLUpload(db *sql.DB ) error {
+	var rowID int64
+	var dirID int64
+	var olddirID int64
+	var name string
+	var dir string
+	rows, err := db.Query("select name, id, dirID from files where do_upload = 1")
 	if err != nil {
 		fmt.Printf("GetSQLToUpload query failed: %s\n", err)
 	}
 	defer rows.Close()
-	i = 0
+	olddirID=-1
 	for rows.Next() {
-		rows.Scan(&names[i], &rowIDs[i], &dirIDs[i])
-		i++
+		rows.Scan(&name, &rowID, &dirID)
+		if dirID != olddirID {
+			dir, err = GetDir(db, dirID)
+			olddirID = dirID
+		}
+		fullpath := filepath.Join(dir,name)
+		// send fullpath and rowID to channel
+		log.Printf("fp=",fullpath)
 	}
-
-	stmt, err := db.Prepare("select path from dirs where id = ?")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer stmt.Close()
-
-	i = 0
-	for i, _ := range rowIDs {
-		err = stmt.QueryRow(rowIDs[i]).Scan(&fullpaths[i])
-		fullpaths[i] = fullpaths[i] + string(filepath.Separator) + names[i]
-	}
-
-	return fullpaths, rowIDs
+	return nil
 }
 
 func GetSQLFiles(db *sql.DB, dirID int64) map[string]int64 {
@@ -180,6 +161,14 @@ func SetSQLDeleted(db *sql.DB, now int64) {
 
 	stmt.Exec(now)
 }
+
+func GetDir(db *sql.DB, dirID int64) (string, error) {
+		var dirname string
+		stmt,_ := db.Prepare("select path from dirs where id=?")
+		err := stmt.QueryRow(dirID).Scan(&dirname)
+		return dirname, err
+}
+
 
 func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, error) {
 	var dirID int64
