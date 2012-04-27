@@ -92,8 +92,7 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 	return err
 }
 
-
-func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t) error {
+func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t, debug bool) error {
 	var rowID int64
 	var dirID int64
 	var olddirID int64
@@ -117,7 +116,9 @@ func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t) error {
 		recptr:=&bdrupload.Upchan_t{}
 		recptr.Rowid=rowID
 		recptr.Path=fullpath
-		log.Printf("sending %s",fullpath)
+		if debug == true {
+			log.Printf("sending %s",fullpath)
+		}
 		UpChan <- recptr
 	}
 	close(UpChan)

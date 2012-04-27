@@ -175,21 +175,21 @@ func main() {
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 	log.Printf("walking took: %v\n", duration)
+	if err != nil {
+		log.Printf("walking didn't finished successfully. Error: %s", err)
+	} else {
+		log.Printf("walking successfully finished")
+	}
 
 	// shutdown database, make a copy, open it, backup copy of db
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
 	for i:=0; i<pool ;i++ {
-		go bdrupload.Uploader(upchan, done)
+		go bdrupload.Uploader(upchan, done, *debug)
 	}
 	// send all files to be uploaded to server.
-	bdrsql.SQLUpload(db, upchan)
+	bdrsql.SQLUpload(db, upchan, *debug)
 	for i:=0;i<pool;i++ {
 		<- done
-	}
-	if err != nil {
-		log.Printf("walking didn't finished successfully. Error: %s", err)
-	} else {
-		log.Printf("walking successfully finished")
 	}
 }
