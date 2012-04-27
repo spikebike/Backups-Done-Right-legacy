@@ -136,7 +136,7 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	pool, err = configF.Int("Client", "cpu_cores")
+	pool, err = configF.Int("Client", "threads")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
