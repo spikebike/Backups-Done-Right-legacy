@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"time"
 	"./bdrsql"
+	"./mystructs"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -21,14 +22,9 @@ var (
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 	debug      = flag.Bool("debug", false, "activates debug mode")
 
-	upchan = make(chan *upchan_t, 100)
+	upchan = make(chan *mystructs.Upchan_t, 100)
 	downchan = make(chan *downchan_t, 100)
 )
-
-type upchan_t struct {
-	rowid int
-	path string
-}
 
 type downchan_t struct {
 	rowid int
@@ -126,7 +122,7 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	return nil
 }
 
-func server(upchan chan *upchan_t) {
+func server(upchan chan *mystructs.Upchan_t) {
 	for f := range upchan {
 		fmt.Printf("Server: received rowID=%d path=%s\n",f.rowid,f.path)
 	}
