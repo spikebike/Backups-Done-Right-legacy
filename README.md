@@ -59,7 +59,7 @@ Then, edit the config file to your needs.
 
 You do also need certificates for the SSL encryption:
 
-	$ cd Backups-Done-Right/src
+	$ cd Backups-Done-Right/src/scripts
 	$ ./makecerts <your_email_address>
 
 
