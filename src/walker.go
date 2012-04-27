@@ -53,6 +53,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 	dDir = 0
 	start := time.Now().Unix()
 	dirArray := strings.Split(dirList, " ")
+	excludeArray := strings.Split(excludeList, " ")
 	i = 0
 	for i < len(dirArray) {
 		dirname = dirArray[i]
@@ -93,9 +94,12 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 				dirC++ //track directories per backup
 				dDir++ //track subdirs per directory
 				fullpath := filepath.Join(dirname, f.Name())
-				// avoid an infinite loop 
-				if !checkPath(dirArray, fullpath) {
-					dirArray = append(dirArray, fullpath)
+
+				for _, entry := range excludeArray {
+					// avoid an infinite loop 
+					if !checkPath(dirArray, fullpath) && !strings.Contains(fullpath, entry){
+						dirArray = append(dirArray, fullpath)
+					}
 				}
 			}
 		}
