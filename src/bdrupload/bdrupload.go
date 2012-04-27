@@ -47,7 +47,7 @@ func Server(upchan chan *Upchan_t, done chan bool) {
 		// for this file create a cipher and new sha256 state
 		cfb := cipher.NewCFBEncrypter(c, commonIV)
 		h := sha256.New() // h is a hash.Hash
-
+		// time how long to read, encrypt, and checksum a file
 		t0 := time.Now().UnixNano()
 		for {
 			if count, err = reader.Read(readBuffer); err != nil {
@@ -58,6 +58,7 @@ func Server(upchan chan *Upchan_t, done chan bool) {
 			h.Write(ciphertext[:count])
 		}
 		t1 := time.Now().UnixNano()
+		close(file)
 		seconds := float64(t1-t0) / 1000000000
 		fmt.Printf("%x %s %4.2f MB/sec\n", h.Sum(nil), f.Path, float64(size)/(1024*1024*seconds))
 
