@@ -20,9 +20,12 @@ var (
 		"create index ctimeindex on files (ctime)",
 		"create index pathindex on dirs (path)",
 	}
+
+	debug bool
 )
 
-func Init_db(dataBaseName string, newDB bool, debug bool) (db *sql.DB, err error) {
+func Init_db(dataBaseName string, newDB bool, dbg bool) (db *sql.DB, err error) {
+	debug = dbg
 	if newDB == true {
 		// rm dataBaseName*  (all backups)
 		fps, _ := filepath.Glob(dataBaseName + "*")
@@ -81,7 +84,7 @@ func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
 	return db2, err
 }
 
-func CreateBDRTables(db *sql.DB, debug bool) error {
+func CreateBDRTables(db *sql.DB) error {
 	var err error
 	for _, sql := range sqls {
 		_, err = db.Exec(sql)
@@ -92,7 +95,7 @@ func CreateBDRTables(db *sql.DB, debug bool) error {
 	return err
 }
 
-func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t, debug bool) error {
+func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t) error {
 	var rowID int64
 	var dirID int64
 	var olddirID int64
@@ -192,7 +195,10 @@ func GetSQLID(db *sql.DB, tablename string, field string, value string) (int64, 
 	}
 	err = stmt.QueryRow(value).Scan(&dirID)
 	if err != nil {
-		log.Printf("GetSQLID: missing %s, error %s\n", value, err)
+		if debug == true {
+			log.Printf("GetSQLID: missing %s, error %s\n", value, err)
+		}
+
 
 		insert := "insert into " + tablename + "(" + field + ") values(?);"
 		stmt, err := db.Prepare(insert)

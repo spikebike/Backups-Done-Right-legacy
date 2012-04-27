@@ -101,8 +101,10 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string, debug bool) erro
 		// All files that we've seen, set last_seen
 		t1 := time.Now().UnixNano()
 		bdrsql.SetSQLSeen(db, Fmap, dirID)
-		t2 := time.Now().UnixNano()
-		fmt.Printf("files=%d dirs=%d duration=%dms\n", dFile, dDir, (t2-t1)/1000000)
+		if debug == true {
+			t2 := time.Now().UnixNano()
+			fmt.Printf("files=%d dirs=%d duration=%dms\n", dFile, dDir, (t2-t1)/1000000)
+		}
 		i++
 	}
 	// if we have not seen the files since start it must have been deleted.
@@ -156,7 +158,7 @@ func main() {
 		log.Printf("opened database %v\n", db)
 	}
 
-	err = bdrsql.CreateBDRTables(db, *debug)
+	err = bdrsql.CreateBDRTables(db)
 	if err != nil {
 		log.Printf("couldn't create tables: %s", err)
 	} else {
@@ -186,7 +188,7 @@ func main() {
 	// send all files to be uploaded to server.
 
 	log.Printf("started sending files to uploaders...\n")
-	bdrsql.SQLUpload(db, upchan, *debug)
+	bdrsql.SQLUpload(db, upchan)
 	for i:=0;i<pool;i++ {
 		<- done
 	}
