@@ -106,14 +106,7 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	// if we have not seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db, start)
 
-	bytes := bdrsql.GetDBSize(dataBaseName)
-	if bytes > 1048576 {
-		log.Printf("size of the database: %1.1f MB\n", float64(bytes)/1024/1024)
-	} else {
-		log.Printf("size of the database: %1.1f KB\n", float64(bytes)/1024)
-	}
-
-	log.Printf("Scanned %d files %d and %d directories\n", fileC, dirC)
+	log.Printf("Scanned %d files and %d directories\n", fileC, dirC)
 	log.Printf("%d files scheduled for backup\n", backupFileC)
 
 	return nil
@@ -184,10 +177,13 @@ func main() {
 	// shutdown database, make a copy, open it, backup copy of db
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
-	for i:=0; i<pool ;i++ {
+	for i := 0; i<pool; i++ {
 		go bdrupload.Uploader(upchan, done, *debug)
 	}
+	log.Printf("startet %d uploaders\n", pool)
 	// send all files to be uploaded to server.
+
+	log.Printf("start sending files to uploaders...\n");
 	bdrsql.SQLUpload(db, upchan, *debug)
 	for i:=0;i<pool;i++ {
 		<- done
