@@ -171,12 +171,12 @@ func main() {
 	err = backupDir(db, dirList, dataBaseName, *debug)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
-	log.Printf("walking took: %v\n", duration)
 	if err != nil {
 		log.Printf("walking didn't finished successfully. Error: %s", err)
 	} else {
 		log.Printf("walking successfully finished")
 	}
+	log.Printf("walking took: %v\n", duration)
 
 	// shutdown database, make a copy, open it, backup copy of db
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
