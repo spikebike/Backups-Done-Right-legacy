@@ -95,9 +95,9 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 				dDir++ //track subdirs per directory
 				fullpath := filepath.Join(dirname, f.Name())
 
-				for _, entry := range excludeArray {
+				for _, excludeEntry := range excludeArray {
 					// avoid an infinite loop 
-					if !checkPath(dirArray, fullpath) && !strings.Contains(fullpath, entry){
+					if !checkPath(dirArray, fullpath) && !strings.Contains(fullpath, excludeEntry){
 						dirArray = append(dirArray, fullpath)
 					}
 				}
