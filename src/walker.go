@@ -13,6 +13,7 @@ import (
 	"time"
 	"./bdrsql"
 	"./mystructs"
+	"./upload"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -23,7 +24,7 @@ var (
 	debug      = flag.Bool("debug", false, "activates debug mode")
 
 	upchan = make(chan *mystructs.Upchan_t, 100)
-	downchan = make(chan *downchan_t, 100)
+	downchan = make(chan *mystructs.Downchan_t, 100)
 )
 
 type downchan_t struct {
@@ -122,13 +123,13 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	return nil
 }
 
-func server(upchan chan *mystructs.Upchan_t) {
-	for f := range upchan {
-		fmt.Printf("Server: received rowID=%d path=%s\n",f.Rowid,f.Path)
+//func server(upchan chan *mystructs.Upchan_t) {
+//	for f := range upchan {
+//		fmt.Printf("Server: received rowID=%d path=%s\n",f.Rowid,f.Path)
 //		fmt.Printf("%T %#v\n",f,f)
-	}
-	fmt.Print("Server: Channel closed, existing\n")
-}
+//	}
+//	fmt.Print("Server: Channel closed, existing\n")
+//}
 
 func main() {
 	flag.Parse()
@@ -172,7 +173,9 @@ func main() {
 	duration := t1.Sub(t0)
 	// shutdown database, make a copy, open it, backup copy of db
 	db, _ = bdrsql.BackupDB(db,dataBaseName)
-	go server(upchan)
+	// launch server to receive uploads
+	go upload.Server(upchan)
+	// send all files to be uploaded to server.
 	bdrsql.SQLUpload(db, upchan)
 	if err != nil {
 		log.Printf("walking didn't finished successfully. Error: %s", err)

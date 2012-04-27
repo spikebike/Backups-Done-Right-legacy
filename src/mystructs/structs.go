@@ -4,3 +4,9 @@ type Upchan_t struct {
 	Path string
 }
 
+type Downchan_t struct {
+	Rowid int
+	Err error
+}
+
+
