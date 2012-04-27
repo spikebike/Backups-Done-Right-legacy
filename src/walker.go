@@ -19,9 +19,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const pool = 8
-
-
 var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
@@ -136,9 +133,6 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 //}
 
 func main() {
-
-	runtime.GOMAXPROCS(pool) 
-
 	flag.Parse()
 
 	log.Printf("loading config file from %s\n", *configFile)
@@ -146,6 +140,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
+
+	pool, err := configF.Int("Client", "cpu_cores")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
+	runtime.GOMAXPROCS(pool)
 
 	dirList, err := configF.String("Client", "backup_dirs_secure")
 	if err != nil {
