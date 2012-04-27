@@ -37,7 +37,7 @@ func checkPath(dirArray []string, dir string) bool {
 	return false
 }
 
-func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
+func backupDir(db *sql.DB, dirList string, dataBaseName string, debug bool) error {
 	var dirname string
 	var i int
 	var fileC int64
@@ -59,7 +59,9 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 		dirID, err := bdrsql.GetSQLID(db, "dirs", "path", dirname)
 		// get a map for filename -> modified time
 		SQLmap := bdrsql.GetSQLFiles(db, dirID)
-		fmt.Printf("Scanning dir %s ", dirname)
+		if debug == true {
+			fmt.Printf("Scanning dir %s ", dirname)
+		}
 		d, err := os.Open(dirname)
 		if err != nil {
 			log.Printf("failed to open %s error : %s", dirname, err)
@@ -164,7 +166,7 @@ func main() {
 	log.Printf("backing up these directories: %s\n", dirList)
 	log.Printf("start walking...")
 	t0 := time.Now()
-	err = backupDir(db, dirList, dataBaseName)
+	err = backupDir(db, dirList, dataBaseName, *debug)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 	log.Printf("walking took: %v\n", duration)
@@ -180,12 +182,13 @@ func main() {
 	for i := 0; i<pool; i++ {
 		go bdrupload.Uploader(upchan, done, *debug)
 	}
-	log.Printf("startet %d uploaders\n", pool)
+	log.Printf("started %d uploaders\n", pool)
 	// send all files to be uploaded to server.
 
-	log.Printf("start sending files to uploaders...\n");
+	log.Printf("started sending files to uploaders...\n")
 	bdrsql.SQLUpload(db, upchan, *debug)
 	for i:=0;i<pool;i++ {
 		<- done
 	}
+	log.Printf("uploading successfully finished\n")
 }
