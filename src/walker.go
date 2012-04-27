@@ -13,7 +13,6 @@ import (
 	"runtime"
 	"./bdrsql"
 	"./bdrupload"
-	"./upload"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -181,7 +180,7 @@ func main() {
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
 	for i:=0;i<pool;i++ {
-		go upload.Server(upchan, done)
+		go bdrupload.Server(upchan, done)
 	}
 	// send all files to be uploaded to server.
 	bdrsql.SQLUpload(db, upchan)
