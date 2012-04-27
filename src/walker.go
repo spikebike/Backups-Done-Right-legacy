@@ -155,7 +155,7 @@ func main() {
 	if err != nil {
 		log.Printf("could not open %s, error: %s", dataBaseName, err)
 	} else {
-		log.Printf("opened database %v\n", db)
+		log.Printf("opened database %v\n", dataBaseName)
 	}
 
 	err = bdrsql.CreateBDRTables(db)
