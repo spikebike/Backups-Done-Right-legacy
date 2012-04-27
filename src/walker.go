@@ -37,7 +37,7 @@ func checkPath(dirArray []string, dir string) bool {
 	return false
 }
 
-func backupDir(db *sql.DB, dirList string, dataBaseName string, debug bool) error {
+func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName string, debug bool) error {
 	var dirname string
 	var i int
 	var fileC int64
@@ -145,6 +145,11 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
+	excludeList, err := configF.String("Client", "exclude_dirs")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
 	dataBaseName, err := configF.String("Client", "sql_file")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
@@ -168,7 +173,7 @@ func main() {
 	log.Printf("backing up these directories: %s\n", dirList)
 	log.Printf("start walking...")
 	t0 := time.Now()
-	err = backupDir(db, dirList, dataBaseName, *debug)
+	err = backupDir(db, dirList, excludeList, dataBaseName, *debug)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 	if err != nil {

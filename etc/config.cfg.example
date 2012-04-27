@@ -8,7 +8,8 @@
 [Client]
 private_key = /etc/bdr/client/private.key
 public_key = /etc/bdr/client/public.key
-backup_dirs_secure = /home/tectu/pictures
+backup_dirs_secure = /home/tectu/projects/jeyos
+exclude_dirs = /home/tectu/projects/.git
 backup_dirs_less_secure = /usr /lib /var
 threads = 4
 sql_file = fs-meta.sql
