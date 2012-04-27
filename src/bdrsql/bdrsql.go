@@ -120,6 +120,7 @@ func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t) error {
 		log.Printf("sending %s",fullpath)
 		UpChan <- recptr
 	}
+	close(UpChan)
 	return nil
 }
 

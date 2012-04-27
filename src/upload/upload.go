@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func Server(upchan chan *bdrupload.Upchan_t) {
+func Server(upchan chan *bdrupload.Upchan_t, done chan bool) {
 	var count int
 	var size int64
 	buffer := make([]byte, 16384)
@@ -35,4 +35,5 @@ func Server(upchan chan *bdrupload.Upchan_t) {
 
 	}
 	fmt.Print("Server: Channel closed, existing\n")
+	done <- true
 }

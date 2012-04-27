@@ -22,9 +22,11 @@ var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 	debug      = flag.Bool("debug", false, "activates debug mode")
+	pool int
 
 	upchan = make(chan *bdrupload.Upchan_t, 100)
 	downchan = make(chan *bdrupload.Downchan_t, 100)
+	done = make(chan bool)
 )
 
 func checkPath(dirArray []string, dir string) bool {
@@ -135,7 +137,7 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	pool, err := configF.Int("Client", "cpu_cores")
+	pool, err = configF.Int("Client", "cpu_cores")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
@@ -178,21 +180,17 @@ func main() {
 	// shutdown database, make a copy, open it, backup copy of db
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
-	go upload.Server(upchan)
-	go upload.Server(upchan)
-	go upload.Server(upchan)
-	go upload.Server(upchan)
-	go upload.Server(upchan)
-	go upload.Server(upchan)
-	go upload.Server(upchan)
-	go upload.Server(upchan)
+	for i:=0;i<pool;i++ {
+		go upload.Server(upchan, done)
+	}
 	// send all files to be uploaded to server.
 	bdrsql.SQLUpload(db, upchan)
+	for i:=0;i<pool;i++ {
+		<- done
+	}
 	if err != nil {
 		log.Printf("walking didn't finished successfully. Error: %s", err)
 	} else {
 		log.Printf("walking successfully finished")
 	}
-
-	time.Sleep(1000*1000*1000*100)
 }
