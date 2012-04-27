@@ -48,11 +48,13 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 	var dirname string
 	var i int
 	var fileC int64
+	var backupFileC int64
 	var dirC int64
 	var dFile int64
 	var dDir int64
 	fileC = 0
 	dirC = 0
+	backupFileC = 0
 	dFile = 0
 	dDir = 0
 	start := time.Now().Unix()
@@ -88,6 +90,7 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 					Fmap[f.Name()] = f.ModTime().Unix()
 				} else {
 					// log.Printf("backup needed for %s \n",f.Name())
+					backupFileC++
 					bdrsql.InsertSQLFile(db, f, dirID)
 				}
 			} else { // is directory
@@ -119,7 +122,8 @@ func backupDir(db *sql.DB, dirList string, dataBaseName string) error {
 		log.Printf("size of the database: %1.1f KB\n", float64(bytes)/1024)
 	}
 
-	log.Printf("TOTAL files: %d directories: %d\n", fileC, dirC)
+	log.Printf("Scanned %d files %d and %d directories\n", fileC, dirC)
+	log.Printf("%d files scheduled for backup\n", backupFileC)
 
 	return nil
 }
