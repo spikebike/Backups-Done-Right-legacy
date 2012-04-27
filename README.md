@@ -27,14 +27,14 @@ Backups-Done-Right does have two project maintainers:
 
 ## Build
 
-Backups Done Right depends on 3 external go packages that need to be installed:
+Backups Done Right depends on 3 external go packages that need to be installed.  Set GOPKG to where you want them installed.  Something like export GOPKG=/home/JoeUser/gopkg.  DO *NOT* use ~/gopkg.  To install the dependencies:
 
 goconfig - to install, simply run:
 
-	$ go get github.com/kless/goconfig/gonfig
+	$ go get github.com/kless/goconfig/config
 
 
-go-sqlite3 - to install, simply run:
+go-sqlite3 - This requires the sqlite and sql-dev packages to be installed already.  To install, simply run:
 
 	$ go get github.com/mattn/go-sqlite3
 
