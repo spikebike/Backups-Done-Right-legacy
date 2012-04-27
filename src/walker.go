@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	//	"syscall"
 	"fmt"
 	"time"
 	"runtime"
@@ -27,11 +26,6 @@ var (
 	upchan = make(chan *mystructs.Upchan_t, 100)
 	downchan = make(chan *mystructs.Downchan_t, 100)
 )
-
-type downchan_t struct {
-	rowid int
-	err error
-}
 
 func checkPath(dirArray []string, dir string) bool {
 	for _, i := range dirArray {
