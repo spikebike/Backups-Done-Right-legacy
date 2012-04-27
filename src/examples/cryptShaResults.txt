@@ -1,0 +1,25 @@
+
+Device: homebrew
+CPU: Intel Xeon X3450 @ 2.67 GHz/Lynnfield core
+GPU: ATI Radeon 6850
+RAM: 8GB DDRIII
+Disk: WD Green 1TB (WD10EACS)
+
+1 core,           43.17 seconds, 23MB/sec.
+2 cores,          22.98 seconds, 44MB/sec
+4 cores,          13.80 seconds, 74MB/sec
+8 thread/4 cores, 12.68 seconds, 80MB/sec
+
+Device: Quad socket Opteron 6272
+RAM: 512GB DDRIII
+Disk: WD RE4 2TB
+
+1 core,  152.26 seconds,  13MB/sec
+2 cores,  74.75 seconds,  27MB/sec
+4 cores,  42.00 seconds,  48MB/sec
+8 cores,  23.71 seconds,  86MB/sec
+16 cores, 16.69 seconds, 122MB/sec
+32 cores, 11.05 seconds, 185MB/sec
+64 cores,  9.67 seconds, 211MB/sec
+
+
