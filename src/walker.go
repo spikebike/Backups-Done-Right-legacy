@@ -13,6 +13,7 @@ import (
 	"runtime"
 	"./bdrsql"
 	"./bdrupload"
+	"path/filepath"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -91,7 +92,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 			} else { // is directory
 				dirC++ //track directories per backup
 				dDir++ //track subdirs per directory
-				fullpath := dirname + "/" + f.Name()
+				fullpath := filepath.Join(dirname, f.Name())
 				// avoid an infinite loop 
 				if !checkPath(dirArray, fullpath) {
 					dirArray = append(dirArray, fullpath)
