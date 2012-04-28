@@ -22,11 +22,13 @@ var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
 	debug      = flag.Bool("debug", false, "activates debug mode")
-	pool int
+	pool_flag  = flag.Int("threads", 0, "overwrites threads in [Client] section in config.cfg")
 
 	upchan = make(chan *bdrupload.Upchan_t, 100)
 	downchan = make(chan *bdrupload.Downchan_t, 100)
 	done = make(chan bool)
+
+	pool int
 )
 
 func checkPath(dirArray []string, dir string) bool {
@@ -138,9 +140,14 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	pool, err = configF.Int("Client", "threads")
+	pool_config, err := configF.Int("Client", "threads")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
+	}
+	if *pool_flag != 0 {
+		pool = *pool_flag
+	} else {
+		pool = pool_config
 	}
 
 	runtime.GOMAXPROCS(pool)
