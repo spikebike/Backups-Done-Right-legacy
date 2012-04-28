@@ -123,14 +123,6 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 	return nil
 }
 
-//func server(upchan chan *mystructs.Upchan_t) {
-//	for f := range upchan {
-//		fmt.Printf("Server: received rowID=%d path=%s\n",f.Rowid,f.Path)
-//		fmt.Printf("%T %#v\n",f,f)
-//	}
-//	fmt.Print("Server: Channel closed, existing\n")
-//}
-
 func main() {
 	flag.Parse()
 
