@@ -32,10 +32,12 @@ var (
 )
 
 func checkPath(dirArray []string, excludeArray []string, dir string) bool {
+	if excludeArray != nil {
 	for _, j := range excludeArray {
 		if strings.Contains(dir, j) {
 			return true
 		}
+	}
 	}
 	for _, i := range dirArray {
 			if i == dir {
@@ -53,6 +55,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 	var dirC int64
 	var dFile int64
 	var dDir int64
+	var excludeArray []string
 	fileC = 0
 	dirC = 0
 	backupFileC = 0
@@ -60,7 +63,11 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 	dDir = 0
 	start := time.Now().Unix()
 	dirArray := strings.Split(dirList, " ")
-	excludeArray := strings.Split(excludeList, " ")
+	if excludeList != "" {
+		excludeArray = strings.Split(excludeList, " ")
+	} else {
+		excludeArray = nil
+	}
 	i = 0
 	for i < len(dirArray) {
 		dirname = dirArray[i]
