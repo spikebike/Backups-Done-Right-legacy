@@ -31,9 +31,14 @@ var (
 	pool int
 )
 
-func checkPath(dirArray []string, dir string) bool {
+func checkPath(dirArray []string, excludeArray []string, dir string) bool {
+	for _, j := range excludeArray {
+		if strings.Contains(dir, j) {
+			return true
+		}
+	}
 	for _, i := range dirArray {
-		if i == dir {
+			if i == dir {
 			return true
 		}
 	}
@@ -97,11 +102,8 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 				dDir++ //track subdirs per directory
 				fullpath := filepath.Join(dirname, f.Name())
 
-				for _, excludeEntry := range excludeArray {
-					// avoid an infinite loop 
-					if !checkPath(dirArray, fullpath) && !strings.Contains(fullpath, excludeEntry){
-						dirArray = append(dirArray, fullpath)
-					}
+				if !checkPath(dirArray, excludeArray, fullpath) {
+					dirArray = append(dirArray, fullpath)
 				}
 			}
 		}
