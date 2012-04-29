@@ -9,7 +9,6 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 * very fast filesystem walker
 * posibility to run more than one fs walker at once (huge speed increasing on multi HDD systems)
 * simple configuration - just one config file
-* P2P - allows to have one server and multiple clients
 * simple installation (static linked build)
 * restores with permissions, symlinks etc.
 * open source - be sure that nobody gets your data
