@@ -21,7 +21,7 @@ import (
 var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
-	debug      = flag.Bool("debug", false, "activates debug mode")
+	dbg        = flag.Bool("debug", false, "activates debug mode")
 	pool_flag  = flag.Int("threads", 0, "overwrites threads in [Client] section in config.cfg")
 
 	upchan = make(chan *bdrupload.Upchan_t, 100)
@@ -29,6 +29,7 @@ var (
 	done = make(chan bool)
 
 	pool int
+	debug bool
 )
 
 func checkPath(dirArray []string, excludeArray []string, dir string) bool {
@@ -45,7 +46,7 @@ func checkPath(dirArray []string, excludeArray []string, dir string) bool {
 	return false
 }
 
-func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName string, debug bool) error {
+func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName string) error {
 	var dirname string
 	var i int
 	var fileC int64
@@ -132,6 +133,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 
 func main() {
 	flag.Parse()
+	debug = *dbg
 
 	log.Printf("loading config file from %s\n", *configFile)
 	configF, err := config.ReadDefault("../etc/config.cfg")
@@ -166,7 +168,7 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	db, err := bdrsql.Init_db(dataBaseName, *newDB, *debug)
+	db, err := bdrsql.Init_db(dataBaseName, *newDB, debug)
 	if err != nil {
 		log.Printf("could not open %s, error: %s", dataBaseName, err)
 	} else {
@@ -174,7 +176,7 @@ func main() {
 	}
 
 	err = bdrsql.CreateBDRTables(db)
-	if err != nil && *debug == true {
+	if err != nil && debug == true {
 		log.Printf("couldn't create tables: %s", err)
 	} else {
 		log.Printf("created tables\n")
@@ -183,7 +185,7 @@ func main() {
 	log.Printf("backing up these directories: %s\n", dirList)
 	log.Printf("start walking...")
 	t0 := time.Now()
-	err = backupDir(db, dirList, excludeList, dataBaseName, *debug)
+	err = backupDir(db, dirList, excludeList, dataBaseName)
 	t1 := time.Now()
 	duration := t1.Sub(t0)
 	if err != nil {
@@ -197,7 +199,7 @@ func main() {
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
 	for i := 0; i<pool; i++ {
-		go bdrupload.Uploader(upchan, done, *debug)
+		go bdrupload.Uploader(upchan, done, debug)
 	}
 	log.Printf("started %d uploaders\n", pool)
 	// send all files to be uploaded to server.
