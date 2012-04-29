@@ -165,7 +165,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
-	log.Printf("attempting to open %s", dataBaseName)
 
 	db, err := bdrsql.Init_db(dataBaseName, *newDB, *debug)
 	if err != nil {
