@@ -32,12 +32,10 @@ var (
 )
 
 func checkPath(dirArray []string, excludeArray []string, dir string) bool {
-	if excludeArray != nil {
 	for _, j := range excludeArray {
 		if strings.Contains(dir, j) {
 			return true
 		}
-	}
 	}
 	for _, i := range dirArray {
 			if i == dir {
