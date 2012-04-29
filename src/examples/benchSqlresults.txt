@@ -1,7 +1,7 @@
 
 In this file, you can add your result from running ./benchSql.sh
 
-This is just for fun, please also note your system specs:
+This is just for fun, please also note your system specs.
 
 --------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ Device: homebrew
 CPU: Intel Xeon X3450 @ 2.67 GHz/Lynnfield core
 GPU: ATI Radeon 6850
 RAM: 8GB DDRIII
-Disk: WD Green 1TB (WD10EACS)
+Disk: WD Green 3.5" 1TB (WD10EACS)
 
 10000 inserts,  20 inserts/commit in 39.4 seconds for   253.70 inserts/sec
 10000 inserts,  40 inserts/commit in 20.2 seconds for   494.77 inserts/sec
@@ -45,4 +45,18 @@ Disk: WD Green 1TB (WD10EACS)
 10000 inserts, 160 inserts/commit in  5.4 seconds for  1836.28 inserts/sec
 10000 inserts, 320 inserts/commit in  3.5 seconds for  2880.04 inserts/sec
 10000 inserts, 640 inserts/commit in  1.9 seconds for  5344.33 inserts/sec
+--------------------------------------------------------------------------
+
+Device: Thinkpad x61s
+CPU: Intel Core2Duo L7500 @ 1.60 GHz
+GPU: Intel Mobile GM965/GL960
+RAM: 3GB DDRII
+Disk: Samsung 2.5" SATA II 500GB (HM500JI)
+
+10000 inserts,  20 inserts/commit in 68.7 seconds for   145.64 inserts/sec
+10000 inserts,  40 inserts/commit in 39.9 seconds for   250.54 inserts/sec
+10000 inserts,  80 inserts/commit in 17.9 seconds for   559.90 inserts/sec
+10000 inserts, 160 inserts/commit in  9.9 seconds for  1013.42 inserts/sec
+10000 inserts, 320 inserts/commit in  5.7 seconds for  1750.06 inserts/sec
+10000 inserts, 640 inserts/commit in  2.8 seconds for  3560.89 inserts/sec
 --------------------------------------------------------------------------

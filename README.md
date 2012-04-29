@@ -27,6 +27,11 @@ Backups-Done-Right does have two project maintainers:
 
 ## Build
 
+Backups-Done-Right does require sqlite3 which is not a part of go or Backups-Done-Right itself. 
+Installing sqlite3 depends on your system. Therefore we cannot give you an installing howto. If you don't know how to install sqlite3 on your system, we recommend to use google to find out. Please not that you may need the development packages of sqlite3, for example, on debian: 
+
+	$ apt-get install libsqlite3-dev
+
 Backups Done Right depends on 3 external go packages that need to be installed.  Set GOPKG to where you want them installed.  Something like export GOPKG=/home/JoeUser/gopkg.  DO *NOT* use ~/gopkg.  To install the dependencies:
 
 goconfig - to install, simply run:
@@ -42,10 +47,6 @@ go-sqlite3 - This requires the sqlite and sql-dev packages to be installed alrea
 go-rpcgen - to install, simply run:
 
 	$ go get github.com/kylelemons/go-rpcgen/protoc-gen-go
-
-
-Please note that Backups-Done-Right does also require sqlite3 which is not a part of go or Backups-Done-Right itself. 
-Installing sqlite3 depends on your system. Therefor we cannot give you an installing howto. If you don't know how to install sqlite3 on your system, we recommend to use google to find out.
 
 
 ## Run
