@@ -13,7 +13,7 @@ import (
 // dd if=/dev/urandom of=test1 count=16384 bs=16384
 //
 // encrypt file
-// openssl enc -nopad -aes-256-cbc -K 129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31 -iv 000102030405060708090a0b0c0d0e0f -e -in test -out test-openssl.aes
+// openssl enc -nopad -aes-256-ctr -K 129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31 -iv 000102030405060708090a0b0c0d0e0f -e -in test -out test-openssl.aes
 // 
 // run go:
 // $ go run aes-test.go test test-go.aes
@@ -55,7 +55,7 @@ func main() {
 	cipherFile, err:= os.Create(os.Args[2])
 	writer := bufio.NewWriter(cipherFile)
 
-	cbc := cipher.NewCBCEncrypter(c, commonIV)
+	cbc := cipher.NewCTR(c, commonIV)
 	size = 0
 	for {
 		if count,err=reader.Read(readBuffer); err != nil {
@@ -63,11 +63,10 @@ func main() {
 				break
 		}
 		size=size+count
-		cbc.CryptBlocks(cipherBuffer[:count],readBuffer[:count])
+		cbc.XORKeyStream(cipherBuffer[:count],readBuffer[:count])
 		writer.Write(cipherBuffer[:count])
 	}
-	cbc.CryptBlocks(cipherBuffer[:count],readBuffer[:count])
-	writer.Write(cipherBuffer[:count])
+	fmt.Printf("count=%d\n",count)
 	fmt.Printf("size=%d\n",size)
 	writer.Flush()
 	plainFile.Close()
