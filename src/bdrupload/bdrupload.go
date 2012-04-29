@@ -56,7 +56,7 @@ func Uploader(upchan chan *Upchan_t, done chan bool, debug bool) {
 				break
 			}
 			size = size + int64(count)
-			cfb.XORKeyStream(ciphertext[:count], readBuffer[:count])
+			cfb.CryptBlocks(ciphertext[:count], readBuffer[:count])
 			h.Write(ciphertext[:count])
 		}
 		t1 := time.Now().UnixNano()
