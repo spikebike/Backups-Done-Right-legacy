@@ -21,7 +21,7 @@ import (
 var (
 	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
 	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
-	dbg        = flag.Bool("debug", false, "activates debug mode")
+	debug_flag = flag.Bool("debug", false, "activates debug mode")
 	pool_flag  = flag.Int("threads", 0, "overwrites threads in [Client] section in config.cfg")
 
 	upchan = make(chan *bdrupload.Upchan_t, 100)
@@ -133,7 +133,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 
 func main() {
 	flag.Parse()
-	debug = *dbg
+	debug = *debug_flag
 
 	log.Printf("loading config file from %s\n", *configFile)
 	configF, err := config.ReadDefault("../etc/config.cfg")

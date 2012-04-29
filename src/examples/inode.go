@@ -20,12 +20,12 @@ func main() {
 
 	fi, err := os.Lstat("foo")
 	if fi.Mode()&os.ModeSymlink != 0 {
-		fmt.Printf("we haave a link!!!\n")
+		fmt.Printf("we have a link!!!\n")
 	}
 
 	fi, err = os.Stat("inode.go")
 	if fi.Mode()&os.ModeSymlink != 0 {
-		fmt.Printf("we haave a link!!!\n")
+		fmt.Printf("we have a link!!!\n")
 	}
 	fmt.Printf("%T %#v\n", fi, fi)
 
