@@ -29,7 +29,8 @@ func Uploader(upchan chan *Upchan_t, done chan bool, debug bool) {
 	var size int64
 	readBuffer := make([]byte, bufferSize)
 	ciphertext := make([]byte, bufferSize)
-	key_text := "32o4908go293hohg98fh40ghaidlkjk1"
+//	key_text := "32o4908go293hohg98fh40ghaidlkjk1"
+	key_text := []byte{0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31}
 	c, err := aes.NewCipher([]byte(key_text))
 	if err != nil {
 		fmt.Printf("Error: NewCipher(%d bytes) = %s", len(key_text), err)
@@ -46,7 +47,7 @@ func Uploader(upchan chan *Upchan_t, done chan bool, debug bool) {
 		reader := bufio.NewReader(file)
 
 		// for this file create a cipher and new sha256 state
-		cfb := cipher.NewCFBEncrypter(c, commonIV)
+		cfb := cipher.NewCBCEncrypter(c, commonIV)
 		h := sha256.New() // h is a hash.Hash
 		// time how long to read, encrypt, and checksum a file
 		t0 := time.Now().UnixNano()

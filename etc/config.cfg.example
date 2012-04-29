@@ -8,7 +8,7 @@
 [Client]
 private_key = /etc/bdr/client/private.key
 public_key = /etc/bdr/client/public.key
-backup_dirs_secure = /home/tectu/projects/jeyos
+backup_dirs_secure = /home/bill/tmp/bdrtest
 backup_dirs_less_secure = /usr /lib /var
 exclude_dirs = /home/tectu/projects/build .git	# don't backup these directories and their childrens <fullpath / dirname>
 threads = 4

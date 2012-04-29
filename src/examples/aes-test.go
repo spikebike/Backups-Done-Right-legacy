@@ -1,27 +1,45 @@
 package main
 
 import (
+	"bufio"
 	"crypto/aes"
 	"crypto/cipher"
-	"encoding/base64"
 	"fmt"
 	"os"
 )
 
+// verified to be identical openssl's -aes-256-cbc with:
+// create 256MB random file:
+// dd if=/dev/urandom of=test1 count=16384 bs=16384
+//
+// encrypt file
+// openssl enc -nopad -aes-256-cbc -K 129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31 -iv 000102030405060708090a0b0c0d0e0f -e -in test -out test-openssl.aes
+// 
+// run go:
+// $ go run aes-test.go test test-go.aes
+//
+// Make sure openssl and aes-test.go output matches:
+// $ sha256sum test.aes test-go.aes
+// 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67  test1.aes
+// 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67  test1-go.aes
+// $ cmp test1.aes test1-go.aes
+// $ 
+
+
 var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
 
+const bufferSize=1024 
+
 func main() {
-	// Load the plaintext message you want to encrypt.
-	plaintext := []byte("hello, world")
-	if len(os.Args) > 1 {
-		plaintext = []byte(os.Args[1])
-	}
+	var count int
+	var size int
+	readBuffer   := make([]byte, bufferSize)
+	cipherBuffer := make([]byte, bufferSize)
 
 	// Setup a key that will encrypt the other text.
-	key_text := "32o4908go293hohg98fh40gh"
-	if len(os.Args) > 2 {
-		key_text = os.Args[2]
-	}
+	key_text := []byte{0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31}
+	fmt.Printf("Len = %d Key= %x\n",len(key_text),key_text)
+	fmt.Printf("len = %d iv = %x\n",len(commonIV),commonIV)
 
 	// We chose our cipher type here in this case
 	// we are using AES.
@@ -31,25 +49,27 @@ func main() {
 		os.Exit(-1)
 	}
 
-	// We use the CFBEncrypter in order to encrypt
-	// the whole stream of plaintext using the
-	// cipher setup with c and a iv.
-	cfb := cipher.NewCFBEncrypter(c, commonIV)
-	ciphertext := make([]byte, len(plaintext))
-	cfb.XORKeyStream(ciphertext, plaintext)
-	fmt.Printf("%s=>%x\n", plaintext, ciphertext)
+	plainFile, err := os.Open(os.Args[1])
+	reader := bufio.NewReader(plainFile)
 
-	// We decrypt it here just for the purpose of
-	// showing the fact that it is decryptable.
-	cfbdec := cipher.NewCFBDecrypter(c, commonIV)
-	plaintextCopy := make([]byte, len(plaintext))
-	cfbdec.XORKeyStream(plaintextCopy, ciphertext)
-	fmt.Printf("%x=>%s\n", ciphertext, plaintextCopy)
+	cipherFile, err:= os.Create(os.Args[2])
+	writer := bufio.NewWriter(cipherFile)
 
-	// We must now convert the ciphertext to base64
-	// this will allow for the encrypted data to be
-	// visible to copy and paste into the decrypter.
-	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(ciphertext)))
-	base64.StdEncoding.Encode(base64Text, []byte(ciphertext))
-	fmt.Printf("base64: %s\n", base64Text)
+	cbc := cipher.NewCBCEncrypter(c, commonIV)
+	size = 0
+	for {
+		if count,err=reader.Read(readBuffer); err != nil {
+				size=size+count
+				break
+		}
+		size=size+count
+		cbc.CryptBlocks(cipherBuffer[:count],readBuffer[:count])
+		writer.Write(cipherBuffer[:count])
+	}
+	cbc.CryptBlocks(cipherBuffer[:count],readBuffer[:count])
+	writer.Write(cipherBuffer[:count])
+	fmt.Printf("size=%d\n",size)
+	writer.Flush()
+	plainFile.Close()
+	cipherFile.Close()
 }
