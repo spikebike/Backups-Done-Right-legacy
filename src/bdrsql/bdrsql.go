@@ -88,7 +88,7 @@ func CreateBDRTables(db *sql.DB) error {
 	var err error
 	for _, sql := range sqls {
 		_, err = db.Exec(sql)
-		if err != nil {
+		if err != nil && debug == true {
 			log.Printf("%s", err)
 		}
 	}
