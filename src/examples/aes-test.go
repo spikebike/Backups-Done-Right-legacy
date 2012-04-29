@@ -10,18 +10,18 @@ import (
 
 // verified to be identical openssl's -aes-256-cbc with:
 // create 256MB random file:
-// dd if=/dev/urandom of=test1 count=16384 bs=16384
+// dd if=/dev/urandom of=test count=16384 bs=16384
 //
 // encrypt file
-// openssl enc -nopad -aes-256-ctr -K 129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31 -iv 000102030405060708090a0b0c0d0e0f -e -in test -out test-openssl.aes
+// openssl enc -nopad -aes-256-cfb -K 129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31 -iv 000102030405060708090a0b0c0d0e0f -e -in test -out test-openssl.aes
 // 
 // run go:
 // $ go run aes-test.go test test-go.aes
 //
 // Make sure openssl and aes-test.go output matches:
-// $ sha256sum test.aes test-go.aes
-// 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67  test1.aes
-// 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67  test1-go.aes
+// $ sha256sum test-openssl.aes test-go.aes
+// 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67 test-openssl.aes
+// 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67 test-go.aes
 // $ cmp test1.aes test1-go.aes
 // $ 
 
@@ -55,7 +55,7 @@ func main() {
 	cipherFile, err:= os.Create(os.Args[2])
 	writer := bufio.NewWriter(cipherFile)
 
-	cbc := cipher.NewCTR(c, commonIV)
+	cfb := cipher.NewCFBEncrypter(c, commonIV)
 	size = 0
 	for {
 		if count,err=reader.Read(readBuffer); err != nil {
@@ -63,7 +63,7 @@ func main() {
 				break
 		}
 		size=size+count
-		cbc.XORKeyStream(cipherBuffer[:count],readBuffer[:count])
+		cfb.XORKeyStream(cipherBuffer[:count],readBuffer[:count])
 		writer.Write(cipherBuffer[:count])
 	}
 	fmt.Printf("count=%d\n",count)

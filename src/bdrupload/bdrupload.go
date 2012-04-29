@@ -47,7 +47,7 @@ func Uploader(upchan chan *Upchan_t, done chan bool, debug bool) {
 		reader := bufio.NewReader(file)
 
 		// for this file create a cipher and new sha256 state
-		cfb := cipher.NewCBCEncrypter(c, commonIV)
+		cfb := cipher.NewCFBEncrypter(c, commonIV)
 		h := sha256.New() // h is a hash.Hash
 		// time how long to read, encrypt, and checksum a file
 		t0 := time.Now().UnixNano()
@@ -56,7 +56,7 @@ func Uploader(upchan chan *Upchan_t, done chan bool, debug bool) {
 				break
 			}
 			size = size + int64(count)
-			cfb.CryptBlocks(ciphertext[:count], readBuffer[:count])
+			cfb.XORKeyStream(ciphertext[:count], readBuffer[:count])
 			h.Write(ciphertext[:count])
 		}
 		t1 := time.Now().UnixNano()
