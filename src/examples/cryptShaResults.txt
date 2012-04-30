@@ -5,21 +5,20 @@ GPU: ATI Radeon 6850
 RAM: 8GB DDRIII
 Disk: WD Green 1TB (WD10EACS)
 
-1 core,           43.17 seconds, 23MB/sec.
-2 cores,          22.98 seconds, 44MB/sec
-4 cores,          13.80 seconds, 74MB/sec
-8 thread/4 cores, 12.68 seconds, 80MB/sec
+1 threads 2048.00 Mbytes 23.64 MB/sec
+2 threads 2048.00 Mbytes 46.10 MB/sec
+4 threads 2048.00 Mbytes 83.31 MB/sec
+8 threads 2048.00 Mbytes 87.86 MB/sec
 
 Device: Quad socket Opteron 6272
 RAM: 512GB DDRIII
 Disk: WD RE4 2TB
 
-1 core,  152.26 seconds,  13MB/sec
-2 cores,  74.75 seconds,  27MB/sec
-4 cores,  42.00 seconds,  48MB/sec
-8 cores,  23.71 seconds,  86MB/sec
-16 cores, 16.69 seconds, 122MB/sec
-32 cores, 11.05 seconds, 185MB/sec
-64 cores,  9.67 seconds, 211MB/sec
-
+1 threads 4032.00 Mbytes 13.91 MB/sec
+2 threads 4032.00 Mbytes 27.45 MB/sec
+4 threads 4032.00 Mbytes 54.75 MB/sec
+8 threads 4032.00 Mbytes 108.73 MB/sec
+16 threads 4032.00 Mbytes 217.87 MB/sec
+32 threads 4032.00 Mbytes 319.54 MB/sec
+64 threads 4032.00 Mbytes 612.82 MB/sec
 
