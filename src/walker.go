@@ -212,13 +212,13 @@ func main() {
 	bytesDone = 0
 	bytes = 0
 	for i:=0;i<pool;i++ {
-		bytes <- done
+		bytes = <-done
 		bytesDone=bytesDone+bytes
 	}
 	tn1 := time.Now().UnixNano()
 	if debug == true {
-			seconds := float64(t1-t0) / 1000000000
-			log.Printf("%d threads %d bytes %f MB/sec", pool_config,bytesDone, float64(size)/(1024*1024*seconds))
+			seconds := float64(tn1-tn0) / 1000000000
+			log.Printf("%d threads %d bytes %f MB/sec", pool_config,bytesDone, float64(bytesDone)/(1024*1024*seconds))
 	}
 	log.Printf("uploading successfully finished\n")
 }
