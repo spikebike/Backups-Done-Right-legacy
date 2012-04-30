@@ -201,7 +201,7 @@ func main() {
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
 	tn0 := time.Now().UnixNano()
-	for i := 0; i<pool; i++ {
+	for i := 0; i < pool; i++ {
 		go bdrupload.Uploader(upchan, done, debug)
 	}
 	log.Printf("started %d uploaders\n", pool)
@@ -211,9 +211,9 @@ func main() {
 	bdrsql.SQLUpload(db, upchan)
 	bytesDone = 0
 	bytes = 0
-	for i:=0;i<pool;i++ {
+	for i := 0; i < pool; i++ {
 		bytes = <-done
-		bytesDone=bytesDone+bytes
+		bytesDone += bytes
 	}
 	tn1 := time.Now().UnixNano()
 	if debug == true {
