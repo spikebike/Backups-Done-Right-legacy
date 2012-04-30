@@ -26,7 +26,7 @@ var (
 
 	upchan = make(chan *bdrupload.Upchan_t, 100)
 	downchan = make(chan *bdrupload.Downchan_t, 100)
-	done = make(chan bool)
+	done = make(chan int64)
 
 	pool int
 	debug bool
@@ -132,6 +132,8 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 }
 
 func main() {
+	var bytes int64
+	var bytesDone int64
 	flag.Parse()
 	debug = *debug_flag
 
@@ -198,6 +200,7 @@ func main() {
 	// shutdown database, make a copy, open it, backup copy of db
 	// db, _ = bdrsql.BackupDB(db,dataBaseName)
 	// launch server to receive uploads
+	tn0 := time.Now().UnixNano()
 	for i := 0; i<pool; i++ {
 		go bdrupload.Uploader(upchan, done, debug)
 	}
@@ -206,8 +209,16 @@ func main() {
 
 	log.Printf("started sending files to uploaders...\n")
 	bdrsql.SQLUpload(db, upchan)
+	bytesDone = 0
+	bytes = 0
 	for i:=0;i<pool;i++ {
-		<- done
+		bytes <- done
+		bytesDone=bytesDone+bytes
+	}
+	tn1 := time.Now().UnixNano()
+	if debug == true {
+			seconds := float64(t1-t0) / 1000000000
+			log.Printf("%d threads %d bytes %f MB/sec", pool_config,bytesDone, float64(size)/(1024*1024*seconds))
 	}
 	log.Printf("uploading successfully finished\n")
 }

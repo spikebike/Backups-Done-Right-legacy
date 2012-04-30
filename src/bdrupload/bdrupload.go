@@ -28,10 +28,13 @@ var (
 
 const bufferSize = 524288
 
-func Uploader(upchan chan *Upchan_t, done chan bool, dbg bool) {
+func Uploader(upchan chan *Upchan_t, done chan int64, dbg bool) {
 	debug = dbg
 	var count int
 	var size int64
+	var totalSize int64
+
+	totalSize = 0
 	readBuffer := make([]byte, bufferSize)
 	ciphertext := make([]byte, bufferSize)
 //	key_text := "32o4908go293hohg98fh40ghaidlkjk1"
@@ -70,9 +73,10 @@ func Uploader(upchan chan *Upchan_t, done chan bool, dbg bool) {
 		if debug == true {
 			fmt.Printf("%x %s %4.2f MB/sec\n", h.Sum(nil), f.Path, float64(size)/(1024*1024*seconds))
 		}
+		totalSize=totalSize+size
 	}
 	if debug == true {
 		fmt.Print("Server: Channel closed\n")
 	}
-	done <- true
+	done <- totalSize
 }
