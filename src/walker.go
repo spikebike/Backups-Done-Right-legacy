@@ -138,7 +138,7 @@ func main() {
 	debug = *debug_flag
 
 	log.Printf("loading config file from %s\n", *configFile)
-	configF, err := config.ReadDefault("../etc/config.cfg")
+	configF, err := config.ReadDefault(*configFile)
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
