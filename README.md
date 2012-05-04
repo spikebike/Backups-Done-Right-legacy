@@ -12,21 +12,20 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 * simple configuration - just one config file
 * simple installation (static linked build)
 * restores with permissions, symlinks etc.
-* open source - be sure that nobody gets your data
 * backups are stored encrypted - you don't need to trust in your sysadmin
 * encryption key does not get transfered - you always keep the key on your side
 
 ## Potential Misfeatures
 * No back doors - without the clients AES256 key no recovery is possible
-* No bare metal restores - Backups Does Right depends on Go + working unix 
-          system, and AES256 key for a restore.  For connections to peers 
-          one of the old IP address or the IP address of peers is needed.
-* No cross client file restores - Full restore of a linux backup requires
-          a linux client.  Same with Windows, and OSX.  No
-          attempts are made to handle platform specific file
-          system meta-data on non-native platforms.
+* No bare metal restores - Backups Does Right depends on Go + working OS, 
+		and AES256 key for a restore.  For connections to peers 
+		one of (old IP address or IP address of peers) is needed.
+* Some metadata is lost on cross platform restores.  Go's stat implementation
+		is used.  Backups done right is only as cross platform compatible
+ 		as go.
 * Owner of SHA256 key *MUST* make copies to protect against lost.  Multiple
-           Printouts and thumbdrives are recommended to insure recovery.
+		Printouts and/or thumbdrives in secure locations (not in the same 
+		building) are recommended to insure recovery.
                         
 
 ## Maintainers
