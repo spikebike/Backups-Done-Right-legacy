@@ -22,3 +22,15 @@ Disk: WD RE4 2TB
 32 threads 4032.00 Mbytes 319.54 MB/sec
 64 threads 4032.00 Mbytes 612.82 MB/sec
 
+Dual socket Opteron 6212
+RAM 8GB DDRIII
+Disk: RAID1-Mirror
+
+1 threads 4096.00 Mbytes 17.02 MB/sec
+2 threads 4096.00 Mbytes 34.22 MB/sec
+4 threads 4096.00 Mbytes 68.06 MB/sec
+8 threads 4096.00 Mbytes 124.85 MB/sec
+16 threads 4096.00 Mbytes 196.31 MB/sec
+
+
+

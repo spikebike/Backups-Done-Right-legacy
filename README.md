@@ -5,9 +5,10 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 
 ## Features
 
-* file transfer is always encrypted
-* very fast filesystem walker
-* posibility to run more than one fs walker at once (huge speed increasing on multi HDD systems)
+* files encrypted with AES256 before they go over the network
+* Server does not have to have the clients encryption key
+* fast filesystem walker
+* posibility to run more than one fs walker at once (performance scales with number of spindles)
 * simple configuration - just one config file
 * simple installation (static linked build)
 * restores with permissions, symlinks etc.
@@ -15,6 +16,18 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 * backups are stored encrypted - you don't need to trust in your sysadmin
 * encryption key does not get transfered - you always keep the key on your side
 
+## Potential Misfeatures
+* No back doors - without the clients AES256 key no recovery is possible
+* No bare metal restores - Backups Does Right depends on Go + working unix 
+          system, and AES256 key for a restore.  For connections to peers 
+          one of the old IP address or the IP address of peers is needed.
+* No cross client file restores - Full restore of a linux backup requires
+          a linux client.  Same with Windows, and OSX.  No
+          attempts are made to handle platform specific file
+          system meta-data on non-native platforms.
+* Owner of SHA256 key *MUST* make copies to protect against lost.  Multiple
+           Printouts and thumbdrives are recommended to insure recovery.
+                        
 
 ## Maintainers
 
@@ -26,10 +39,10 @@ Backups-Done-Right does have two project maintainers:
 
 ## Build
 
-Backups-Done-Right does require sqlite3 which is not a part of go or Backups-Done-Right itself. 
-Installing sqlite3 depends on your system. Therefore we cannot give you an installing howto. If you don't know how to install sqlite3 on your system, we recommend to use google to find out. Please not that you may need the development packages of sqlite3, for example, on debian: 
+Backups-Done-Right does depend on some go packages, which in turn depend on some software packages.  The below statement should install the dependencies for most Debian/Ubuntu based systems:
 
-	$ apt-get install libsqlite3-dev
+
+	$ apt-get install libsqlite3-dev libsqlite-dev git mercurial pkg-config
 
 Backups Done Right depends on 3 external go packages that need to be installed.  Set GOPKG to where you want them installed.  Something like export GOPKG=/home/JoeUser/gopkg.  DO *NOT* use ~/gopkg.  To install the dependencies:
 
