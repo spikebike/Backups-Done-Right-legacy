@@ -3,7 +3,6 @@ package main
 import "C"
 
 import (
-	"database/sql"
 	"flag"
 	"log"
 	"os"
@@ -13,6 +12,7 @@ import (
 	"runtime"
 	"./bdrsql"
 	"./bdrupload"
+	"database/sql"
 	"path/filepath"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
@@ -134,6 +134,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 func main() {
 	var bytes int64
 	var bytesDone int64
+
 	flag.Parse()
 	debug = *debug_flag
 
@@ -152,7 +153,6 @@ func main() {
 	} else {
 		pool = pool_config
 	}
-
 	runtime.GOMAXPROCS(pool)
 
 	dirList, err := configF.String("Client", "backup_dirs_secure")
@@ -218,7 +218,7 @@ func main() {
 	tn1 := time.Now().UnixNano()
 	if debug == true {
 			seconds := float64(tn1-tn0) / 1000000000
-			fmt.Printf("%d threads %4.2f Mbytes %4.2f MB/sec", pool,float64(bytesDone)/(1024*1024), float64(bytesDone)/(1024*1024*seconds))
+			log.Printf("%d threads %4.2f Mbytes %4.2f MB/sec\n", pool,float64(bytesDone)/(1024*1024), float64(bytesDone)/(1024*1024*seconds))
 	}
 	log.Printf("uploading successfully finished\n")
 }
