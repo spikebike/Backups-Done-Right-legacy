@@ -6,6 +6,8 @@ import (
 	"crypto/cipher"
 	"crypto/sha256"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"time"
 )
@@ -28,16 +30,17 @@ var (
 
 const bufferSize = 524288
 
-func Uploader(upchan chan *Upchan_t, done chan int64, dbg bool) {
+func Uploader(upchan chan *Upchan_t, done chan int64, dbg bool, UpDir string) {
 	debug = dbg
-	var count int
+	var rCount int
 	var size int64
 	var totalSize int64
 
 	totalSize = 0
 	readBuffer := make([]byte, bufferSize)
+	//	writeBuffer := make([]byte, bufferSize)
 	ciphertext := make([]byte, bufferSize)
-//	key_text := "32o4908go293hohg98fh40ghaidlkjk1"
+	//	key_text := "32o4908go293hohg98fh40ghaidlkjk1"
 	key_text := []byte{0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31}
 	c, err := aes.NewCipher([]byte(key_text))
 	if err != nil {
@@ -52,7 +55,13 @@ func Uploader(upchan chan *Upchan_t, done chan int64, dbg bool) {
 
 		// open file and create a reader
 		file, err := os.Open(f.Path)
+		outF, err := ioutil.TempFile(UpDir+"/tmp", "bdr")
+		if dbg {
+			fmt.Printf("Opening tmp file %s\n", outF.Name())
+		}
+
 		reader := bufio.NewReader(file)
+		writer := bufio.NewWriter(outF)
 
 		// for this file create a cipher and new sha256 state
 		cfb := cipher.NewCFBEncrypter(c, commonIV)
@@ -60,20 +69,30 @@ func Uploader(upchan chan *Upchan_t, done chan int64, dbg bool) {
 		// time how long to read, encrypt, and checksum a file
 		t0 := time.Now().UnixNano()
 		for {
-			if count, err = reader.Read(readBuffer); err != nil {
+			if rCount, err = reader.Read(readBuffer); err != nil {
 				break
 			}
-			size = size + int64(count)
-			cfb.XORKeyStream(ciphertext[:count], readBuffer[:count])
-			h.Write(ciphertext[:count])
+			size = size + int64(rCount)
+			cfb.XORKeyStream(ciphertext[:rCount], readBuffer[:rCount])
+			h.Write(ciphertext[:rCount])
+			if _, err = writer.Write(ciphertext[:rCount]); err != nil {
+				log.Printf("Write failed for %s with %s\n", outF.Name(), err)
+			}
 		}
 		t1 := time.Now().UnixNano()
 		file.Close()
+		writer.Flush()
+		outF.Close()
+		blobName := fmt.Sprintf("%s/blob/%x", UpDir, h.Sum(nil))
+		if dbg {
+			fmt.Printf("newblob = %s\n", blobName)
+		}
+		os.Rename(outF.Name(), blobName)
 		seconds := float64(t1-t0) / 1000000000
 		if debug == true {
 			fmt.Printf("%x %s %4.2f MB/sec\n", h.Sum(nil), f.Path, float64(size)/(1024*1024*seconds))
 		}
-		totalSize=totalSize+size
+		totalSize = totalSize + size
 	}
 	if debug == true {
 		fmt.Print("Server: Channel closed\n")

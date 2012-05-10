@@ -175,6 +175,15 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
+	queueBlobDir, err := configF.String("Client", "queue_blobs")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	} else {
+		os.Mkdir(queueBlobDir+"/tmp",0700)
+		os.Mkdir(queueBlobDir+"/blob",0700)
+	}
+
+
 	db, err := bdrsql.Init_db(dataBaseName, *newDB, debug)
 	if err != nil {
 		log.Printf("could not open %s, error: %s", dataBaseName, err)
@@ -207,7 +216,7 @@ func main() {
 	// launch server to receive uploads
 	tn0 := time.Now().UnixNano()
 	for i := 0; i < pool; i++ {
-		go bdrupload.Uploader(upchan, done, debug)
+		go bdrupload.Uploader(upchan, done, debug,queueBlobDir)
 	}
 	log.Printf("started %d uploaders\n", pool)
 	// send all files to be uploaded to server.
