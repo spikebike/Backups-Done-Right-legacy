@@ -3,19 +3,19 @@ package main
 import "C"
 
 import (
-	"flag"
-	"log"
-	"os"
-	"strings"
-	"fmt"
-	"time"
-	"runtime"
 	"./bdrsql"
 	"./bdrupload"
 	"database/sql"
-	"path/filepath"
+	"flag"
+	"fmt"
 	"github.com/kless/goconfig/config"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"time"
 )
 
 var (
@@ -24,18 +24,18 @@ var (
 	debug_flag = flag.Bool("debug", false, "activates debug mode")
 	pool_flag  = flag.Int("threads", 0, "overwrites threads in [Client] section in config.cfg")
 
-	upchan = make(chan *bdrupload.Upchan_t, 100)
+	upchan   = make(chan *bdrupload.Upchan_t, 100)
 	downchan = make(chan *bdrupload.Downchan_t, 100)
-	done = make(chan int64)
+	done     = make(chan int64)
 
-	pool int
+	pool  int
 	debug bool
 )
 
 const KBYTE = 1024
-const MBYTE = 1024*1024
-const GBYTE = 1024*1024*1024
-const TBYTE = 1024*1024*1024*1024
+const MBYTE = 1024 * 1024
+const GBYTE = 1024 * 1024 * 1024
+const TBYTE = 1024 * 1024 * 1024 * 1024
 
 func checkPath(dirArray []string, excludeArray []string, dir string) bool {
 	for _, j := range excludeArray {
@@ -44,7 +44,7 @@ func checkPath(dirArray []string, excludeArray []string, dir string) bool {
 		}
 	}
 	for _, i := range dirArray {
-			if i == dir {
+		if i == dir {
 			return true
 		}
 	}
@@ -179,10 +179,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	} else {
-		os.Mkdir(queueBlobDir+"/tmp",0700)
-		os.Mkdir(queueBlobDir+"/blob",0700)
+		os.Mkdir(queueBlobDir+"/tmp", 0700)
+		os.Mkdir(queueBlobDir+"/blob", 0700)
 	}
-
 
 	db, err := bdrsql.Init_db(dataBaseName, *newDB, debug)
 	if err != nil {
@@ -216,7 +215,7 @@ func main() {
 	// launch server to receive uploads
 	tn0 := time.Now().UnixNano()
 	for i := 0; i < pool; i++ {
-		go bdrupload.Uploader(upchan, done, debug,queueBlobDir)
+		go bdrupload.Uploader(upchan, done, debug, queueBlobDir)
 	}
 	log.Printf("started %d uploaders\n", pool)
 	// send all files to be uploaded to server.
@@ -231,15 +230,16 @@ func main() {
 	}
 	tn1 := time.Now().UnixNano()
 	if debug == true {
-			seconds := float64(tn1-tn0) / 1000000000
-			if bytesDone < KBYTE {
-				log.Printf("%d threads %4.2f Bytes %4.2f B/sec\n", pool,float64(bytesDone), float64(bytesDone)/seconds)
-			} else if bytesDone >= KBYTE && bytesDone < MBYTE {
-				log.Printf("%d threads %4.2f KB %4.2f MB/sec\n", pool,float64(bytesDone)/(KBYTE), float64(bytesDone)/(MBYTE*seconds))
-			} else if bytesDone >= MBYTE && bytesDone < GBYTE {
-				log.Printf("%d threads %4.2f MB %4.2f MB/sec\n", pool,float64(bytesDone)/(MBYTE), float64(bytesDone)/(MBYTE*seconds))
-			} else if bytesDone >= GBYTE && bytesDone < TBYTE {
-				log.Printf("%d threads %4.2f GB %4.2f MB/sec\n", pool,float64(bytesDone)/(GBYTE), float64(bytesDone)/(MBYTE*seconds))			}
+		seconds := float64(tn1-tn0) / 1000000000
+		if bytesDone < KBYTE {
+			log.Printf("%d threads %4.2f Bytes %4.2f B/sec\n", pool, float64(bytesDone), float64(bytesDone)/seconds)
+		} else if bytesDone >= KBYTE && bytesDone < MBYTE {
+			log.Printf("%d threads %4.2f KB %4.2f MB/sec\n", pool, float64(bytesDone)/(KBYTE), float64(bytesDone)/(MBYTE*seconds))
+		} else if bytesDone >= MBYTE && bytesDone < GBYTE {
+			log.Printf("%d threads %4.2f MB %4.2f MB/sec\n", pool, float64(bytesDone)/(MBYTE), float64(bytesDone)/(MBYTE*seconds))
+		} else if bytesDone >= GBYTE && bytesDone < TBYTE {
+			log.Printf("%d threads %4.2f GB %4.2f MB/sec\n", pool, float64(bytesDone)/(GBYTE), float64(bytesDone)/(MBYTE*seconds))
+		}
 	}
 	log.Printf("uploading successfully finished\n")
 }
