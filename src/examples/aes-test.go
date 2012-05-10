@@ -25,21 +25,20 @@ import (
 // $ cmp test1.aes test1-go.aes
 // $ 
 
-
 var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
 
-const bufferSize=1024 
+const bufferSize = 1024
 
 func main() {
 	var count int
 	var size int
-	readBuffer   := make([]byte, bufferSize)
+	readBuffer := make([]byte, bufferSize)
 	cipherBuffer := make([]byte, bufferSize)
 
 	// Setup a key that will encrypt the other text.
 	key_text := []byte{0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31, 0x12, 0x9e, 0x12, 0xfd, 0x1f, 0x9e, 0x2b, 0x31}
-	fmt.Printf("Len = %d Key= %x\n",len(key_text),key_text)
-	fmt.Printf("len = %d iv = %x\n",len(commonIV),commonIV)
+	fmt.Printf("Len = %d Key= %x\n", len(key_text), key_text)
+	fmt.Printf("len = %d iv = %x\n", len(commonIV), commonIV)
 
 	// We chose our cipher type here in this case
 	// we are using AES.
@@ -52,22 +51,22 @@ func main() {
 	plainFile, err := os.Open(os.Args[1])
 	reader := bufio.NewReader(plainFile)
 
-	cipherFile, err:= os.Create(os.Args[2])
+	cipherFile, err := os.Create(os.Args[2])
 	writer := bufio.NewWriter(cipherFile)
 
 	cfb := cipher.NewCFBEncrypter(c, commonIV)
 	size = 0
 	for {
-		if count,err=reader.Read(readBuffer); err != nil {
-				size=size+count
-				break
+		if count, err = reader.Read(readBuffer); err != nil {
+			size = size + count
+			break
 		}
-		size=size+count
-		cfb.XORKeyStream(cipherBuffer[:count],readBuffer[:count])
+		size = size + count
+		cfb.XORKeyStream(cipherBuffer[:count], readBuffer[:count])
 		writer.Write(cipherBuffer[:count])
 	}
-	fmt.Printf("count=%d\n",count)
-	fmt.Printf("size=%d\n",size)
+	fmt.Printf("count=%d\n", count)
+	fmt.Printf("size=%d\n", size)
 	writer.Flush()
 	plainFile.Close()
 	cipherFile.Close()
