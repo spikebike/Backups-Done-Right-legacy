@@ -86,3 +86,4 @@ Whenever we need a backup, we send the encrypted checksum (SHA-512) of the file,
 Please see documentation/* for additional informations
 
  
+ 
