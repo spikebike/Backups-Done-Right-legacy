@@ -24,7 +24,7 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 * Some metadata is lost on cross platform restores.  Go's stat implementation
 		is used.  Backups done right is only as cross platform compatible
  		as go.
-* Owner of SHA256 key *MUST* make copies to protect against lost.  Multiple
+* Owner of AES256 key *MUST* make copies to protect against lost.  Multiple
 		Printouts and/or thumbdrives in secure locations (not in the same 
 		building) are recommended to insure recovery.
                         
