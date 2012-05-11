@@ -97,5 +97,5 @@ func Uploader(upchan chan *Upchan_t, done chan int64, dbg bool, UpDir string) {
 	if debug == true {
 		fmt.Print("Server: Channel closed\n")
 	}
-	done <- totalSize
+	done <- totalSize 
 }
