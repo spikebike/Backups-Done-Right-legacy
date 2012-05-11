@@ -32,11 +32,6 @@ var (
 	debug bool
 )
 
-const KBYTE = 1024
-const MBYTE = 1024 * 1024
-const GBYTE = 1024 * 1024 * 1024
-const TBYTE = 1024 * 1024 * 1024 * 1024
-
 type ByteSize float64
 
 const (
