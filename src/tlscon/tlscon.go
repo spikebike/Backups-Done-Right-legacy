@@ -66,12 +66,12 @@ func handleClient(conn net.Conn, f func(conn net.Conn)) {
 	}
 }
 
-func ServerTLSListen(service string, f func(conn net.Conn)) {
+func ServerTLSListen(service string, f func(conn net.Conn),privKey string, pubKey string) {
 
 	// Load x509 certificates for our private/public key, makecert.sh will
 	// generate them for you.
 
-	cert, err := tls.LoadX509KeyPair("certs/server.pem", "certs/server.key")
+	cert, err := tls.LoadX509KeyPair(pubKey, privKey)
 	if err != nil {
 		log.Fatalf("server: loadkeys: %s", err)
 	}

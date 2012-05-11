@@ -43,6 +43,16 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
+	serverPrivKey, err := configF.String("Client", "private_key")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
+	serverPubKey, err := configF.String("Client", "public_key")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
 	dataBaseName, err := configF.String("Server", "sql_file")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
@@ -61,6 +71,6 @@ func main() {
 	}
 
 	fptr := RequestFunc
-	tlscon.ServerTLSListen("0.0.0.0:8000", fptr)
+	tlscon.ServerTLSListen("0.0.0.0:8000", fptr, serverPrivKey, serverPubKey)
 
 }

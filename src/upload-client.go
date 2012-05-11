@@ -6,8 +6,8 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"flag"
-	"github.com/kless/goconfig/config"
 	"fmt"
+	"github.com/kless/goconfig/config"
 	"log"
 )
 
@@ -38,7 +38,17 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	conn, err := tlscon.OpenTLSClient("127.0.0.1:8000", clientPrivKey, clientPubKey)
+	server, err := configF.String("Client", "server")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+	serverPort, err := configF.String("Client", "serverPort")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
+	// connect to server
+	conn, err := tlscon.OpenTLSClient(server+":"+serverPort, clientPrivKey, clientPubKey)
 	if err != nil {
 		log.Fatalf("dial: %s", err)
 	}
