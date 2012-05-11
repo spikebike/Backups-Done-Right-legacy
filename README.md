@@ -78,8 +78,11 @@ You do also need certificates for the SSL encryption:
 
 ## Technical Description
 
-Once the filesystem walker created a database of the directories that have to be backed up, it will just update the database on every run. On each run the walker decides if the file got any changes. If yes, the file gets encrypted over AES-512 and gets uploaded to the backup server over an SSL secured TCP/IP connection. The server keeps the files encrypted.
-Whenever we need a backup, we send the encrypted checksum (SHA-512) of the file, which is also stored in the database to the server. The server will send the encrypted file to the matching client over an SSL secured TCP/IP connection again. The client will then decrypt the received file and restores the complete directory tree with all the permissions, symlinks etc.
+The walker tracks filesystem metadata in sqlite.  During each walker invocation all configured directories are walked looking for new or changed files.  Any new or changed files are encrypted (AES-256) and checksummed (SHA256).  
+
+The walker then attempts to upload the encrypted blobs to the server.  The servers public key is checked and if trusted any non-duplicated files are uploaded.
+
+Server <-> server connections are used to replicated blobs to the configured redundancy.  Only known public keys are trusted and all communications happen over an SSL connection.
 
 
 ## Misc
