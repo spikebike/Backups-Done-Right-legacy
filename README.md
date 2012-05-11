@@ -15,6 +15,7 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 * backups are stored encrypted - you don't need to trust in your sysadmin
 * encryption key does not get transfered - you always keep the key on your side
 
+
 ## Potential Misfeatures
 * No back doors - without the clients AES256 key no recovery is possible
 * No bare metal restores - Backups Does Right depends on Go + working OS, 
