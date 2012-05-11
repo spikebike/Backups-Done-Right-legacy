@@ -37,6 +37,42 @@ const MBYTE = 1024 * 1024
 const GBYTE = 1024 * 1024 * 1024
 const TBYTE = 1024 * 1024 * 1024 * 1024
 
+type ByteSize float64
+
+const (
+	_           = iota // ignore first value by assigning to blank identifier
+	KB ByteSize = 1 << (10 * iota)
+	MB
+	GB
+	TB
+	PB
+	EB
+	ZB
+	YB
+)
+
+func (b ByteSize) String() string {
+	switch {
+	case b >= YB:
+		return fmt.Sprintf("%.2fYB", b/YB)
+	case b >= ZB:
+		return fmt.Sprintf("%.2fZB", b/ZB)
+	case b >= EB:
+		return fmt.Sprintf("%.2fEB", b/EB)
+	case b >= PB:
+		return fmt.Sprintf("%.2fPB", b/PB)
+	case b >= TB:
+		return fmt.Sprintf("%.2fTB", b/TB)
+	case b >= GB:
+		return fmt.Sprintf("%.2fGB", b/GB)
+	case b >= MB:
+		return fmt.Sprintf("%.2fMB", b/MB)
+	case b >= KB:
+		return fmt.Sprintf("%.2fKB", b/KB)
+	}
+	return fmt.Sprintf("%.2fB", b)
+}
+
 func checkPath(dirArray []string, excludeArray []string, dir string) bool {
 	for _, j := range excludeArray {
 		if strings.Contains(dir, j) {
@@ -231,15 +267,7 @@ func main() {
 	tn1 := time.Now().UnixNano()
 	if debug == true {
 		seconds := float64(tn1-tn0) / 1000000000
-		if bytesDone < KBYTE {
-			log.Printf("%d threads %4.2f Bytes %4.2f B/sec\n", pool, float64(bytesDone), float64(bytesDone)/seconds)
-		} else if bytesDone >= KBYTE && bytesDone < MBYTE {
-			log.Printf("%d threads %4.2f KB %4.2f MB/sec\n", pool, float64(bytesDone)/(KBYTE), float64(bytesDone)/(MBYTE*seconds))
-		} else if bytesDone >= MBYTE && bytesDone < GBYTE {
-			log.Printf("%d threads %4.2f MB %4.2f MB/sec\n", pool, float64(bytesDone)/(MBYTE), float64(bytesDone)/(MBYTE*seconds))
-		} else if bytesDone >= GBYTE && bytesDone < TBYTE {
-			log.Printf("%d threads %4.2f GB %4.2f MB/sec\n", pool, float64(bytesDone)/(GBYTE), float64(bytesDone)/(MBYTE*seconds))
-		}
+		log.Printf("%d threads %s %s/sec in %4.2f seconds\n", pool, ByteSize(float64(bytesDone)), ByteSize(float64(bytesDone)/seconds),seconds)
 	}
 	log.Printf("uploading successfully finished\n")
 }
