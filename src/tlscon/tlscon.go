@@ -9,11 +9,13 @@ import (
 	"net"
 )
 
-func OpenTLSClient(ipPort string) (*tls.Conn, error) {
+func OpenTLSClient(ipPort string,privKey string,pubKey string) (*tls.Conn, error) {
+	
 
+	log.Printf("priv=%s pub=%s\n",privKey,pubKey)
 	// Note this loads standard x509 certificates, test keys can be
 	// generated with makecert.sh
-	cert, err := tls.LoadX509KeyPair("certs/client.pem", "certs/client.key")
+	cert, err := tls.LoadX509KeyPair(pubKey,privKey)
 	if err != nil {
 		log.Fatalf("server: loadkeys: %s", err)
 	}

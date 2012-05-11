@@ -14,13 +14,15 @@ import (
 )
 
 var (
-	sqls = []string{
+	clientSQLs= []string{
 		"create table dirs (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, uid INT, gid INT, path varchar(2048), last_seen BIGINT, deleted INT)",
 		"create table files (id INTEGER PRIMARY KEY, mode INT, ino BIGINT, dev BIGINT, uid INT, gid INT, size BIGINT, mtime BIGINT, ctime BIGINT, name varchar(254), dirID BIGINT, last_seen BIGINT, deleted INT, do_upload INT, FOREIGN KEY(dirID) REFERENCES dirs(id))",
 		"create index ctimeindex on files (ctime)",
 		"create index pathindex on dirs (path)",
 	}
-
+	serverSQLs = []string{
+			"create table peers (id INTEGER PRIMARY KEY, publicKey varchar(1024), last_ip varchar(64)",
+	}
 	debug bool
 )
 
@@ -84,9 +86,20 @@ func BackupDB(db *sql.DB, dbname string) (*sql.DB, error) {
 	return db2, err
 }
 
-func CreateBDRTables(db *sql.DB) error {
+func CreateClientTables(db *sql.DB) error {
 	var err error
-	for _, sql := range sqls {
+	for _, sql := range clientSQLs {
+		_, err = db.Exec(sql)
+		if err != nil && debug == true {
+			log.Printf("%s", err)
+		}
+	}
+	return err
+}
+
+func CreateServerTables(db *sql.DB) error {
+	var err error
+	for _, sql := range serverSQLs {
 		_, err = db.Exec(sql)
 		if err != nil && debug == true {
 			log.Printf("%s", err)

@@ -190,7 +190,7 @@ func main() {
 		log.Printf("opened database %v\n", dataBaseName)
 	}
 
-	err = bdrsql.CreateBDRTables(db)
+	err = bdrsql.CreateClientTables(db)
 	if err != nil && debug == true {
 		log.Printf("couldn't create tables: %s", err)
 	} else {

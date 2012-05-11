@@ -5,12 +5,40 @@ import (
 	"./tlscon"     // handles SSL connections
 	"crypto/rand"
 	"crypto/sha256"
+	"flag"
+	"github.com/kless/goconfig/config"
 	"fmt"
 	"log"
 )
 
+var (
+	configFile = flag.String("config", "../etc/config.cfg", "Defines where to load configuration from")
+	newDB      = flag.Bool("new-db", false, "true = creates a new database | false = use existing database")
+	debug_flag = flag.Bool("debug", false, "activates debug mode")
+	debug      bool
+)
+
 func main() {
-	conn, err := tlscon.OpenTLSClient("127.0.0.1:8000")
+
+	flag.Parse()
+	log.Printf("loading config file from %s\n", *configFile)
+
+	configF, err := config.ReadDefault(*configFile)
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
+	clientPrivKey, err := configF.String("Client", "private_key")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
+	clientPubKey, err := configF.String("Client", "public_key")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
+	conn, err := tlscon.OpenTLSClient("127.0.0.1:8000", clientPrivKey, clientPubKey)
 	if err != nil {
 		log.Fatalf("dial: %s", err)
 	}
