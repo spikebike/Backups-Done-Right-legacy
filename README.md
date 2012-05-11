@@ -80,10 +80,11 @@ You do also need certificates for the SSL encryption:
 
 The walker tracks filesystem metadata in sqlite.  During each walker invocation all configured directories are walked looking for new or changed files.  Any new or changed files are encrypted (AES-256) and checksummed (SHA256).  
 
-The walker then attempts to upload the encrypted blobs to the server.  The servers public key is checked and if trusted any non-duplicated files are uploaded.
+The walker then attempts to upload the encrypted blobs to the server.  The servers public key is checked and if trusted any non-duplicated (sha256 blobs the server doesn't already have) files are uploaded.
 
 Server <-> server connections are used to replicated blobs to the configured redundancy.  Only known public keys are trusted and all communications happen over an SSL connection.
 
+Peers are periodically challenged to prove they have the blobs they claim to be storing.  This also allows for disaster recovery (assuming the AES256 key is available) by waiting for challenges from your peers.
 
 ## Misc
 
