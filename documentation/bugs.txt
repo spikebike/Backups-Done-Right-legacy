@@ -1,0 +1,6 @@
+This file should contain known bugs.
+
+
+Num	Description
+===	===========
+ 1	program panics if [Client] queue_blobs is unexisting or wrong permission
