@@ -267,3 +267,4 @@ func main_test() {
 		//		fmt.Printf("%T %#v\n\n", unixStat.Ino, unixStat.Ino)
 	}
 }
+

@@ -111,7 +111,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 		// get a map for filename -> modified time
 		SQLmap := bdrsql.GetSQLFiles(db, dirID)
 		if debug == true {
-			fmt.Printf("Scanning dir %s ", dirname)
+			fmt.Printf("scanning dir %s ", dirname)
 		}
 		d, err := os.Open(dirname)
 		if err != nil {
@@ -161,7 +161,7 @@ func backupDir(db *sql.DB, dirList string, excludeList string, dataBaseName stri
 	// if we have not seen the files since start it must have been deleted.
 	bdrsql.SetSQLDeleted(db, start)
 
-	log.Printf("Scanned %d files and %d directories\n", fileC, dirC)
+	log.Printf("scanned %d files and %d directories\n", fileC, dirC)
 	log.Printf("%d files scheduled for backup\n", backupFileC)
 
 	return nil
