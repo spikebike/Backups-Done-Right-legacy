@@ -17,6 +17,7 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 
 
 ## Potential Misfeatures
+
 * No back doors - without the clients AES256 key no recovery is possible
 * No bare metal restores - Backups Does Right depends on Go + working OS, 
 		and AES256 key for a restore.  For connections to peers 
@@ -85,6 +86,7 @@ The walker then attempts to upload the encrypted blobs to the server.  The serve
 Server <-> server connections are used to replicated blobs to the configured redundancy.  Only known public keys are trusted and all communications happen over an SSL connection.
 
 Peers are periodically challenged to prove they have the blobs they claim to be storing.  This also allows for disaster recovery (assuming the AES256 key is available) by waiting for challenges from your peers.
+
 
 ## Misc
 
