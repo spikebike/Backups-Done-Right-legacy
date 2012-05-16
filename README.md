@@ -49,6 +49,11 @@ Server <-> server connections are used to replicated blobs to the configured red
 Peers are periodically challenged to prove they have the blobs they claim to be storing.  This also allows for disaster recovery (assuming the AES256 key is available) by waiting for challenges from your peers.
 
 
+## Install and use
+
+See doc/INSTALL
+
+
 ## Misc
 
 Please see documentation/* for additional informations
