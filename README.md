@@ -56,5 +56,5 @@ See doc/INSTALL
 
 ## Misc
 
-Please see documentation/* for additional informations
+Please see doc/* for additional informations
 
