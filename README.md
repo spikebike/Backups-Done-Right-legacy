@@ -34,7 +34,7 @@ Backups-Done-Right is a P2P backup program providing easy, fast and secure encry
 
 Backups-Done-Right does have two project maintainers:
 
-* Bill Broaldey   aka spikebike	<bill@broadley.org>	(english)
+* Bill Broadley   aka spikebike	<bill@broadley.org>	(english)
 * Joel Bodenmann  aka Tectu	<joel@unormal.org>	(german / english)
 
 
