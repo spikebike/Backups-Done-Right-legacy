@@ -7,7 +7,7 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
-	"github.com/kless/goconfig/config"
+	"github.com/msbranco/goconfig"
 	"log"
 )
 
@@ -23,26 +23,26 @@ func main() {
 	flag.Parse()
 	log.Printf("loading config file from %s\n", *configFile)
 
-	configF, err := config.ReadDefault(*configFile)
+	configF, err := goconfig.ReadConfigFile(*configFile)
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	clientPrivKey, err := configF.String("Client", "private_key")
+	clientPrivKey, err := configF.GetString("Client", "private_key")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	clientPubKey, err := configF.String("Client", "public_key")
+	clientPubKey, err := configF.GetString("Client", "public_key")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	server, err := configF.String("Client", "server")
+	server, err := configF.GetString("Client", "server")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
-	serverPort, err := configF.String("Client", "serverPort")
+	serverPort, err := configF.GetString("Client", "server_port")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}

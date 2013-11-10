@@ -5,7 +5,7 @@ import (
 	"./bdrsql"
 	"./tlscon" // handles SSL connections
 	"flag"
-	"github.com/kless/goconfig/config"
+	"github.com/msbranco/goconfig"
 	"log"
 	"net"
 )
@@ -38,22 +38,27 @@ func main() {
 	flag.Parse()
 	log.Printf("loading config file from %s\n", *configFile)
 
-	configF, err := config.ReadDefault(*configFile)
+	configF, err := goconfig.ReadConfigFile(*configFile)
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	serverPrivKey, err := configF.String("Client", "private_key")
+	serverPort, err := configF.GetString("Server", "server_port")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	serverPubKey, err := configF.String("Client", "public_key")
+	serverPrivKey, err := configF.GetString("Client", "private_key")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	dataBaseName, err := configF.String("Server", "sql_file")
+	serverPubKey, err := configF.GetString("Client", "public_key")
+	if err != nil {
+		log.Fatalf("ERROR: %s", err)
+	}
+
+	dataBaseName, err := configF.GetString("Server", "sql_file")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
@@ -71,6 +76,6 @@ func main() {
 	}
 
 	fptr := RequestFunc
-	tlscon.ServerTLSListen("0.0.0.0:8000", fptr, serverPrivKey, serverPubKey)
+	tlscon.ServerTLSListen("0.0.0.0:"+serverPort, fptr, serverPrivKey, serverPubKey)
 
 }

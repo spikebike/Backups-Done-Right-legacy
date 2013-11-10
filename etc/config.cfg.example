@@ -5,29 +5,34 @@
 #							#
 #########################################################
 
+
 [Client]
-private_key = /etc/bdr/client/private.key
-public_key = /etc/bdr/client/public.key
-backup_dirs_secure = /home/bill/tmp/bdrtest
+private_key = ../certs/client.key
+public_key = ../certs/client.pem
+backup_dirs_secure = .
 backup_dirs_less_secure = /usr /lib /var
-exclude_dirs = /home/tectu/projects/build .git	# don't backup these directories and their childrens <fullpath / dirname>
+exclude_dirs = .git	# don't backup these directories and their childrens <fullpath / dirname>
 threads = 4
-sql_file = fs-meta.sql
-server = my-master-p2p.domain.com
+sql_file = ../etc/fsmeta.sql
+server = 127.0.0.1
 purge_deleted_files = 30 #days
-queue_blobs = /var/lib/bdr
+queue_blobs = /tmp/bdr
 notify_email = mail@example.com
+server_port=8000
 
 [Server]
-private_key = /etc/bdr/server/private.key
-public_key = /etc/bdr/server/public.key
+#private_key = /home/bill/src/go/Backups-Done-Right/certs/server.key
+#public_key = /home/bill/src/go/Backups-Done-Right/certs/server.pem
+private_key = ../certs/server.key
+public_key = ../certs/server.pem
 minimum_number_of_hops = 2 # avoid peers too local
-local_sqlite = /etc/bdr/blob-peer-meta.sql
+sql_file = /home/bill/src/go/Backups-Done-Right/etc/blob-peer-meta.sql
 local_store = /home/bdr/blobs
 notify_email = mail@example.com
 max_cores = 4 # maximum workers
 contract_grace_period = 48 # hours.  The time that you agree to store blobs even if the peer disappears.
 keep_files_for = 28 # days
 keep_local_copy_of_all_blobs = True # costs more disk, less reliant on peers
+server_port=8000
 
 
