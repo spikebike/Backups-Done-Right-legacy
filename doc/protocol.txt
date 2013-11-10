@@ -19,27 +19,13 @@ Protocol should support the following commands:
             <256bit checksum> - checksum
             <size> - blob size
 
-            The request command is sent from a peer that needs a blob
-            stored to a peer that will hopefully store blob.  
+            This request can from from a walker/uploader to the server
+            or between two servers.
 
-			If accepted the blob size counts against the requester.
-
-			If the block is already stored on the target it doesn't
-            need to be sent.
-
-* REPLY - <number of records>
-               <256 bit checksum>
-               <reply-status>
-           
-           Reply allows a peer to respond to a REQUEST.  This isn't on the
-           same connection.  Status should be one of:
-           Status = 0   I don't have that blob, please send it.
-           Status = 1   I have blob, your are now subscribed to it.
-           Status = 2   I don't want that blob, try someone else
-           Status = 3   I don't accept blobs that big, try someone else
-           Status = 4   That violated our agreed on quota, go away
-           Status = 5   That vioated our agreed on quota, but I will accept 
-                        a larger quota trade.
+				The result is a RequestACK for each record that includes:
+              1 = HAVE: I have the blob, you are subscribed.
+              2 = ACCEPT: I do not have the blob, will accept an upload
+              3 = REJECT: I do not have the blob, and will not accept an upload
 
 * SEND - <number of records>
             <256 checksum>

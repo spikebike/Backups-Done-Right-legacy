@@ -9,7 +9,7 @@ Backups Done Right depends on 3 external go packages that need to be installed. 
 
 goconfig - to install, simply run:
 
-	$ go get github.com/kless/goconfig/config
+	$ go get github.com/msbranco/goconfig/config
 
 
 go-sqlite3 - This requires the sqlite and sql-dev packages to be installed already.  To install, simply run:
@@ -36,7 +36,7 @@ Then, edit the config file to your needs.
 
 You do also need certificates for the SSL encryption:
 
-	$ cd Backups-Done-Right/src/scripts
-	$ ./makecerts <your_email_address>
+	$ cd Backups-Done-Right
+	$ ./src/scripts/makecerts <your_email_address>
 
 

@@ -17,7 +17,7 @@ Num 	Status  	Description
 			and selet.
 #2D 	Done		Write an example to implement a reasonable config file format
 
-#3	Unassigned 	Uploader depends on #2 - For each file in the queue it reads, 
+#3	Done		Uploader depends on #2 - For each file in the queue it reads, 
 			compresses, and checksums it.  Ideally multiple core friendly.  
 			As files are finished upload them to p2p server.  See 
 			uploader.txt.  Depends on #4 and #5 to actually upload.

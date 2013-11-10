@@ -17,9 +17,10 @@ Observations:
 * At least on LANs (multiple peers on same lan is predicted to
   be a common use case) 60-80MB/sec connections are common
 * Reading, compressing, checksumming, and encrypting at 60-80MB/sec
-  is tough.
+  is tough and requires using multiple CPUs.
 * Disk space is cheap (don't try too hard to save disk space)
 * Random IO on disks is often on the order of 100/second (very slow)
+* In many environments deduplication is valuable
 
 To this end 2 programs to achieve this are:
 1) file system walker - has access to encryption key, tracks all
@@ -34,4 +35,6 @@ To this end 2 programs to achieve this are:
       same protocol as peers do.
    D) ensures desired redundancy of blobs
    E) accepts stores from peers.
+
+Note the walker/uploader <-> p2p daemon protocol is identical to the p2p<->p2p
 
