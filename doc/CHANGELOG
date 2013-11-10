@@ -1,0 +1,11 @@
+Nov 9, 2013:
++ replaced github.com/kless/goconfig which doesn't exist with 
+  github.com/msbranco/goconfig
++ Migrated SQL schema to etc
++ fixed several problems in example config file, it's now more generic
+  and should work out of the box
++ tweaked server to accept a configurable server port
++ fixed README to make running a simple example cut and paste.
+
+
+ 
