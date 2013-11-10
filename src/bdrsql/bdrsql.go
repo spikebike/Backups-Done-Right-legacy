@@ -128,6 +128,8 @@ func SQLUpload(db *sql.DB, UpChan chan *bdrupload.Upchan_t) error {
 			olddirID = dirID
 		}
 		fullpath := filepath.Join(dir,name)
+		log.Printf("fullpath=%s\n",fullpath)
+
 		// send fullpath and rowID to channel
 		recptr:=&bdrupload.Upchan_t{}
 		recptr.Rowid=rowID

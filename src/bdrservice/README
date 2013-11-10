@@ -1,0 +1,3 @@
+
+To rebuild (if necessary):
+protoc --go_out=. *.proto

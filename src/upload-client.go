@@ -64,7 +64,7 @@ func main() {
 		// get its size
 		size := int32(len(randBytes))
 
-		// create a new hash, and do a crypty hash of the random bytes.
+		// create a new hash, and do a crypto hash of the random bytes.
 		sha := sha256.New()
 		sha.Write(randBytes)
 		strhash := fmt.Sprintf("%x", sha.Sum(nil))

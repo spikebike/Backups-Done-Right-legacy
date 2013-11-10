@@ -26,7 +26,7 @@ func (Request) Request(in *bdrservice.RequestMessage, out *bdrservice.RequestACK
 		records++
 	}
 	out.Received = new(int32)
-	*out.Received = records
+	*out.Received = records-1
 	return nil
 }
 

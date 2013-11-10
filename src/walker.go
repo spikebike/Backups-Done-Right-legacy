@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/kless/goconfig/config"
+	"github.com/msbranco/goconfig"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
@@ -175,38 +175,38 @@ func main() {
 	debug = *debug_flag
 
 	log.Printf("loading config file from %s\n", *configFile)
-	configF, err := config.ReadDefault(*configFile)
+	configF, err := goconfig.ReadConfigFile(*configFile)
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	pool_config, err := configF.Int("Client", "threads")
+	pool_config, err := configF.GetInt64("Client", "threads")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 	if *pool_flag != 0 {
 		pool = *pool_flag
 	} else {
-		pool = pool_config
+		pool = int(pool_config)
 	}
 	runtime.GOMAXPROCS(pool)
 
-	dirList, err := configF.String("Client", "backup_dirs_secure")
+	dirList, err := configF.GetString("Client", "backup_dirs_secure")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	excludeList, err := configF.String("Client", "exclude_dirs")
+	excludeList, err := configF.GetString("Client", "exclude_dirs")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	dataBaseName, err := configF.String("Client", "sql_file")
+	dataBaseName, err := configF.GetString("Client", "sql_file")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	queueBlobDir, err := configF.String("Client", "queue_blobs")
+	queueBlobDir, err := configF.GetString("Client", "queue_blobs")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	} else {

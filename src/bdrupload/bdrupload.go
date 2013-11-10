@@ -55,7 +55,12 @@ func Uploader(upchan chan *Upchan_t, done chan int64, dbg bool, UpDir string) {
 
 		// open file and create a reader
 		file, err := os.Open(f.Path)
+		if err != nil {
+			log.Fatal(err)
+		}
 		outF, err := ioutil.TempFile(UpDir+"/tmp", "bdr")
+		log.Printf("received file=%s blob=%s\n",file.Name(),outF.Name())
+
 		if dbg {
 			fmt.Printf("Opening tmp file %s\n", outF.Name())
 		}
