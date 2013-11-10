@@ -9,7 +9,7 @@ message request_message {
 }
 
 message requestACK_message {
- 	required int32 received=1;
+ 	repeated int32 RetVal=1;
 }
 
 service request_service {

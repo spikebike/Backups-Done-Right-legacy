@@ -61,19 +61,19 @@ func (m *RequestMessageBlob) GetBsize() int32 {
 }
 
 type RequestACKMessage struct {
-	Received         *int32 `protobuf:"varint,1,req,name=received" json:"received,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
+	RetVal           []int32 `protobuf:"varint,1,rep" json:"RetVal,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *RequestACKMessage) Reset()         { *m = RequestACKMessage{} }
 func (m *RequestACKMessage) String() string { return proto.CompactTextString(m) }
 func (*RequestACKMessage) ProtoMessage()    {}
 
-func (m *RequestACKMessage) GetReceived() int32 {
-	if m != nil && m.Received != nil {
-		return *m.Received
+func (m *RequestACKMessage) GetRetVal() []int32 {
+	if m != nil {
+		return m.RetVal
 	}
-	return 0
+	return nil
 }
 
 func init() {

@@ -21,12 +21,17 @@ type Request struct{}
 
 func (Request) Request(in *bdrservice.RequestMessage, out *bdrservice.RequestACKMessage) error {
 	var records int32
+
+//	ack := &bdrservice.RequestACKMessage{}
 	for _, blob := range in.Blobarray {
 		log.Printf("server: blobarray=%v %T", *blob.Sha256, *blob.Sha256)
 		records++
+//		r := &bdrservice.RequestACKMessage{
+//			RetVal: []bdrservice.RequestACKMessage_RetEnum{bdrservice.RequestACKMessage_HAVE},
+//		r:=new(bdrservice.RequestACKMessage)
+		out.RetVal=append(out.RetVal,records)
 	}
-	out.Received = new(int32)
-	*out.Received = records-1
+//	*out.Received = ack
 	return nil
 }
 

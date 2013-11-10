@@ -75,5 +75,5 @@ func main() {
 	if err := request.Request(req, ack); err != nil {
 		log.Fatalf("Add failed with: %s", err)
 	}
-	fmt.Printf("Server ACKs %d records\n\n", *ack.Received)
+	fmt.Printf("Server ACKs %d records\n\n", ack.RetVal)
 }
