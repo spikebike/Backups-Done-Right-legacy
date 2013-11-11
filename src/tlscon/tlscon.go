@@ -10,7 +10,6 @@ import (
 )
 
 func OpenTLSClient(ipPort string,privKey string,pubKey string) (*tls.Conn, error) {
-	
 
 	log.Printf("priv=%s pub=%s\n",privKey,pubKey)
 	// Note this loads standard x509 certificates, test keys can be
@@ -19,8 +18,10 @@ func OpenTLSClient(ipPort string,privKey string,pubKey string) (*tls.Conn, error
 	if err != nil {
 		log.Fatalf("server: loadkeys: %s", err)
 	}
-	// InsecureSkipVerify required for unsigned certs with Go1 and later.
-	config := tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}
+	// InsecureSkipVerify required for unsigned certs with Go1 and later.  
+
+	config := tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true , CipherSuites: []uint16{tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA}}
+
 	conn, err := tls.Dial("tcp", ipPort, &config)
 	if err != nil {
 		log.Fatalf("client: dial: %s", err)
@@ -76,7 +77,7 @@ func ServerTLSListen(service string, f func(conn net.Conn),privKey string, pubKe
 		log.Fatalf("server: loadkeys: %s", err)
 	}
 	// Note if we don't tls.RequireAnyClientCert client side certs are ignored.
-	config := tls.Config{Certificates: []tls.Certificate{cert}, ClientAuth: tls.RequireAnyClientCert}
+	config := tls.Config{Certificates: []tls.Certificate{cert}, ClientAuth: tls.RequireAnyClientCert, CipherSuites: []uint16{tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA}}
 	config.Rand = rand.Reader
 	listener, err := tls.Listen("tcp", service, &config)
 	if err != nil {
