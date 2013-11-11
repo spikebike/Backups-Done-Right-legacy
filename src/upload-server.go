@@ -53,12 +53,12 @@ func main() {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	serverPrivKey, err := configF.GetString("Client", "private_key")
+	serverPrivKey, err := configF.GetString("Server", "private_key")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 
-	serverPubKey, err := configF.GetString("Client", "public_key")
+	serverPubKey, err := configF.GetString("Server", "public_key")
 	if err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}

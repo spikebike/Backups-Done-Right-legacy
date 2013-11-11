@@ -55,10 +55,9 @@ func handleClient(conn net.Conn, f func(conn net.Conn)) {
 		}
 		state := tlscon.ConnectionState()
 		// Note we could reject clients if we don't like their public key.      
-		log.Println("Server: client public key is:")
 		for _, v := range state.PeerCertificates {
 //			fmt.Printf("Client: Server public key is:\n%x\n",v.PublicKey.(*rsa.PublicKey).N)
-			log.Printf("Client: Server public key is:\n%x\n",v.PublicKey.(*rsa.PublicKey).N)
+			log.Printf("Server: Client public key is:\n%x\n",v.PublicKey.(*rsa.PublicKey).N)
 		}
 		// Now that we have completed SSL/TLS 
 		// hopefully F does the same as below
@@ -72,6 +71,7 @@ func ServerTLSListen(service string, f func(conn net.Conn),privKey string, pubKe
 	// Load x509 certificates for our private/public key, makecert.sh will
 	// generate them for you.
 
+	log.Printf("priv=%s pub=%s\n",privKey,pubKey)
 	cert, err := tls.LoadX509KeyPair(pubKey, privKey)
 	if err != nil {
 		log.Fatalf("server: loadkeys: %s", err)
