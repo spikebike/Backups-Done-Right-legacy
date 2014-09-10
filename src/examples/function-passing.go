@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// return a function 
+// return a function
 func Sequence() func() int {
 	n := 0
 	return func() int {
@@ -11,7 +11,7 @@ func Sequence() func() int {
 	}
 }
 
-// take a funtion as argument 
+// take a funtion as argument
 func Print(f func() int) {
 	fmt.Printf("%d\n", f())
 }

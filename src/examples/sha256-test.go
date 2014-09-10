@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"os"
 
-//	"bytes"
-//    "hash"
+	//	"bytes"
+	//    "hash"
 )
 
 var plaintext string

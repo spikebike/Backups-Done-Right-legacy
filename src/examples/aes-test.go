@@ -14,7 +14,7 @@ import (
 //
 // encrypt file
 // openssl enc -nopad -aes-256-cfb -K 129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31129e12fd1f9e2b31 -iv 000102030405060708090a0b0c0d0e0f -e -in test -out test-openssl.aes
-// 
+//
 // run go:
 // $ go run aes-test.go test test-go.aes
 //
@@ -23,7 +23,7 @@ import (
 // 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67 test-openssl.aes
 // 7320cc72c78ddf395964b43a03425cc6323ac700223a3210c3af6b09d58b3e67 test-go.aes
 // $ cmp test1.aes test1-go.aes
-// $ 
+// $
 
 var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
 
