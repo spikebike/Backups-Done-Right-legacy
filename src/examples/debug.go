@@ -13,7 +13,7 @@ const (
 
 func main() {
 	 go http.ListenAndServe(fmt.Sprintf(":%d", httpPortTCP), nil)
-    fmt.Printf("To go http://localhost:%d in the next %d seconds \n",httpPortTCP,delaySeconds)
+    fmt.Printf("To go http://localhost:%d/debug/vars in the next %d seconds \n",httpPortTCP,delaySeconds)
 	 time.Sleep(delaySeconds * time.Second)
 }
 
