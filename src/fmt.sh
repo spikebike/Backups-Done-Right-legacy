@@ -1,2 +1,2 @@
 #!/bin/bash
-gofmt -w=true -tabs=true *.go
+gofmt -w=true *.go
