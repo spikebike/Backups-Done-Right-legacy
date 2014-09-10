@@ -33,7 +33,7 @@ func main() {
 
 	// make channel for sending signals
 	sig := make(chan os.Signal, 1)
-	// send a singal on channel cig for each SIGUSR1
+	// send a signal on channel cig for each SIGUSR1
 	signal.Notify(sig, syscall.SIGUSR1)
 	// run signal handler in gorouting
 	go HandleSignals(sig)
