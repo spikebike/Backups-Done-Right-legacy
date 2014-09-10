@@ -35,7 +35,7 @@ func main() {
 	sig := make(chan os.Signal, 1)
 	// send a signal on channel cig for each SIGUSR1
 	signal.Notify(sig, syscall.SIGUSR1)
-	// run signal handler in gorouting
+	// run signal handler in a goroutine in a seperate thread
 	go HandleSignals(sig)
 
 	fmt.Printf("\nGo to http://localhost:%d/debug/vars in the next %d seconds \n", httpPortTCP, delaySeconds)
