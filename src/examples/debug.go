@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// docs at http://golang.org/pkg/expvar/
+
 const (
 	httpPortTCP  = 8711
 	delaySeconds = 120
